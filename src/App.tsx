@@ -338,6 +338,7 @@ export default function App() {
               onGenerateBio={handleGenerateBio}
               isGeneratingBio={isGeneratingBio}
               onLoadPreset={handleLoadPreset}
+              onSwitchToPreview={() => setPosterMobileTab('preview')}
             />
 
           </div>

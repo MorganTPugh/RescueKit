@@ -28,6 +28,7 @@ interface PosterFormProps {
   onGenerateBio: (style: string) => void;
   isGeneratingBio: boolean;
   onLoadPreset: (presetKey: string) => void;
+  onSwitchToPreview?: () => void;
 }
 
 export const PosterForm: React.FC<PosterFormProps> = ({
@@ -37,7 +38,8 @@ export const PosterForm: React.FC<PosterFormProps> = ({
   setSettings,
   onGenerateBio,
   isGeneratingBio,
-  onLoadPreset
+  onLoadPreset,
+  onSwitchToPreview
 }) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [customTraitInput, setCustomTraitInput] = useState<string>('');
@@ -562,7 +564,8 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           {/* Contact Details & Rescue Information */}
           <div className="space-y-3 pt-3 border-t border-sky-50">
-            <h4 className="text-xs font-black text-slate-850 mb-1 flex items-center gap-1.5"><HeartHandshake className="w-4 h-4 text-indigo-550" /> Organization Contact Information (only input what should be on the poster)</h4>
+            <h4 className="text-xs font-black text-slate-850 mb-0.5 flex items-center gap-1.5"><HeartHandshake className="w-4 h-4 text-indigo-550" /> Organization Contact Information</h4>
+            <p className="text-[10px] font-semibold text-slate-400 mb-1.5">Only add what you want to show on the flyer</p>
             
             <div className="grid grid-cols-1 gap-3">
               <div>
@@ -581,7 +584,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
-                  Contact Email <span className="normal-case font-medium text-slate-500"> (if applicable)</span>
+                  Contact Email
                 </label>
                 <input
                   type="email"
@@ -594,7 +597,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
               </div>
               <div>
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
-                  Contact phone number <span className="normal-case font-medium text-slate-500"> (if applicable)</span>
+                  Contact Phone
                 </label>
                 <input
                   type="text"
@@ -629,7 +632,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
         <div className="space-y-4 animate-fade-in text-slate-800">
           <div>
             <h3 className="text-sm font-black text-slate-800 mb-1">Poster Canvas Aesthetics</h3>
-            <p className="text-xs text-slate-500">Customize layout themes, headers, and click to automatically generate bios using Gemini API.</p>
+            <p className="text-xs text-slate-500">Customize layout theme, header, and use Gemini to help with the final description.</p>
           </div>
 
           {/* Template Choice Selectors */}
@@ -768,6 +771,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 rows={5}
                 className="w-full text-xs font-semibold border-2 border-sky-100 rounded-xl p-2.5 outline-none bg-white font-sans text-slate-800"
               />
+              <p className="text-[10px] font-semibold text-slate-400 mt-1">Tip: Check the poster preview to make sure your description fits — trim if needed.</p>
             </div>
           </div>
         </div>
@@ -801,9 +805,13 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             Continue →
           </button>
         ) : (
-          <div className="text-xs font-bold text-emerald-600 flex items-center gap-1 animate-pulse">
+          <button
+            type="button"
+            onClick={onSwitchToPreview}
+            className="text-xs font-bold text-emerald-600 flex items-center gap-1 animate-pulse cursor-pointer hover:text-emerald-700 hover:underline transition-colors"
+          >
             <Check className="w-4 h-4" /> Ready to Print!
-          </div>
+          </button>
         )}
       </div>
 

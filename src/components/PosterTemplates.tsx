@@ -279,8 +279,8 @@ const getDynamicBioStyle = (text: string, templateId: string, isSquare: boolean)
       maxPx = 21.0;
       minPx = 11.0;
     } else if (templateId === 'two-photos' || templateId === 'comic-2-photos') {
-      maxPx = 18.5;
-      minPx = 10.0; 
+      maxPx = 21.0;
+      minPx = 11.0;
     } else if (templateId === 'bio-only') {
       maxPx = 28.0;
       minPx = 13.5; 
@@ -533,7 +533,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           </div>
 
           {/* 2. Photo Grid (Takes up space for 2 photos) */}
-          <div className="grid grid-cols-2 gap-2 my-1 h-[45%] shrink-0 relative">
+          <div className="grid grid-cols-2 gap-2 my-1 h-[50%] shrink-0 relative">
             {/* Photo 1 Container */}
             <div className={`relative h-full rounded-xl overflow-hidden border bg-slate-50 group ${isComic2 ? 'border-pink-200/80 shadow-3xs' : 'border-slate-200'}`}>
               {primaryPhoto ? (
@@ -600,41 +600,41 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             }`}>
               <div className="flex flex-col gap-0.5">
                 {/* Basic info box */}
-                <div className={`p-1 px-1.5 rounded border flex flex-col gap-1 text-[7.5px] font-bold ${
-                  isComic2 
-                    ? 'bg-[#fffcfb] border-pink-200/60 text-slate-700' 
+                <div className={`p-1.5 rounded border flex flex-col gap-1.5 text-[8.5px] font-bold ${
+                  isComic2
+                    ? 'bg-[#fffcfb] border-pink-200/60 text-slate-700'
                     : 'bg-stone-50/50 border-stone-200/60 text-slate-700'
                 }`}>
                   <div className={`flex justify-start items-center border-b border-dashed pb-1 ${
                     isComic2 ? 'border-pink-105' : 'border-slate-200/50'
                   }`}>
-                    <span className={`${isComic2 ? 'text-rose-600' : 'text-slate-900'} font-extrabold truncate text-[8.5px]`}>
+                    <span className={`${isComic2 ? 'text-rose-600' : 'text-slate-900'} font-extrabold truncate text-[10px]`}>
                       {pet.age || 'Unknown'}{pet.weight ? `, ${pet.weight}` : ''}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className={`${isComic2 ? 'text-pink-400' : 'text-slate-404'} text-[6px] uppercase shrink-0`}>Housetrained</span>
+                    <span className={`${isComic2 ? 'text-pink-400' : 'text-slate-404'} text-[7px] uppercase shrink-0`}>Housetrained</span>
                     <span className={`${isComic2 ? 'text-rose-700' : 'text-slate-900'} font-extrabold max-w-[55px] truncate`}>{pet.houseTrained === 'yes' ? 'Yes ✓' : pet.houseTrained === 'working-on-it' ? 'Learning' : 'No ✗'}</span>
                   </div>
                 </div>
 
                 {/* Social compatibility boxes (1 word & answer below in separate boxes) */}
                 <div className="grid grid-cols-3 gap-0.5">
-                  <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200/80'} border p-0.5 rounded text-center`}>
-                    <span className={`text-[4.5px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>DOGS</span>
-                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[6px] font-black leading-none block mt-0.5`}>
+                  <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200/80'} border p-1 rounded text-center`}>
+                    <span className={`text-[6px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>DOGS</span>
+                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[7.5px] font-black leading-none block mt-0.5`}>
                       {pet.goodWithDogs === 'yes' ? 'Yes' : pet.goodWithDogs === 'no' ? 'No' : 'Maybe'}
                     </span>
                   </div>
-                  <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200/80'} border p-0.5 rounded text-center`}>
-                    <span className={`text-[4.5px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>CATS</span>
-                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[6px] font-black leading-none block mt-0.5`}>
+                  <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200/80'} border p-1 rounded text-center`}>
+                    <span className={`text-[6px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>CATS</span>
+                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[7.5px] font-black leading-none block mt-0.5`}>
                       {pet.goodWithCats === 'yes' ? 'Yes' : pet.goodWithCats === 'no' ? 'No' : 'Maybe'}
                     </span>
                   </div>
-                  <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200/80'} border p-0.5 rounded text-center`}>
-                    <span className={`text-[4.5px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>KIDS</span>
-                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[6px] font-black leading-none block mt-0.5`}>
+                  <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200/80'} border p-1 rounded text-center`}>
+                    <span className={`text-[6px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>KIDS</span>
+                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[7.5px] font-black leading-none block mt-0.5`}>
                       {pet.goodWithKids === 'yes' ? 'Yes' : pet.goodWithKids === 'no' ? 'No' : 'Maybe'}
                     </span>
                   </div>
@@ -645,9 +645,9 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               {pet.traits.length > 0 && (
                 <div className="flex flex-wrap gap-0.5">
                   {pet.traits.slice(0, 3).map((t, idx) => (
-                    <span key={idx} className={`text-[6px] font-bold border px-1 py-0.5 rounded capitalize leading-none ${
-                        isComic2 
-                          ? 'bg-rose-50 border-pink-200/70 text-rose-600' 
+                    <span key={idx} className={`text-[7.5px] font-bold border px-1 py-0.5 rounded capitalize leading-none ${
+                        isComic2
+                          ? 'bg-rose-50 border-pink-200/70 text-rose-600'
                           : 'bg-slate-50 border-slate-200/80 text-slate-700'
                       }`}
                     >
@@ -1553,10 +1553,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
       {/* ==================== 1. UPPER HEADER SECTION (COMPACT SIZE FOR HIGHER DENSITY) ==================== */}
       {settings.templateId === 'whimsical' ? (
-        <div className="w-full flex items-center justify-between mt-0 mb-2 z-10 font-sans shrink-0 border-b border-[#2d5a27]/10 pb-2 select-none">
+        <div className="w-full flex items-center justify-between mt-0 mb-2 z-10 font-sans shrink-0 border-b border-[#2d5a27]/10 pb-1 select-none">
           {/* Left top: Meet Barnaby! */}
           <div className="relative inline-block pl-2 mt-1">
-            <h1 className="text-3.5xl md:text-4xl font-handwritten font-black tracking-tight text-[#0f5c3a] leading-none mb-0.5">
+            <h1 className="text-4.5xl font-handwritten font-black tracking-tight text-[#0f5c3a] leading-none mb-0.5">
               Meet {pet.name || 'Lovely Foster'}!
             </h1>
             <svg className="absolute -bottom-1 left-2 w-[calc(100%-12px)] h-2 text-rose-350 pointer-events-none" fill="none" viewBox="0 0 100 10" preserveAspectRatio="none">
@@ -1670,19 +1670,6 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                   <h4 className="text-[10.5px] font-extrabold uppercase tracking-wide text-rose-700 leading-none mb-0.5">Blooming Sweetheart</h4>
                   <p className="text-[8.5px] md:text-[9px] font-semibold text-stone-755 leading-tight">
                     {pet.name} is filled with endless affection and is ready to shower you with infinite cuddles, active joy, and companion loyalty.
-                  </p>
-                </div>
-              </div>
-
-              {/* Feature 2: House Manners & Cozy Shelter Icon */}
-              <div className="flex items-start gap-2 bg-[#fdfcf5] border border-amber-100 rounded-xl p-1.5 md:p-2 transition-all shadow-3xs hover:border-amber-205 select-text shrink-0">
-                <div className="bg-amber-400 text-white text-xs rounded-lg shrink-0 shadow-3xs font-extrabold flex items-center justify-center w-7 h-7 font-sans">
-                  🏠
-                </div>
-                <div className="flex flex-col text-left min-w-0 font-sans">
-                  <h4 className="text-[10.5px] font-extrabold uppercase tracking-wide text-[#854d0e] leading-none mb-0.5 font-sans">Home Sweet Home</h4>
-                  <p className="text-[8.5px] md:text-[9px] font-semibold text-stone-755 leading-tight">
-                    {pet.houseTrained === 'yes' ? 'Fully housetrained! Extremely well-mannered, clean, and cooperative in-house.' : pet.houseTrained === 'working-on-it' ? 'Learning house manners fast and doing wonderful with routines!' : 'Ready to settle in and learn all your warm house manners.'}
                   </p>
                 </div>
               </div>
