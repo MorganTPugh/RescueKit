@@ -1,0 +1,6 @@
+{
+  "name": "RescueKit",
+  "description": "Create gorgeous, high-impact printable and digital posters for foster animals to accelerate their adoption. Powered by Gemini text enhancement.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

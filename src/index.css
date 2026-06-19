@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Fredoka:wght@400;500;600;700&family=Gaegu:wght@400;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+  --font-handwritten: "Caveat", cursive, sans-serif;
+  --font-playful: "Fredoka", "Gaegu", cursive, sans-serif;
+  --font-fraunces: "Fraunces", serif;
+
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-pop-scale: pop-scale 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pop-scale {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Custom UI styling helpers */
+.scroll-hide::-webkit-scrollbar {
+  display: none;
+}
+.scroll-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Print Overrides */
+@media print {
+  /* Suppress browser headers and footers (which display page title like "Google AI Studio", date, time, and URL) */
+  @page {
+    margin: 0 !important;
+  }
+  
+  /* Reset transitions, filters, transforms, and animations on major ancestors to prevent viewport offset bugs in position: fixed */
+  html, body, #root, #full-scale-preview-modal, #modal-poster-card-wrapper {
+    transform: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  /* Hide all app interface DOM elements reliably */
+  body * {
+    visibility: hidden !important;
+  }
+  
+  /* Set only the printable poster container and its descendants as visible */
+  .poster-print-container, 
+  .poster-print-container * {
+    visibility: visible !important;
+  }
+  
+  /* Reset body size to exactly fill paper context */
+  html, body, #root {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* Target poster container to span the full page dimensions correctly */
+  .poster-print-container {
+    display: flex !important; /* Force layout context */
+    position: fixed !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background-color: #ffffff !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    z-index: 99999 !important;
+  }
+
+  /* Pixel-perfect vector scaling for vertical flyers (8.5x11 aspect ratio) */
+  .poster-print-container:not(.aspect-ratio-square) {
+    left: 0 !important;
+    top: 0 !important;
+    width: 215.9mm !important; /* US Letter Width: 8.5 in */
+    height: 279.4mm !important; /* US Letter Height: 11 in */
+    border-radius: 0 !important;
+    transform: none !important;
+  }
+
+  /* Specific sizing and vertical centering for Instagram Square templates */
+  .poster-print-container.aspect-ratio-square {
+    width: 210mm !important;
+    height: 210mm !important;
+    top: 34.7mm !important; /* Perfectly center vertically on physical US Letter page */
+    left: 2.95mm !important; /* Perfectly center horizontally on physical US Letter page */
+    border-radius: 20px !important; /* Keep rounded corners elegant on printed/exported page */
+    border: none !important;
+    padding: 24px !important; /* Keep generous padding on printed square page */
+  }
+
+  /* Fix for text rendering under dark elements during print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}
+
+/* Simple aspect ratio helpers for printable posters */
+.poster-proportions {
+  aspect-ratio: 8.5 / 11; /* True US Letter Aspect Ratio */
+}
+
+/* Globally hide scrollbars inside the poster canvas for screen and print */
+.poster-print-container,
+.poster-print-container *,
+.poster-preview-only,
+.poster-preview-only * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.poster-print-container::-webkit-scrollbar,
+.poster-print-container *::-webkit-scrollbar,
+.poster-preview-only::-webkit-scrollbar,
+.poster-preview-only *::-webkit-scrollbar {
+  display: none !important;
+}
+
