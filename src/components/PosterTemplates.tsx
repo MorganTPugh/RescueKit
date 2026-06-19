@@ -1360,7 +1360,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           </div>
 
           {/* Fact Sheet Column (col-span-4) */}
-          <div className={`col-span-12 md:col-span-5 flex flex-col justify-start gap-1 select-none border-l pl-4 h-full min-h-0 ${
+          <div className={`col-span-5 flex flex-col justify-start gap-1 select-none border-l pl-4 h-full min-h-0 ${
             isComic2 ? 'border-pink-100/70' : 'border-slate-250/50'
           }`}>
             <div className="flex flex-col gap-1 w-full font-sans">
@@ -1656,7 +1656,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
       <div className={`grid grid-cols-12 ${settings.templateId === 'whimsical' || settings.templateId === 'editorial' || settings.templateId === 'polaroid' ? 'gap-2 md:gap-2' : 'gap-3 md:gap-3.5'} ${settings.templateId === 'polaroid' ? 'my-0.5' : 'my-1'} z-10 flex-1 h-full items-stretch w-full min-h-0`}>
         
         {/* LEFT COLUMN: TRAITS, DETAILED STORY BIO */}
-        <div className={`col-span-12 ${settings.templateId === 'editorial' ? 'md:col-span-5' : settings.templateId === 'polaroid' ? 'md:col-span-7' : 'md:col-span-6'} flex flex-col justify-stretch h-full select-text mt-0.5 space-y-2 px-0.5 font-sans min-h-0 overflow-hidden`}>
+        <div className={`${settings.templateId === 'editorial' ? 'col-span-5' : settings.templateId === 'polaroid' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-stretch h-full select-text mt-0.5 space-y-2 px-0.5 font-sans min-h-0 overflow-hidden`}>
           
           {settings.templateId === 'comic' ? (
             /* SWEET ROMANCE STYLED TRAITS/STORY WITH CUSTOM HIGH-FIDELITY ICONS */
@@ -1778,7 +1778,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         </div>
 
         {/* RIGHT COLUMN: HERO PHOTO, THUMBNAILS, PRINCESS-STYLE STAT SHEET */}
-        <div className={`col-span-12 ${settings.templateId === 'editorial' ? 'md:col-span-7' : settings.templateId === 'polaroid' ? 'md:col-span-5' : 'md:col-span-6'} flex flex-col justify-between h-full space-y-1.5 pb-0.5 mt-0.5 ${settings.templateId === 'whimsical' ? '' : settings.templateId === 'editorial' ? 'border-t md:border-t-0 md:border-l border-stone-350 pt-2 md:pt-0 md:pl-2' : settings.templateId === 'polaroid' ? 'border-t md:border-t-0 md:border-l border-stone-200/50 pt-1 md:pt-0 md:pl-1.5' : 'border-t md:border-t-0 md:border-l border-slate-100 pt-2 md:pt-0 md:pl-2.5'} min-h-0 overflow-hidden`}>
+        <div className={`${settings.templateId === 'editorial' ? 'col-span-7' : settings.templateId === 'polaroid' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full space-y-1.5 pb-0.5 mt-0.5 ${settings.templateId === 'whimsical' ? '' : settings.templateId === 'editorial' ? 'border-l border-stone-350 pl-2' : settings.templateId === 'polaroid' ? 'border-l border-stone-200/50 pl-1.5' : 'border-l border-slate-100 pl-2.5'} min-h-0 overflow-hidden`}>
           
           {/* STYLED PHOTO BOX - SCALED OUT TO FILL FULL WIDEST SPAN */}
           <div className={`w-full relative flex-1 ${settings.templateId === 'whimsical' ? 'max-h-[62%]' : settings.templateId === 'polaroid' ? 'max-h-[50%]' : 'max-h-[44%]'} min-h-[115px] flex flex-col justify-center items-center`}>

@@ -172,7 +172,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
       <div className="mb-4 bg-sky-50/60 border border-sky-100 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 animate-fade-in">
         <div className="flex items-center gap-1.5">
           <Workflow className="w-4 h-4 text-indigo-500" />
-          <span className="text-xs font-bold text-slate-700">Want a head start? Load a rescue example:</span>
+          <span className="text-xs font-bold text-slate-700">Want a head start? Load an example:</span>
         </div>
         <div className="flex flex-wrap gap-2">
           <button
@@ -188,13 +188,6 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             className="text-[11px] font-bold bg-white border border-sky-100 hover:bg-sky-100 hover:border-sky-300 text-slate-700 hover:text-indigo-750 px-2.5 py-1 rounded-full shadow-2xs transition-all cursor-pointer"
           >
             🐱 Penelope (Cat)
-          </button>
-          <button
-            id="load-waffles-btn"
-            onClick={() => onLoadPreset('waffles')}
-            className="text-[11px] font-bold bg-white border border-sky-100 hover:bg-sky-100 hover:border-sky-300 text-slate-700 hover:text-indigo-750 px-2.5 py-1 rounded-full shadow-2xs transition-all cursor-pointer"
-          >
-            🐰 Waffles (Rabbit)
           </button>
         </div>
       </div>
@@ -228,7 +221,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
         <div className="space-y-4 animate-fade-in text-slate-800">
           <div>
             <h3 className="text-sm font-black text-slate-800 mb-1">About Your Foster</h3>
-            <p className="text-xs text-slate-500">Provide the basic information to fill the headline card details.</p>
+            <p className="text-xs text-slate-500">Provide your pet's basic information for the flyer.</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -420,7 +413,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
         <div className="space-y-4 animate-fade-in text-slate-805">
           <div>
             <h3 className="text-sm font-black text-slate-850 mb-1">Personality Traits & Humorous Habits</h3>
-            <p className="text-xs text-slate-500">Pick what makes them wonderfully quirky, or add custom tags!</p>
+            <p className="text-xs text-slate-500">Describe what makes them wonderfully quirky, or add custom tags!</p>
           </div>
 
           <div className="border border-sky-100 rounded-2xl p-4 bg-sky-50/50">
@@ -491,8 +484,8 @@ export const PosterForm: React.FC<PosterFormProps> = ({
       {activeStep === 2 && (
         <div className="space-y-4 animate-fade-in text-slate-800">
           <div>
-            <h3 className="text-sm font-black text-slate-800 mb-1">Upload Cute Foster Photos (Up to 3)</h3>
-            <p className="text-xs text-slate-500">Provide direct visual proof of their charm. Drag & drop or browse.</p>
+            <h3 className="text-sm font-black text-slate-800 mb-1">Upload Pet Photo/s (Up to 2)</h3>
+            <p className="text-xs text-slate-500">Drag & drop or browse.</p>
           </div>
 
           {/* Drag & Drop File Upload Frame */}
