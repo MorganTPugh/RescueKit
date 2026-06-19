@@ -1717,18 +1717,18 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             <>
               {/* TRAIT BADGES (Brings high informational density to the vertical flyer version!) */}
               {pet.traits.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 px-1 justify-start shrink-0">
+                <div className="flex flex-wrap gap-1 px-1 justify-start shrink-0">
                   {pet.traits.map((t, idx) => {
                     const capTrait = t.charAt(0).toUpperCase() + t.slice(1);
                     if (settings.templateId === 'whimsical') {
                       const rotations = ['rotate-[1deg]', 'rotate-[-1.5deg]', 'rotate-[1.5deg]', 'rotate-[-1deg]'];
                       const rotation = rotations[idx % rotations.length];
                       return (
-                        <span 
-                          key={idx} 
-                          className={`inline-flex items-center text-[11px] md:text-[12px] font-bold font-handwritten px-3 py-1 text-emerald-955 bg-[#fcf9e8] border border-[#2d5a27]/30 shadow-3xs rounded-tl-xl rounded-br-xl rounded-tr-xs rounded-bl-xs ${rotation} print:transform-none`}
+                        <span
+                          key={idx}
+                          className={`inline-flex items-center text-[10px] font-bold font-handwritten px-2 py-0.5 text-emerald-955 bg-[#fcf9e8] border border-[#2d5a27]/30 shadow-3xs rounded-tl-xl rounded-br-xl rounded-tr-xs rounded-bl-xs ${rotation} print:transform-none`}
                         >
-                          <span className="font-sans mr-1 text-[11px] md:text-[12px] text-amber-500 shrink-0">🌸</span>
+                          <span className="font-sans mr-0.5 text-[10px] text-amber-500 shrink-0">🌸</span>
                           <span>{capTrait}</span>
                         </span>
                       );
@@ -1746,10 +1746,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               )}
 
               {/* LARGE ADOPTION STORY BOX (Spacious, beautifully bordered, rich text with more vertical size) */}
-              <div className="flex-1 flex flex-col justify-start min-h-[140px]">
+              <div className="flex-1 flex flex-col justify-start min-h-0">
                 {settings.templateId === 'whimsical' ? (
-                  <div className="bg-[#fefcf5] border-2 border-dashed border-[#2d5a27]/25 p-3 md:p-3.5 rounded-[24px_16px_36px_20px] shadow-3xs relative flex flex-col justify-start h-full overflow-hidden font-playful">
-                    <h4 className="text-[17px] md:text-[19px] font-extrabold font-handwritten text-[#0f5c3a] mb-2 leading-none flex items-center gap-1">🌸 Meet {pet.name || 'Lovely Foster'}!</h4>
+                  <div className="bg-[#fefcf5] border-2 border-dashed border-[#2d5a27]/25 p-2 md:p-2.5 rounded-[24px_16px_36px_20px] shadow-3xs relative flex flex-col justify-start h-full overflow-hidden font-playful">
+                    <h4 className="text-[13px] md:text-[14px] font-extrabold font-handwritten text-[#0f5c3a] mb-1 leading-none flex items-center gap-1">🌸 Meet {pet.name || 'Lovely Foster'}!</h4>
                     <p 
                       className="italic text-stone-800 font-bold select-text pr-1"
                       style={getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", "whimsical", false)}
@@ -1758,7 +1758,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                     </p>
                   </div>
                 ) : (
-                  <div className="bg-[#fcfbf9] border border-stone-200/70 p-2.5 md:p-3 rounded-xl relative shadow-3xs flex flex-col justify-start overflow-hidden h-full">
+                  <div className="bg-[#fcfbf9] border border-stone-200/70 p-2 rounded-xl relative shadow-3xs flex flex-col justify-start overflow-hidden h-full">
                     
                     <h4 className="text-[11.5px] md:text-[12.5px] font-extrabold uppercase tracking-widest text-[#4f46e5] mb-1 leading-none">Meet {pet.name || 'Lovely Foster'}!</h4>
                     
@@ -1778,10 +1778,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         </div>
 
         {/* RIGHT COLUMN: HERO PHOTO, THUMBNAILS, PRINCESS-STYLE STAT SHEET */}
-        <div className={`${settings.templateId === 'editorial' ? 'col-span-7' : settings.templateId === 'polaroid' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full space-y-1.5 pb-0.5 mt-0.5 ${settings.templateId === 'whimsical' ? '' : settings.templateId === 'editorial' ? 'border-l border-stone-350 pl-2' : settings.templateId === 'polaroid' ? 'border-l border-stone-200/50 pl-1.5' : 'border-l border-slate-100 pl-2.5'} min-h-0 overflow-hidden`}>
+        <div className={`${settings.templateId === 'editorial' ? 'col-span-7' : settings.templateId === 'polaroid' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full space-y-1 pb-0.5 mt-0.5 ${settings.templateId === 'whimsical' ? '' : settings.templateId === 'editorial' ? 'border-l border-stone-350 pl-2' : settings.templateId === 'polaroid' ? 'border-l border-stone-200/50 pl-1.5' : 'border-l border-slate-100 pl-2.5'} min-h-0 overflow-hidden`}>
           
           {/* STYLED PHOTO BOX - SCALED OUT TO FILL FULL WIDEST SPAN */}
-          <div className={`w-full relative flex-1 ${settings.templateId === 'whimsical' ? 'max-h-[62%]' : settings.templateId === 'polaroid' ? 'max-h-[50%]' : 'max-h-[44%]'} min-h-[115px] flex flex-col justify-center items-center`}>
+          <div className={`w-full relative flex-1 ${settings.templateId === 'whimsical' ? 'max-h-[68%]' : settings.templateId === 'polaroid' ? 'max-h-[56%]' : 'max-h-[58%]'} min-h-[115px] flex flex-col justify-center items-center`}>
             {settings.templateId === 'polaroid' ? (
               <div className="bg-white p-1.5 pb-2 border border-stone-250 shadow-sm rotate-[1deg] w-full max-w-full aspect-[0.92] flex flex-col shrink-0 group">
                 <div className="flex-1 h-0 w-full bg-stone-100 relative rounded-sm overflow-hidden border">
@@ -1868,30 +1868,30 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
           {/* PRINCESS STYLE COMPREHENSIVE SPREADSHEET INDEX (DETAILED PET PROFILE) */}
           {settings.templateId === 'whimsical' ? (
-            <div className="p-2.5 md:p-3 rounded-[24px_8px_20px_32px] border-2 border-dotted border-amber-300/80 bg-[#fffdf5]/80 flex flex-col gap-1.5 shadow-3xs text-[11.5px] md:text-[12.5px] font-bold text-[#0f5c3a] font-playful relative overflow-hidden shrink-0">
-              <div className="flex flex-col items-start border-b border-dashed border-amber-200 pb-1.5 pt-0.5 font-sans">
-                <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten mb-0.5">Breed</span>
+            <div className="p-1.5 rounded-[24px_8px_20px_32px] border-2 border-dotted border-amber-300/80 bg-[#fffdf5]/80 flex flex-col gap-0.5 shadow-3xs text-[11.5px] md:text-[12.5px] font-bold text-[#0f5c3a] font-playful relative overflow-hidden shrink-0">
+              <div className="flex flex-col items-start border-b border-dashed border-amber-200 pb-0.5 font-sans">
+                <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Breed</span>
                 <span className="text-stone-850 font-extrabold text-[12.5px] md:text-[13.5px] leading-snug w-full break-words">{pet.breed || 'Unknown'}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-1 mt-0.5">
+              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
                 <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Age</span>
                 <span className="text-stone-850 font-extrabold text-[11px] md:text-[12px]">{pet.age || 'Unknown Age'}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-1">
+              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
                 <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Weight</span>
                 <span className="text-stone-850 font-extrabold text-[11px] md:text-[12px]">{pet.weight || 'Medium size'}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-1">
+              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
                 <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Housetrained?</span>
                 <span className="text-stone-850 font-extrabold uppercase text-[9.5px] md:text-[10.5px]">
                   {pet.houseTrained === 'yes' ? '✓ Yup!' : pet.houseTrained === 'working-on-it' ? 'Learning!' : '✗ Nope'}
                 </span>
               </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-1">
+              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
                 <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Dog Friendly?</span>
                 {renderTableCheckmark(pet.goodWithDogs)}
               </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-1">
+              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
                 <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Cat Friendly?</span>
                 {renderTableCheckmark(pet.goodWithCats)}
               </div>
@@ -1938,11 +1938,11 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               </div>
             </div>
           ) : (
-            <div className={`p-2 rounded-2xl border ${currentTheme.borderClass} ${currentTheme.bgClass} flex flex-col gap-0.5 shadow-3xs text-[9px] md:text-[9.5px] font-bold text-slate-700 shrink-0`}>
-              <div className="space-y-1 font-sans">
+            <div className={`p-1.5 rounded-2xl border ${currentTheme.borderClass} ${currentTheme.bgClass} flex flex-col gap-0 shadow-3xs text-[9px] md:text-[9.5px] font-bold text-slate-700 shrink-0`}>
+              <div className="space-y-0.5 font-sans">
                 {settings.templateId !== 'polaroid' && (
-                  <div className="flex flex-col items-start border-b border-dashed border-slate-200/40 pb-1 pt-0.5 font-sans">
-                    <span className="text-slate-400 font-extrabold text-[7.5px] uppercase mb-0.5 shrink-0">Breed</span>
+                  <div className="flex flex-col items-start border-b border-dashed border-slate-200/40 pb-0.5 font-sans">
+                    <span className="text-slate-400 font-extrabold text-[7.5px] uppercase shrink-0">Breed</span>
                     <span className="text-slate-900 font-black text-[10.5px] leading-snug w-full truncate">{pet.breed || 'Unknown'}</span>
                   </div>
                 )}
