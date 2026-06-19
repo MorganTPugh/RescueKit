@@ -1425,7 +1425,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         </div>
 
         {/* 4. Footer Contacts Panel (Shorter Contact Info Footer) */}
-        <div className={`mt-1.5 pt-1.5 border-t grid grid-cols-12 gap-2 items-center z-10 w-full shrink-0 select-text ${
+        <div className={`mt-0.5 pt-1 border-t grid grid-cols-12 gap-2 items-center z-10 w-full shrink-0 select-text ${
           isComic2 ? 'bg-[#fefaf2] border-pink-100' : 'bg-white border-stone-200'
         }`}>
           <div className="col-span-8 flex flex-col text-left select-text leading-tight">
@@ -1466,7 +1466,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               <span className={`text-[7.5px] font-black uppercase block mt-0.5 leading-none ${isComic2 ? 'text-rose-650' : 'text-slate-800'}`}>Scan to Site</span>
             </div>
             
-            <div className={`border p-0.5 rounded-lg w-8 h-8 md:w-8.5 md:h-8.5 relative flex items-center justify-center shadow-3xs shrink-0 ${
+            <div className={`border p-0.5 rounded-lg w-11 h-11 relative flex items-center justify-center shadow-3xs shrink-0 ${
               isComic2 ? 'bg-[#fffcfb] border-pink-200' : 'bg-stone-50 border-stone-200'
             }`}>
               {pet.rescueWebsite ? (
@@ -1989,7 +1989,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
       </div>
 
       {/* ==================== 3. RETRO LOWER QR & CONTACT PANEL ==================== */}
-      <div className={`${settings.templateId === 'polaroid' ? 'mt-1 pt-1 md:mt-1.5 md:pt-1.5' : 'mt-2.5 pt-2.5 md:mt-3 md:pt-3'} border-t border-stone-200 grid grid-cols-12 gap-3 md:gap-4 items-center z-10 w-full shrink-0`}>
+      <div className="mt-1 pt-1 border-t border-stone-200 grid grid-cols-12 gap-3 items-center z-10 w-full shrink-0">
         
         {/* Organization metadata on the left (col-span-8) */}
         <div className="col-span-8 flex flex-col text-left">
@@ -2026,7 +2026,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             <span className="text-[8.5px] font-black text-slate-800 uppercase block mt-0.5 leading-none">Apply to Adopt!</span>
           </div>
           
-          <div className="bg-stone-50 border border-stone-200 p-1 rounded-lg w-11 h-11 md:w-12 md:h-12 relative flex items-center justify-center shadow-3xs shrink-0">
+          <div className="bg-stone-50 border border-stone-200 p-0.5 rounded-lg w-14 h-14 relative flex items-center justify-center shadow-3xs shrink-0">
             {pet.rescueWebsite ? (
               <svg viewBox="0 0 25 25" className="w-full h-full text-stone-900 fill-current" shapeRendering="crispEdges">
                 <rect x="0" y="0" width="7" height="7" />
