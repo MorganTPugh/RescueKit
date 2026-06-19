@@ -255,6 +255,19 @@ export default function App() {
             </div>
           </div>
           
+          {/* ZERO HURDLES CALLOUT - always visible above the tab toggle */}
+          <div className="no-print col-span-full lg:hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex gap-3.5">
+            <div className="p-2 bg-emerald-100 text-emerald-700 h-9 w-9 rounded-xl flex items-center justify-center shrink-0">
+              <Heart className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-emerald-950">Zero hurdles, totally free & private</h3>
+              <p className="text-[11px] text-emerald-800 font-medium leading-relaxed mt-0.5 font-sans">
+                Create adoption flyers and social media posts for your fosters — ready to print, post on Instagram, or share in a Facebook group. Free forever, and your photos never leave your device.
+              </p>
+            </div>
+          </div>
+
           {/* MOBILE TOGGLE TABS FOR EDITOR VS PREVIEW (only visible on mobile) */}
           <div className="no-print col-span-full flex lg:hidden bg-sky-100/80 p-1 rounded-2xl border border-sky-200">
             <button
@@ -283,9 +296,9 @@ export default function App() {
           
           {/* LEFT COLUMN: SURVEY FORM CONTROLLER (no-print) */}
           <div className={`no-print lg:col-span-6 space-y-6 ${posterMobileTab === 'edit' ? 'block' : 'hidden lg:block'}`}>
-            
-            {/* Welcome Alert callout card */}
-            <div id="quick-alert-card" className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex gap-3.5">
+
+            {/* Welcome Alert callout card — desktop only (mobile version is above the tab toggle) */}
+            <div id="quick-alert-card" className="hidden lg:flex bg-emerald-50 border border-emerald-200 rounded-2xl p-4 gap-3.5">
               <div className="p-2 bg-emerald-100 text-emerald-700 h-9 w-9 rounded-xl flex items-center justify-center shrink-0">
                 <Heart className="w-5 h-5 animate-pulse" />
               </div>

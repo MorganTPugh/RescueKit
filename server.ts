@@ -116,9 +116,12 @@ app.post("/api/generate-bio", async (req, res) => {
 
       IMPORTANT RULES:
       1. Write from the prospective pet's point of view OR as an affectionate foster parent. Keep it in first-person (e.g. "I'm ${pet.name}!") or direct, warm storytelling.
-      2. Max length: Around 180-220 words for standard poster templates to ensure perfect graphic fit, or 250-320 words for the 'Biography Only' mode to allow detailed descriptions!
+      2. STRICT LENGTH LIMIT — count your words carefully before responding:
+         - Standard poster templates: MAXIMUM 90 words. Do not exceed this. Short, punchy, impactful.
+         - 'Biography Only' mode: MAXIMUM 180 words. You may use slightly more detail since the whole poster is text.
       3. Focus entirely on highlighting their unique quirks as endearing benefits.
       4. DO NOT use placeholder text or metadata tags. Keep the tone completely natural, adorable, and ready to print.
+      5. If you are unsure whether you are under the word limit, cut more — shorter is always better on a printed poster.
     `;
 
     const response = await ai.models.generateContent({

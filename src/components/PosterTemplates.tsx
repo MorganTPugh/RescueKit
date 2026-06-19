@@ -41,14 +41,18 @@ const RepositionableImage: React.FC<{
   const startYRef = React.useRef(0);
   const startOffsetXRef = React.useRef(0);
   const startOffsetYRef = React.useRef(0);
+  const pinchStartDistRef = React.useRef<number | null>(null);
+  const pinchStartZoomRef = React.useRef<number>(1);
+  const [contextMenu, setContextMenu] = React.useState<{ x: number; y: number } | null>(null);
 
   const zoomValue = pet.photoZoom ?? 1;
   const offsetXValue = pet.photoOffsetX ?? 0;
   const offsetYValue = pet.photoOffsetY ?? 0;
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!setPet) return;
+    if (!setPet || e.button !== 0) return;
     e.preventDefault();
+    setContextMenu(null);
     isDraggingRef.current = true;
     startXRef.current = e.clientX;
     startYRef.current = e.clientY;
@@ -64,7 +68,6 @@ const RepositionableImage: React.FC<{
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    // Convert pixels to width/height percentage of target image container boundary
     const pctX = (deltaX / rect.width) * 100 * (1 / zoomValue);
     const pctY = (deltaY / rect.height) * 100 * (1 / zoomValue);
 
@@ -79,31 +82,76 @@ const RepositionableImage: React.FC<{
     isDraggingRef.current = false;
   };
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (!setPet) return;
+    e.preventDefault();
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const cw = containerRef.current?.clientWidth ?? 200;
+    const ch = containerRef.current?.clientHeight ?? 200;
+    const rawX = e.clientX - rect.left;
+    const rawY = e.clientY - rect.top;
+    setContextMenu({
+      x: Math.min(rawX, cw - 148),
+      y: Math.min(rawY, ch - 72),
+    });
+  };
+
+  const handleZoomIn = () => {
+    setPet?.(prev => ({ ...prev, photoZoom: Math.min(3, parseFloat(((prev.photoZoom ?? 1) + 0.25).toFixed(2))) }));
+    setContextMenu(null);
+  };
+
+  const handleZoomOut = () => {
+    setPet?.(prev => ({ ...prev, photoZoom: Math.max(1, parseFloat(((prev.photoZoom ?? 1) - 0.25).toFixed(2))) }));
+    setContextMenu(null);
+  };
+
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (!setPet || e.touches.length !== 1) return;
-    isDraggingRef.current = true;
-    startXRef.current = e.touches[0].clientX;
-    startYRef.current = e.touches[0].clientY;
-    startOffsetXRef.current = pet.photoOffsetX ?? 0;
-    startOffsetYRef.current = pet.photoOffsetY ?? 0;
+    if (!setPet) return;
+    if (e.touches.length === 1) {
+      isDraggingRef.current = true;
+      pinchStartDistRef.current = null;
+      startXRef.current = e.touches[0].clientX;
+      startYRef.current = e.touches[0].clientY;
+      startOffsetXRef.current = pet.photoOffsetX ?? 0;
+      startOffsetYRef.current = pet.photoOffsetY ?? 0;
+    } else if (e.touches.length === 2) {
+      isDraggingRef.current = false;
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinchStartDistRef.current = Math.sqrt(dx * dx + dy * dy);
+      pinchStartZoomRef.current = pet.photoZoom ?? 1;
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDraggingRef.current || !setPet || e.touches.length !== 1) return;
-    const deltaX = e.touches[0].clientX - startXRef.current;
-    const deltaY = e.touches[0].clientY - startYRef.current;
+    if (!setPet) return;
+    if (e.touches.length === 1 && isDraggingRef.current) {
+      const deltaX = e.touches[0].clientX - startXRef.current;
+      const deltaY = e.touches[0].clientY - startYRef.current;
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const pctX = (deltaX / rect.width) * 100 * (1 / zoomValue);
+      const pctY = (deltaY / rect.height) * 100 * (1 / zoomValue);
+      setPet(prev => ({
+        ...prev,
+        photoOffsetX: Math.min(150, Math.max(-150, Math.round(startOffsetXRef.current + pctX))),
+        photoOffsetY: Math.min(150, Math.max(-150, Math.round(startOffsetYRef.current + pctY)))
+      }));
+    } else if (e.touches.length === 2 && pinchStartDistRef.current !== null) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const scale = dist / pinchStartDistRef.current;
+      const newZoom = Math.min(3, Math.max(1, pinchStartZoomRef.current * scale));
+      setPet(prev => ({ ...prev, photoZoom: parseFloat(newZoom.toFixed(2)) }));
+    }
+  };
 
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const pctX = (deltaX / rect.width) * 100 * (1 / zoomValue);
-    const pctY = (deltaY / rect.height) * 100 * (1 / zoomValue);
-
-    setPet(prev => ({
-      ...prev,
-      photoOffsetX: Math.min(150, Math.max(-150, Math.round(startOffsetXRef.current + pctX))),
-      photoOffsetY: Math.min(150, Math.max(-150, Math.round(startOffsetYRef.current + pctY)))
-    }));
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (e.touches.length < 2) pinchStartDistRef.current = null;
+    if (e.touches.length === 0) isDraggingRef.current = false;
   };
 
   const handleWheel = (e: React.WheelEvent) => {
@@ -113,38 +161,68 @@ const RepositionableImage: React.FC<{
     setPet(prev => {
       const currentZoom = prev.photoZoom ?? 1;
       const nextZoom = Math.min(3, Math.max(1, currentZoom + zoomDelta));
-      return { ...prev, photoZoom: nextZoom };
+      return { ...prev, photoZoom: parseFloat(nextZoom.toFixed(2)) };
     });
   };
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="absolute inset-0 w-full h-full overflow-hidden select-none active:cursor-grabbing cursor-grab z-10 touch-none"
+      className="absolute inset-0 w-full h-full select-none active:cursor-grabbing cursor-grab z-10 touch-none"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUpOrLeave}
       onMouseLeave={handleMouseUpOrLeave}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      onTouchEnd={handleMouseUpOrLeave}
+      onTouchEnd={handleTouchEnd}
       onWheel={handleWheel}
+      onContextMenu={handleContextMenu}
     >
-      <img
-        src={src}
-        alt={alt}
-        referrerPolicy="no-referrer"
-        draggable={false}
-        className={`absolute inset-0 w-full h-full object-cover select-none pointer-events-none ${className}`}
-        style={{
-          transform: `scale(${zoomValue}) translate(${offsetXValue}%, ${offsetYValue}%)`,
-          transformOrigin: 'center center',
-          transition: isDraggingRef.current ? 'none' : 'transform 0.1s ease-out'
-        }}
-      />
+      {/* Image clipped to the container bounds */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <img
+          src={src}
+          alt={alt}
+          referrerPolicy="no-referrer"
+          draggable={false}
+          className={`absolute inset-0 w-full h-full object-cover select-none ${className}`}
+          style={{
+            transform: `scale(${zoomValue}) translate(${offsetXValue}%, ${offsetYValue}%)`,
+            transformOrigin: 'center center',
+            transition: isDraggingRef.current ? 'none' : 'transform 0.1s ease-out'
+          }}
+        />
+      </div>
+
+      {/* Right-click zoom context menu */}
+      {contextMenu && setPet && (
+        <div
+          className="absolute z-50 bg-white border border-stone-200 rounded-xl shadow-xl overflow-hidden text-[11px] font-bold"
+          style={{ left: contextMenu.x, top: contextMenu.y, minWidth: '140px' }}
+          onMouseDown={e => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            onClick={handleZoomIn}
+            className="flex items-center gap-2 w-full px-3.5 py-2.5 text-left hover:bg-indigo-50 text-slate-700 cursor-pointer transition-colors"
+          >
+            🔍 Zoom In
+          </button>
+          <div className="border-t border-stone-100" />
+          <button
+            type="button"
+            onClick={handleZoomOut}
+            className="flex items-center gap-2 w-full px-3.5 py-2.5 text-left hover:bg-indigo-50 text-slate-700 cursor-pointer transition-colors"
+          >
+            🔎 Zoom Out
+          </button>
+        </div>
+      )}
+
       {setPet && (
-        <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 md:group-hover:opacity-90 transition-opacity bg-black/60 text-white rounded-md text-[8px] py-0.5 px-1.5 font-sans pointer-events-none select-none z-30 leading-none">
-          Drag to reposition | Scroll to zoom
+        <div className="absolute bottom-1 right-1 bg-black/55 text-white rounded-md text-[7.5px] py-0.5 px-1.5 font-sans pointer-events-none select-none z-30 leading-none opacity-80">
+          Drag · Pinch/scroll to zoom · Right-click to zoom
         </div>
       )}
     </div>

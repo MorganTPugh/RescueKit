@@ -548,80 +548,22 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             </div>
           )}
 
-          {/* Custom Photo Framing controls */}
+          {/* Photo framing hint */}
           {pet.photos.length > 0 && (
-            <div className="bg-slate-50 border border-slate-200/60 p-3.5 rounded-2xl space-y-3.5 text-slate-800">
-              <div className="flex items-center justify-between border-b border-slate-200/50 pb-2">
-                <div>
-                  <h4 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-                    📸 Primary Photo Framing & Zoom
-                  </h4>
-                  <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
-                    Fine-tune zoom and centering below. You can also drag the photo directly inside the Live Poster Preview to move it!
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleResetPosition}
-                  className="px-2.5 py-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-2xs flex items-center gap-1 cursor-pointer"
-                  title="Reset alignment"
-                >
-                  Reset
-                </button>
+            <div className="bg-slate-50 border border-slate-200/60 p-3.5 rounded-2xl flex items-center justify-between gap-3 text-slate-800">
+              <div>
+                <h4 className="text-xs font-black text-slate-900">📸 Photo Framing</h4>
+                <p className="text-[10px] text-slate-400 font-semibold mt-0.5 leading-relaxed">
+                  Drag photo to reposition · Scroll wheel or pinch (mobile) to zoom · Right-click for zoom options
+                </p>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {/* Zoom range slider */}
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-[10px] font-black tracking-wide text-slate-500 uppercase">
-                    <span>Magnify / Zoom 🔍</span>
-                    <span className="text-indigo-600 font-mono">{(pet.photoZoom ?? 1).toFixed(2)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="1"
-                    max="3"
-                    step="0.05"
-                    value={pet.photoZoom ?? 1}
-                    onChange={handleZoomChange}
-                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 focus:outline-none"
-                  />
-                </div>
-
-                {/* Horizontal Shift range slider */}
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-[10px] font-black tracking-wide text-slate-500 uppercase">
-                    <span>Shift Left / Right ↔️</span>
-                    <span className="text-indigo-600 font-mono">{pet.photoOffsetX ?? 0}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="-150"
-                    max="150"
-                    step="1"
-                    value={pet.photoOffsetX ?? 0}
-                    onChange={handleOffsetXChange}
-                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 focus:outline-none"
-                  />
-                </div>
-
-                {/* Vertical Shift range slider */}
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-[10px] font-black tracking-wide text-slate-500 uppercase">
-                    <span>Shift Up / Down ↕️</span>
-                    <span className="text-indigo-600 font-mono">{pet.photoOffsetY ?? 0}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="-150"
-                    max="150"
-                    step="1"
-                    value={pet.photoOffsetY ?? 0}
-                    onChange={handleOffsetYChange}
-                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 focus:outline-none"
-                  />
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={handleResetPosition}
+                className="shrink-0 px-2.5 py-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
+              >
+                Reset
+              </button>
             </div>
           )}
 
@@ -699,7 +641,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           {/* Template Choice Selectors */}
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">1. Choose Template Layout Archetype</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Choose Poster Style / Layout</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {[
                 { id: 'whimsical', name: '🐱 Cute Whimsical', desc: 'Soft pastel bubbles' },
@@ -730,7 +672,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           {/* Preset Color Themes */}
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">2. Visual Preset Palette</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Choose Color Palette</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {THEMES.map(theme => (
                 <button
@@ -753,17 +695,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Header Title Accent badge text */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">3. Poster Title Header</label>
-              <input
-                type="text"
-                value={settings.headingText}
-                onChange={e => setSettings(prev => ({ ...prev, headingText: e.target.value }))}
-                placeholder="e.g. MEET ME!"
-                className="w-full text-xs font-semibold bg-sky-50/70 border-2 border-sky-100 focus:border-indigo-400 rounded-xl p-2.5 outline-none placeholder:text-slate-400"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Pick Header Preset</label>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Poster Title Preset</label>
               <select
                 value={settings.headingText}
                 onChange={e => setSettings(prev => ({ ...prev, headingText: e.target.value }))}
@@ -773,6 +705,16 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                   <option key={i} value={p}>{p}</option>
                 ))}
               </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Custom Header</label>
+              <input
+                type="text"
+                value={settings.headingText}
+                onChange={e => setSettings(prev => ({ ...prev, headingText: e.target.value }))}
+                placeholder="e.g. MEET ME!"
+                className="w-full text-xs font-semibold bg-sky-50/70 border-2 border-sky-100 focus:border-indigo-400 rounded-xl p-2.5 outline-none placeholder:text-slate-400"
+              />
             </div>
           </div>
 
