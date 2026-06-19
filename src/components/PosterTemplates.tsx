@@ -798,8 +798,8 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                       </h1>
                     </div>
                   ) : settings.templateId === 'comic' ? (
-                    <div className="flex flex-col items-start -mt-0.5 mb-1.5 w-full relative select-none">
-                      <h1 className="text-2.5xl font-extrabold tracking-tight text-[#db2777] font-playful relative leading-none mb-1 text-shadow-3xs">
+                    <div className="flex flex-col items-start mb-1 w-full relative select-none">
+                      <h1 className="text-xl font-extrabold tracking-tight text-[#db2777] font-playful relative leading-none mb-1 text-shadow-3xs">
                         Meet {pet.name || 'Lovely Foster'}!
                       </h1>
                       
@@ -1134,8 +1134,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             {/* ADOPTION QR CODE CAPTURE */}
             <div className="py-1 px-2 border border-slate-150 rounded-xl bg-sky-50/10 text-slate-700 flex items-center justify-between gap-1.5 shrink-0">
               <div className="flex flex-col text-left min-w-0">
-                <span className="text-[5.5px] uppercase tracking-widest text-[#4f46e5] font-black block leading-none">More details</span>
-                <span className="text-[9.5px] md:text-[10px] font-black text-rose-700 hover:underline truncate block w-full leading-snug mt-0.5">
+                <span className="text-[11px] font-black text-rose-700 hover:underline truncate block w-full leading-snug">
                   {pet.rescueWebsite ? pet.rescueWebsite.replace('https://', '').replace('http://', '').replace('www.', '') : 'Help me adopt!'}
                 </span>
               </div>
@@ -1914,15 +1913,15 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                     <span className="text-stone-400 text-[8px] uppercase font-extrabold text-left shrink-0">Breed:</span>
                     <span className="text-rose-700 font-black text-[10px] leading-snug truncate ml-1">{pet.breed || 'Unknown'}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 border-b border-rose-50 pb-1 font-sans">
+                  <div className="flex items-center gap-1.5 border-b border-rose-50 pb-1 col-span-2 font-sans">
                     <span className="text-rose-450 shrink-0 text-xs">📅</span>
-                    <span className="text-stone-400 text-[8px] uppercase font-extrabold w-12 text-left shrink-0">Age:</span>
-                    <span className="text-stone-850 font-black truncate">{pet.age || 'Unknown'}</span>
+                    <span className="text-stone-400 text-[8px] uppercase font-extrabold shrink-0">Age:</span>
+                    <span className="text-stone-850 font-black truncate ml-1">{pet.age || 'Unknown'}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 border-b border-rose-50 pb-1 font-sans">
+                  <div className="flex items-center gap-1.5 border-b border-rose-50 pb-1 col-span-2 font-sans">
                     <span className="text-rose-450 shrink-0 text-xs">🧬</span>
-                    <span className="text-stone-400 text-[8px] uppercase font-extrabold w-12 text-left shrink-0">Gender:</span>
-                    <span className="text-stone-850 font-black truncate">{pet.gender === 'boy' ? 'Male' : pet.gender === 'girl' ? 'Female' : 'Unknown'}</span>
+                    <span className="text-stone-400 text-[8px] uppercase font-extrabold shrink-0">Gender:</span>
+                    <span className="text-stone-850 font-black truncate ml-1">{pet.gender === 'boy' ? 'Male' : pet.gender === 'girl' ? 'Female' : 'Unknown'}</span>
                   </div>
                   <div className="flex items-center gap-1.5 border-b border-rose-50 pb-1 col-span-2 font-sans font-sans">
                     <span className="text-rose-450 shrink-0 text-xs font-sans">⚖️</span>
