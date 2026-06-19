@@ -734,7 +734,7 @@ export function FosterGuide() {
       {activeTab === 'content' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Chapter Selector Column */}
-          <div className="lg:col-span-4 flex flex-col gap-3">
+          <div className="lg:col-span-4 hidden lg:flex flex-col gap-3">
             <div className="space-y-2 border-r border-sky-50/80 pr-2 max-h-[460px] overflow-y-auto">
               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest pl-2 block mb-1">CHAPTER DIRECTORY</span>
               {chapters.map((ch, idx) => (
@@ -771,6 +771,24 @@ export function FosterGuide() {
               </div>
               <span className="text-xs">💾</span>
             </button>
+          </div>
+
+          {/* Mobile Chapter Dropdown Selector */}
+          <div className="block lg:hidden w-full mb-4">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+              Select Guide Chapter
+            </label>
+            <select
+              value={currentChapter}
+              onChange={(e) => setCurrentChapter(Number(e.target.value))}
+              className="w-full bg-white border border-sky-200 text-slate-700 font-semibold p-3.5 rounded-xl outline-none shadow-2xs cursor-pointer text-xs"
+            >
+              {chapters.map((ch, idx) => (
+                <option key={idx} value={idx}>
+                  Ch {idx + 1}: {ch.title}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Active Chapter Display Page */}

@@ -303,7 +303,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Gender</label>
               <select
@@ -347,7 +347,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Living Compatibility Checkboxes */}
           <div className="pt-2 border-t border-sky-50">
             <h4 className="text-xs font-black text-slate-800 mb-2">Social & Potty Compatibility</h4>
-            <div className="grid grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label className="text-[10px] font-black text-slate-405 uppercase tracking-widest block mb-1">Good with dogs?</label>
                 <select
@@ -700,7 +700,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Template Choice Selectors */}
           <div>
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">1. Choose Template Layout Archetype</label>
-            <div className="grid grid-cols-2 xs:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {[
                 { id: 'whimsical', name: '🐱 Cute Whimsical', desc: 'Soft pastel bubbles' },
                 { id: 'minimalist', name: '◽ Clean Modern', desc: 'Sleek asymmetric grid' },

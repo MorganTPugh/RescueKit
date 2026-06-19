@@ -408,11 +408,11 @@ PRIMARY CLINIC: ${orgDetails.partnerVeterinary}`;
       </div>
 
       {/* 2. SUB-NAVIGATION TABS */}
-      <div className="flex flex-wrap gap-1.5 bg-sky-50/70 p-1 rounded-2xl border border-sky-100 mb-6">
+      <div className="flex flex-row overflow-x-auto whitespace-nowrap scroll-hide flex-nowrap lg:flex-wrap gap-1.5 bg-sky-50/70 p-1 rounded-2xl border border-sky-100 mb-6">
         <button
           type="button"
           onClick={() => setActiveTab('board')}
-          className={`cursor-pointer px-4 py-2 text-xs font-black rounded-xl transition-all ${
+          className={`cursor-pointer shrink-0 px-4 py-2 text-xs font-black rounded-xl transition-all ${
             activeTab === 'board' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -421,7 +421,7 @@ PRIMARY CLINIC: ${orgDetails.partnerVeterinary}`;
         <button
           type="button"
           onClick={() => setActiveTab('checklist')}
-          className={`cursor-pointer px-4 py-2 text-xs font-black rounded-xl transition-all flex items-center gap-1 ${
+          className={`cursor-pointer shrink-0 px-4 py-2 text-xs font-black rounded-xl transition-all flex items-center gap-1 ${
             activeTab === 'checklist' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -433,7 +433,7 @@ PRIMARY CLINIC: ${orgDetails.partnerVeterinary}`;
         <button
           type="button"
           onClick={() => setActiveTab('copypaste')}
-          className={`cursor-pointer px-4 py-2 text-xs font-black rounded-xl transition-all ${
+          className={`cursor-pointer shrink-0 px-4 py-2 text-xs font-black rounded-xl transition-all ${
             activeTab === 'copypaste' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -442,7 +442,7 @@ PRIMARY CLINIC: ${orgDetails.partnerVeterinary}`;
         <button
           type="button"
           onClick={() => setActiveTab('assistant')}
-          className={`cursor-pointer px-4 py-2 text-xs font-black rounded-xl transition-all ${
+          className={`cursor-pointer shrink-0 px-4 py-2 text-xs font-black rounded-xl transition-all ${
             activeTab === 'assistant' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -451,7 +451,7 @@ PRIMARY CLINIC: ${orgDetails.partnerVeterinary}`;
         <button
           type="button"
           onClick={() => setActiveTab('tracker')}
-          className={`cursor-pointer px-4 py-2 text-xs font-black rounded-xl transition-all flex items-center gap-1.5 ${
+          className={`cursor-pointer shrink-0 px-4 py-2 text-xs font-black rounded-xl transition-all flex items-center gap-1.5 ${
             activeTab === 'tracker' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >

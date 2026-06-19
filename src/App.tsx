@@ -6,6 +6,7 @@ import { PosterForm } from './components/PosterForm';
 import { PosterTemplates } from './components/PosterTemplates';
 import { FosterGuide } from './components/FosterGuide';
 import { RescueGrants } from './components/RescueGrants';
+import { PosterPreviewWrapper } from './components/PosterPreviewWrapper';
 import { 
   Heart, 
   Printer, 
@@ -58,6 +59,7 @@ export default function App() {
   const [showFullPreview, setShowFullPreview] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState<'posters' | 'guide' | 'grants'>('posters');
+  const [posterMobileTab, setPosterMobileTab] = useState<'edit' | 'preview'>('edit');
 
   // Overwrite state on preset load request
   const handleLoadPreset = (presetKey: string) => {
@@ -184,7 +186,7 @@ export default function App() {
     <div className="min-h-screen bg-sky-50 text-slate-800 flex flex-col justify-between selection:bg-indigo-100">
       
       {/* 1. APP HEADER - HIDDEN IN PRINTING OUTPUT (.no-print) */}
-      <header className="no-print bg-white px-8 py-4 sticky top-0 z-20 shadow-sm border-b border-sky-100">
+      <header className="no-print bg-white px-4 py-3 md:px-8 md:py-4 sticky top-0 z-20 shadow-sm border-b border-sky-100">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           
           <div className="flex items-center gap-3">
@@ -193,44 +195,44 @@ export default function App() {
             </div>
             <div>
               <span className="text-2xl font-black text-slate-800 tracking-tight">Rescue<span className="text-indigo-600">Kit</span></span>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5">Free Support Tools for Rescues & Fosters</p>
+              <p className="hidden sm:block text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5">Free Support Tools for Rescues & Fosters</p>
             </div>
           </div>
 
           {/* DYNAMIC NAVIGATION SECTION TABS */}
-          <div className="flex flex-wrap items-center gap-2 bg-sky-50/75 p-1.5 rounded-2xl border border-sky-100 shrink-0">
+          <div className="flex flex-wrap items-center gap-1.5 bg-sky-50/75 p-1 rounded-2xl border border-sky-100 shrink-0">
             <button
               onClick={() => setActiveSection('posters')}
-              className={`cursor-pointer px-4 py-2 rounded-xl transition-all flex flex-col items-start gap-0.5 text-left ${
+              className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition-all flex flex-col items-start gap-0.5 text-left ${
                 activeSection === 'posters'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-150'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-sky-100/50'
               }`}
             >
-              <span className="text-xs font-black flex items-center gap-1">🎨 Adoption Flyers & Bios</span>
-              <span className={`text-[9px] font-bold ${activeSection === 'posters' ? 'text-indigo-100' : 'text-slate-400'}`}>For fosters and rescues</span>
+              <span className="text-[11px] sm:text-xs font-black flex items-center gap-1">🎨 Flyers & Bios</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'posters' ? 'text-indigo-100' : 'text-slate-400'}`}>For fosters and rescues</span>
             </button>
             <button
               onClick={() => setActiveSection('guide')}
-              className={`cursor-pointer px-4 py-2 rounded-xl transition-all flex flex-col items-start gap-0.5 text-left ${
+              className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition-all flex flex-col items-start gap-0.5 text-left ${
                 activeSection === 'guide'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-150'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-sky-100/50'
               }`}
             >
-              <span className="text-xs font-black flex items-center gap-1">📖 RescueKit's Foster Guide</span>
-              <span className={`text-[9px] font-bold ${activeSection === 'guide' ? 'text-indigo-100' : 'text-slate-400'}`}>Tips & Tricks</span>
+              <span className="text-[11px] sm:text-xs font-black flex items-center gap-1">📖 Foster Guide</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'guide' ? 'text-indigo-100' : 'text-slate-400'}`}>Tips & Tricks</span>
             </button>
             <button
               onClick={() => setActiveSection('grants')}
-              className={`cursor-pointer px-4 py-2 rounded-xl transition-all flex flex-col items-start gap-0.5 text-left ${
+              className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition-all flex flex-col items-start gap-0.5 text-left ${
                 activeSection === 'grants'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-150'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-sky-100/50'
               }`}
             >
-              <span className="text-xs font-black flex items-center gap-1">💰 RescueKit's Grant Hub</span>
-              <span className={`text-[9px] font-bold ${activeSection === 'grants' ? 'text-indigo-100' : 'text-slate-400'}`}>Grants & Prep</span>
+              <span className="text-[11px] sm:text-xs font-black flex items-center gap-1">💰 Grant Hub</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'grants' ? 'text-indigo-100' : 'text-slate-400'}`}>Grants & Prep</span>
             </button>
           </div>
 
@@ -242,7 +244,7 @@ export default function App() {
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* SECTION HEADER BANNER - EXPLICTLY HIGHLIGHTING INTENT AND VALUE */}
-          <div className="no-print col-span-12 bg-white border border-sky-100 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="no-print col-span-full bg-white border border-sky-100 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="relative z-10">
               <h1 className="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-2 font-fraunces">Create Adoption Flyers in Minutes</h1>
               <p className="text-sm text-slate-500 font-bold mt-1.5">Generate Digital & Printable flyers or copy-pasteable biographies with RescueKit AI</p>
@@ -253,8 +255,34 @@ export default function App() {
             </div>
           </div>
           
+          {/* MOBILE TOGGLE TABS FOR EDITOR VS PREVIEW (only visible on mobile) */}
+          <div className="no-print col-span-full flex lg:hidden bg-sky-100/80 p-1 rounded-2xl border border-sky-200">
+            <button
+              type="button"
+              onClick={() => setPosterMobileTab('edit')}
+              className={`flex-1 text-center py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all ${
+                posterMobileTab === 'edit'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              📝 Edit Details
+            </button>
+            <button
+              type="button"
+              onClick={() => setPosterMobileTab('preview')}
+              className={`flex-1 text-center py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all ${
+                posterMobileTab === 'preview'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              👁️ View Poster Preview
+            </button>
+          </div>
+          
           {/* LEFT COLUMN: SURVEY FORM CONTROLLER (no-print) */}
-          <div className="no-print lg:col-span-6 space-y-6">
+          <div className={`no-print lg:col-span-6 space-y-6 ${posterMobileTab === 'edit' ? 'block' : 'hidden lg:block'}`}>
             
             {/* Welcome Alert callout card */}
             <div id="quick-alert-card" className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex gap-3.5">
@@ -302,7 +330,7 @@ export default function App() {
           </div>
 
           {/* RIGHT COLUMN: HIGH-FIDELITY LIVE PREVIEW (Visible in print mode) */}
-          <div className="lg:col-span-6 flex flex-col items-center justify-start gap-4 h-full">
+          <div className={`lg:col-span-6 flex flex-col items-center justify-start gap-4 h-full ${posterMobileTab === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
             
             {/* FORMAT RATIO SELECTOR CONTROL BOX */}
             <div className="no-print w-full bg-white border border-sky-100 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -310,7 +338,7 @@ export default function App() {
                 <span className="text-[10px] uppercase tracking-widest text-indigo-500 font-extrabold block">POSTER CONFIGURATION</span>
                 <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Choose your presentation medium</p>
               </div>
-              <div className="flex gap-2 shrink-0">
+              <div className="flex flex-wrap gap-2">
                 <button
                   id="layout-flyer-btn"
                   type="button"
@@ -358,15 +386,17 @@ export default function App() {
             {/* The Poster canvas card frame */}
             <div className={`w-full bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all border border-stone-200/85 p-0 relative overflow-hidden ${
               settings.aspectRatio === 'square'
-                ? 'max-w-[480px] aspect-square'
-                : 'max-w-[420px] aspect-[8.5/11]'
+                ? 'max-w-[480px]'
+                : 'max-w-[420px]'
             }`}>
-              <PosterTemplates
-                pet={pet}
-                settings={settings}
-                setPet={setPet}
-                isPrintable={!showFullPreview}
-              />
+              <PosterPreviewWrapper aspectRatio={settings.aspectRatio}>
+                <PosterTemplates
+                  pet={pet}
+                  settings={settings}
+                  setPet={setPet}
+                  isPrintable={!showFullPreview}
+                />
+              </PosterPreviewWrapper>
             </div>
 
             {/* Sizable Action Buttons for Quick Image Export and Print Options */}
