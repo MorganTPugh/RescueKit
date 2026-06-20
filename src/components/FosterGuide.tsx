@@ -162,9 +162,6 @@ export function FosterGuide() {
             </ul>
           </div>
 
-          <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-xl text-[13px] text-indigo-900 font-semibold">
-            <p className="italic">This handbook is provided as a free resource by RescueKit for rescue organizations, shelters, and foster families everywhere. Rescue coordinators are encouraged to use it as a foundation and adapt it freely — add your own policies, protocols, and contact details to make it yours.</p>
-          </div>
         </div>
       ),
     },
@@ -1593,8 +1590,18 @@ export function FosterGuide() {
         </div>
       </div>
 
+      {/* PERSISTENT DISCLAIMER NOTE */}
+      <div className="print:hidden mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-5 text-[11px] text-slate-500 font-medium leading-relaxed space-y-2">
+        <p>
+          <strong className="text-slate-600">For rescue coordinators:</strong> This guide is provided as a free resource by RescueKit and is designed to be a foundation, not a final rulebook. Feel free to adapt it — layer in your own policies, contact details, and organization-specific protocols to make it fully yours.
+        </p>
+        <p>
+          <strong className="text-slate-600">For fosters:</strong> This guide covers general best practices, but every rescue operates a little differently. Always check with your coordinator for rules specific to your rescue — including adoption procedures, event attendance, transport policies, and anything else not outlined here.
+        </p>
+      </div>
+
       {/* FOOTER */}
-      <div className="print:hidden border-t border-sky-50 mt-8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-400 text-[13px] text-center md:text-left">
+      <div className="print:hidden border-t border-sky-50 mt-6 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-400 text-[13px] text-center md:text-left">
         <div className="flex items-center gap-2.5">
           <Heart className="w-5 h-5 text-indigo-500 shrink-0" />
           <p className="font-semibold text-stone-500">
