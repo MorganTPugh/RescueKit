@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Heart,
   Search,
@@ -8,6 +8,7 @@ import {
   Thermometer,
   ShieldAlert,
   Printer,
+  FileText,
   ChevronRight,
   Sparkles,
   Camera,
@@ -71,6 +72,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
 export function FosterGuide() {
   const [activeTab, setActiveTab] = useState<'content' | 'checklist' | 'toxic' | 'health'>('content');
   const [currentChapter, setCurrentChapter] = useState<number>(0);
+  const chapterPanelRef = useRef<HTMLDivElement>(null);
 
   // Checklist State (localStorage)
   const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>(() => {
@@ -94,24 +96,41 @@ export function FosterGuide() {
   useEffect(() => {
     const val = parseFloat(tempValue);
     if (isNaN(val)) { setTempResult({ status: 'warning', text: 'Please enter a valid numeric temperature.' }); return; }
-    if (val > 104 || val < 99) {
-      setTempResult({ status: 'emergency', text: '🚨 EMERGENCY! Temperature above 104°F or below 99°F. Contact your rescue veterinarian immediately!' });
-      return;
-    }
     if (tempSpecies === 'puppy_new') {
-      setTempResult(val >= 94 && val <= 97
-        ? { status: 'normal', text: '✅ Normal. Newborn puppies maintain 94–97°F.' }
-        : { status: 'warning', text: '⚠️ Warning. Normal newborns range 94–97°F. Monitor and contact your coordinator.' });
+      if (val < 94) {
+        setTempResult({ status: 'emergency', text: '🚨 CRITICAL EMERGENCY! Below 94°F in a newborn is life-threatening. Warm them immediately and contact your rescue veterinarian.' });
+      } else if (val >= 94 && val <= 97) {
+        setTempResult({ status: 'normal', text: '✅ Normal for Week 1. Newborn puppies maintain 94–97°F in the first week, rising to ~100°F by Week 4.' });
+      } else if (val > 97 && val <= 100) {
+        setTempResult({ status: 'normal', text: '✅ Normal for an older newborn (Weeks 2–4). Temperature rises to ~100°F by Week 4.' });
+      } else {
+        setTempResult({ status: 'warning', text: '⚠️ Above 100°F for a newborn — monitor closely and contact your coordinator.' });
+      }
     } else if (tempSpecies === 'dog_adult') {
-      setTempResult(val >= 100 && val <= 102.5
-        ? { status: 'normal', text: '✅ Normal. Puppies (4+ weeks) and adult dogs: 100–102.5°F.' }
-        : { status: 'warning', text: '⚠️ Warning. Normal range is 100–102.5°F. Monitor closely.' });
+      if (val > 104 || val < 99) {
+        setTempResult({ status: 'emergency', text: '🚨 EMERGENCY! Temperature above 104°F or below 99°F requires immediate veterinary attention.' });
+      } else {
+        setTempResult(val >= 99.5 && val <= 102.5
+          ? { status: 'normal', text: '✅ Normal. Puppies (4+ weeks) and adult dogs: 99.5–102.5°F.' }
+          : { status: 'warning', text: '⚠️ Borderline. Normal range is 99.5–102.5°F. Monitor closely and contact your coordinator if other symptoms appear.' });
+      }
     } else {
-      setTempResult(val >= 100.5 && val <= 102.5
-        ? { status: 'normal', text: '✅ Normal. Adult cats: 100.5–102.5°F.' }
-        : { status: 'warning', text: '⚠️ Warning. Normal range is 100.5–102.5°F. Check for lethargy.' });
+      if (val > 104 || val < 99) {
+        setTempResult({ status: 'emergency', text: '🚨 EMERGENCY! Temperature above 104°F or below 99°F requires immediate veterinary attention.' });
+      } else {
+        setTempResult(val >= 100.5 && val <= 102.5
+          ? { status: 'normal', text: '✅ Normal. Adult cats: 100.5–102.5°F.' }
+          : { status: 'warning', text: '⚠️ Borderline. Normal range is 100.5–102.5°F. Monitor for lethargy or other symptoms.' });
+      }
     }
   }, [tempSpecies, tempValue]);
+
+  useEffect(() => {
+    if (chapterPanelRef.current) {
+      const top = chapterPanelRef.current.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, [currentChapter]);
 
   // Toxic Food Search
   const [foodSearch, setFoodSearch] = useState<string>('');
@@ -278,54 +297,64 @@ export function FosterGuide() {
             </p>
           </div>
 
-          <div className="border border-sky-200 bg-sky-50/50 p-4 rounded-2xl space-y-2">
-            <h4 className="font-bold text-[13px] text-sky-950">🐱 Litter Box Setup & Care (Cats)</h4>
-            <ul className="space-y-1.5 text-xs font-semibold text-stone-600">
-              {[
-                'Place the litter box in a quiet, low-traffic area accessible at all times.',
-                'Keep the litter box away from the cat\'s food and water.',
-                'Avoid litter boxes with a flap-style entrance — some cats refuse to use them.',
-                'Scoop at least once daily. A second cat means scooping more frequently.',
-                'Completely empty and clean the box once a week with mild dish soap and warm water.',
-                'Provide one box per floor or area for free-roaming cats.',
-                'If your foster cat stops using the litter box, contact your rescue coordinator promptly.',
-              ].map((item, i) => (
-                <li key={i} className="flex gap-2"><span className="text-sky-500 shrink-0">•</span><span>{item}</span></li>
-              ))}
-            </ul>
-            <div className="bg-rose-100 border border-rose-300 p-3 rounded-xl text-xs font-semibold text-rose-900">
-              <strong>🩺 Medical Note:</strong> A cat avoiding the litter box can signal a medical issue — UTI, diarrhea, or pain. Blood in the stool, visible worms, or dark potent-smelling urine are reasons to contact your rescue coordinator right away.
-            </div>
-          </div>
-
-          <div className="border border-purple-100 bg-purple-50/30 p-4 rounded-xl space-y-2">
-            <h4 className="font-bold text-[13px] text-purple-950">🐱 Setting Up Hiding Spaces (Cats)</h4>
-            <p className="text-xs font-semibold text-stone-600 leading-relaxed">
-              Cats feel safest with places to retreat to. Good options: covered cat beds, cardboard boxes with a hole cut in the side, cat towers with enclosed compartments, folded blankets in corners. Place at least one hiding spot at floor level and one elevated. <strong>Do not pull a hiding cat out of their spot — let them emerge on their own terms.</strong>
-            </p>
-          </div>
-
-          <div className="border border-emerald-200 bg-emerald-50/30 p-4 rounded-xl space-y-2">
-            <h4 className="font-bold text-[13px] text-emerald-950">🐱 Recommended Supplies for Cat Fosters</h4>
-            <ul className="grid grid-cols-1 gap-1.5 text-xs font-semibold text-stone-600">
-              {[
-                'Non-porous food/water bowls (stainless steel or ceramic) — plastic harbors bacteria.',
-                'A sturdy, hard-sided carrier — cats feel more secure in enclosed hard carriers during transport.',
-                'Scratching posts or cardboard scratchers — provide at least one before the cat arrives.',
-                'Extra blankets — washable resting spots that can be laundered between fosters.',
-                'A variety of toys — cats have individual preferences; try different types.',
-                'Enzyme-based stain and odor remover for accidents.',
-              ].map((item, i) => (
-                <li key={i} className="flex gap-2"><span className="text-emerald-500 shrink-0">•</span><span>{item}</span></li>
-              ))}
-            </ul>
-          </div>
-
           <div>
             <h4 className="font-bold text-[13px] text-slate-800 mb-1">Cleaning Supplies to Have Ready</h4>
             <p className="text-[13px] text-stone-600 font-medium leading-relaxed">
               Keep a pet-safe enzyme-based cleaner (like Nature's Miracle) on hand. Avoid ammonia-based cleaners — they smell like urine and attract animals back to the same spot. Use rubber gloves when cleaning up waste. Launder all towels, blankets, and soft toys regularly. Allow the area to fully ventilate before returning the animal after cleaning.
             </p>
+          </div>
+
+          <div className="border-2 border-indigo-200 bg-indigo-50/40 p-4 rounded-2xl space-y-4">
+            <div className="flex items-center gap-2 border-b border-indigo-200 pb-3">
+              <span className="text-xl">🐱</span>
+              <div>
+                <h4 className="font-extrabold text-[13px] text-indigo-900 leading-tight">For Cat Fosters</h4>
+                <p className="text-[11px] font-semibold text-indigo-500">Everything below is cat-specific — dog fosters can skip this section.</p>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <h5 className="font-bold text-[12px] text-indigo-800">Litter Box Setup & Care</h5>
+              <ul className="space-y-1.5 text-xs font-semibold text-stone-600">
+                {[
+                  'Place the litter box in a quiet, low-traffic area accessible at all times.',
+                  'Keep the litter box away from the cat\'s food and water.',
+                  'Avoid litter boxes with a flap-style entrance — some cats refuse to use them.',
+                  'Scoop at least once daily. A second cat means scooping more frequently.',
+                  'Completely empty and clean the box once a week with mild dish soap and warm water.',
+                  'Provide one box per floor or area for free-roaming cats.',
+                  'If your foster cat stops using the litter box, contact your rescue coordinator promptly.',
+                ].map((item, i) => (
+                  <li key={i} className="flex gap-2"><span className="text-indigo-400 shrink-0">•</span><span>{item}</span></li>
+                ))}
+              </ul>
+              <div className="bg-rose-100 border border-rose-300 p-3 rounded-xl text-xs font-semibold text-rose-900">
+                <strong>🩺 Medical Note:</strong> A cat avoiding the litter box can signal a medical issue — UTI, diarrhea, or pain. Blood in the stool, visible worms, or dark potent-smelling urine are reasons to contact your rescue coordinator right away.
+              </div>
+            </div>
+
+            <div className="space-y-1.5 border-t border-indigo-200 pt-3">
+              <h5 className="font-bold text-[12px] text-indigo-800">Setting Up Hiding Spaces</h5>
+              <p className="text-xs font-semibold text-stone-600 leading-relaxed">
+                Cats feel safest with places to retreat to. Good options: covered cat beds, cardboard boxes with a hole cut in the side, cat towers with enclosed compartments, folded blankets in corners. Place at least one hiding spot at floor level and one elevated. <strong>Do not pull a hiding cat out of their spot — let them emerge on their own terms.</strong>
+              </p>
+            </div>
+
+            <div className="space-y-1.5 border-t border-indigo-200 pt-3">
+              <h5 className="font-bold text-[12px] text-indigo-800">Recommended Supplies</h5>
+              <ul className="grid grid-cols-1 gap-1.5 text-xs font-semibold text-stone-600">
+                {[
+                  'Non-porous food/water bowls (stainless steel or ceramic) — plastic harbors bacteria.',
+                  'A sturdy, hard-sided carrier — cats feel more secure in enclosed hard carriers during transport.',
+                  'Scratching posts or cardboard scratchers — provide at least one before the cat arrives.',
+                  'Extra blankets — washable resting spots that can be laundered between fosters.',
+                  'A variety of toys — cats have individual preferences; try different types.',
+                  'Enzyme-based stain and odor remover for accidents.',
+                ].map((item, i) => (
+                  <li key={i} className="flex gap-2"><span className="text-indigo-400 shrink-0">•</span><span>{item}</span></li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       ),
@@ -598,39 +627,48 @@ export function FosterGuide() {
             </div>
           </div>
 
-          <div className="bg-sky-50 border border-sky-100 p-4 rounded-xl space-y-2">
-            <h4 className="font-bold text-[13px] text-sky-950">🐱 Cat Behavior: Scratching</h4>
-            <p className="text-xs font-semibold text-stone-600 leading-relaxed">
-              Scratching is completely natural — cats do it to release emotions, mark territory, shed nail layers, and stretch. The goal is to redirect, not stop it.
-            </p>
-            <ul className="space-y-1 text-xs text-stone-600 font-semibold">
-              {[
-                'Provide at least one scratching post or cardboard scratcher before the cat arrives.',
-                'If they scratch furniture, calmly redirect them. Rub a little catnip on the scratcher to attract them.',
-                'Place double-sided tape on furniture surfaces they are scratching.',
-                'Never physically punish a cat for scratching — it creates fear and does not stop the behavior.',
-              ].map((item, i) => <li key={i} className="flex gap-2"><span className="text-sky-500 shrink-0">•</span><span>{item}</span></li>)}
-            </ul>
-          </div>
+          <div className="border-2 border-indigo-200 bg-indigo-50/40 p-4 rounded-2xl space-y-4">
+            <div className="flex items-center gap-2 border-b border-indigo-200 pb-3">
+              <span className="text-xl">🐱</span>
+              <div>
+                <h4 className="font-extrabold text-[13px] text-indigo-900 leading-tight">For Cat Fosters</h4>
+              </div>
+            </div>
 
-          <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl space-y-2">
-            <h4 className="font-bold text-[13px] text-purple-950">🐱 Cat Behavior: Counter Jumping</h4>
-            <p className="text-xs font-semibold text-stone-600 leading-relaxed">
-              Getting up high is instinctive for cats. However, keeping them off counters and cooking surfaces is important for safety.
-            </p>
-            <ul className="space-y-1 text-xs text-stone-600 font-semibold">
-              {[
-                'Never leave food unattended on counters — this is the strongest invitation for a curious cat.',
-                'Provide a cat tree or wall-mounted shelf as an approved high space.',
-                'Aluminum foil placed on counter edges works well as a deterrent.',
-                'Cats also dislike citrus scents — wiping surfaces with a citrus cleaner can help.',
-                'Never push or shoo a cat off a surface from above — this can startle them and cause a fall.',
-              ].map((item, i) => <li key={i} className="flex gap-2"><span className="text-purple-500 shrink-0">•</span><span>{item}</span></li>)}
-            </ul>
-          </div>
+            <div className="space-y-1.5">
+              <h5 className="font-bold text-[12px] text-indigo-800">Cat Behavior: Scratching</h5>
+              <p className="text-xs font-semibold text-stone-600 leading-relaxed">
+                Scratching is completely natural — cats do it to release emotions, mark territory, shed nail layers, and stretch. The goal is to redirect, not stop it.
+              </p>
+              <ul className="space-y-1 text-xs text-stone-600 font-semibold">
+                {[
+                  'Provide at least one scratching post or cardboard scratcher before the cat arrives.',
+                  'If they scratch furniture, calmly redirect them. Rub a little catnip on the scratcher to attract them.',
+                  'Place double-sided tape on furniture surfaces they are scratching.',
+                  'Never physically punish a cat for scratching — it creates fear and does not stop the behavior.',
+                ].map((item, i) => <li key={i} className="flex gap-2"><span className="text-indigo-400 shrink-0">•</span><span>{item}</span></li>)}
+              </ul>
+            </div>
 
-          <div className="bg-emerald-100 border border-emerald-300 p-3 rounded-xl text-xs font-semibold text-emerald-900">
-            <strong>💚 Why This Matters:</strong> Scratching furniture and jumping on counters are among the most common reasons cats are surrendered to shelters. Addressing these behaviors gently during fostering makes the cat significantly more adoptable.
+            <div className="space-y-1.5 border-t border-indigo-200 pt-3">
+              <h5 className="font-bold text-[12px] text-indigo-800">Cat Behavior: Counter Jumping</h5>
+              <p className="text-xs font-semibold text-stone-600 leading-relaxed">
+                Getting up high is instinctive for cats. However, keeping them off counters and cooking surfaces is important for safety.
+              </p>
+              <ul className="space-y-1 text-xs text-stone-600 font-semibold">
+                {[
+                  'Never leave food unattended on counters — this is the strongest invitation for a curious cat.',
+                  'Provide a cat tree or wall-mounted shelf as an approved high space.',
+                  'Aluminum foil placed on counter edges works well as a deterrent.',
+                  'Cats also dislike citrus scents — wiping surfaces with a citrus cleaner can help.',
+                  'Never push or shoo a cat off a surface from above — this can startle them and cause a fall.',
+                ].map((item, i) => <li key={i} className="flex gap-2"><span className="text-indigo-400 shrink-0">•</span><span>{item}</span></li>)}
+              </ul>
+            </div>
+
+            <div className="border-t border-indigo-200 pt-3 bg-emerald-100 border border-emerald-300 p-3 rounded-xl text-xs font-semibold text-emerald-900">
+              <strong>💚 Why This Matters:</strong> Scratching furniture and jumping on counters are among the most common reasons cats are surrendered to shelters. Addressing these behaviors gently during fostering makes the cat significantly more adoptable.
+            </div>
           </div>
         </div>
       ),
@@ -690,13 +728,14 @@ export function FosterGuide() {
               Temperature Reference
             </h4>
             <div className="grid grid-cols-1 gap-2 text-xs font-bold text-stone-700">
-              <div className="p-2 bg-white rounded-lg">👶 Newborn Puppies: <strong className="text-amber-700">94–97°F</strong></div>
-              <div className="p-2 bg-white rounded-lg">🐕 Puppies (4w+) & Adult Dogs: <strong className="text-amber-700">100–102.5°F</strong></div>
+              <div className="p-2 bg-white rounded-lg">👶 Newborn Puppies (Week 1): <strong className="text-amber-700">94–97°F</strong> <span className="text-stone-400 font-semibold">(rises to ~100°F by Week 4)</span></div>
+              <div className="p-2 bg-white rounded-lg">🐕 Puppies (4w+) & Adult Dogs: <strong className="text-amber-700">99.5–102.5°F</strong></div>
               <div className="p-2 bg-white rounded-lg">🐈 Adult Cats: <strong className="text-amber-700">100.5–102.5°F</strong></div>
             </div>
-            <p className="text-xs font-black text-rose-700 mt-2">
-              🚨 Emergency: Temperature above 104°F or below 99°F requires immediate veterinary attention.
-            </p>
+            <div className="text-xs font-black text-rose-700 mt-2 space-y-1">
+              <p>🚨 Adults & Older Puppies: above 104°F or below 99°F requires immediate vet attention.</p>
+              <p>🚨 Newborns (under 4 weeks): below 94°F (or below 97°F after Week 1) is a critical emergency.</p>
+            </div>
           </div>
 
           <div className="p-4 bg-sky-50 rounded-2xl border">
@@ -985,34 +1024,36 @@ export function FosterGuide() {
       subtitle: "Children, resident animals & household hazards",
       content: (
         <div className="space-y-4">
-          <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200">
-            <h4 className="font-bold text-[13px] text-amber-950 mb-2 flex items-center gap-1">
-              <ShieldAlert className="w-4 h-4 text-amber-700" />
-              Around Children
-            </h4>
-            <p className="text-[13px] text-stone-600 font-medium leading-relaxed">
-              <strong>Never leave young children unsupervised with a foster animal — no exceptions.</strong> Even the gentlest animal can react unexpectedly when startled, cornered, or in pain.
-            </p>
-            <ul className="mt-2 space-y-1.5 text-xs text-stone-600 font-semibold">
-              {[
-                'Teach children to approach animals calmly and let the animal come to them.',
-                'Teach children never to approach an animal while it is eating, sleeping, or in its crate.',
-                'Do not allow children to play in or handle the animal while it is in its crate.',
-              ].map((item, i) => <li key={i} className="flex gap-2"><span className="shrink-0">•</span><span>{item}</span></li>)}
-            </ul>
-          </div>
+          <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 space-y-4">
+            <div>
+              <h4 className="font-bold text-[13px] text-amber-950 mb-2 flex items-center gap-1">
+                <ShieldAlert className="w-4 h-4 text-amber-700" />
+                Around Children
+              </h4>
+              <p className="text-[13px] text-stone-600 font-medium leading-relaxed">
+                <strong>Never leave young children unsupervised with a foster animal — no exceptions.</strong> Even the gentlest animal can react unexpectedly when startled, cornered, or in pain.
+              </p>
+              <ul className="mt-2 space-y-1.5 text-xs text-stone-600 font-semibold">
+                {[
+                  'Teach children to approach animals calmly and let the animal come to them.',
+                  'Teach children never to approach an animal while it is eating, sleeping, or in its crate.',
+                  'Do not allow children to play in or handle the animal while it is in its crate.',
+                ].map((item, i) => <li key={i} className="flex gap-2"><span className="shrink-0">•</span><span>{item}</span></li>)}
+              </ul>
+            </div>
 
-          <div className="p-4 border rounded-xl bg-slate-50 space-y-2">
-            <h4 className="font-bold text-[13px] text-slate-800">Around Other Animals</h4>
-            <ul className="space-y-1.5 text-xs text-stone-600 font-semibold">
-              {[
-                'Do not allow your foster animal to interact with unknown neighborhood dogs.',
-                'Do not take unvaccinated animals to dog parks, pet stores, or grassy public areas.',
-                'Always use a secure leash and harness. Double-check gates and latches before letting the animal into any outdoor area.',
-                'Puppies should never be left unsupervised outdoors — even in a securely fenced yard.',
-                'Foster cats and kittens must remain indoors at all times.',
-              ].map((item, i) => <li key={i} className="flex gap-2"><span className="shrink-0">•</span><span>{item}</span></li>)}
-            </ul>
+            <div className="border-t border-amber-200 pt-4">
+              <h4 className="font-bold text-[13px] text-amber-950 mb-2">Around Other Animals</h4>
+              <ul className="space-y-1.5 text-xs text-stone-600 font-semibold">
+                {[
+                  'Do not allow your foster animal to interact with unknown neighborhood dogs.',
+                  'Do not take unvaccinated animals to dog parks, pet stores, or grassy public areas.',
+                  'Always use a secure leash and harness. Double-check gates and latches before letting the animal into any outdoor area.',
+                  'Puppies should never be left unsupervised outdoors — even in a securely fenced yard.',
+                  'Foster cats and kittens must remain indoors at all times.',
+                ].map((item, i) => <li key={i} className="flex gap-2"><span className="shrink-0">•</span><span>{item}</span></li>)}
+              </ul>
+            </div>
           </div>
 
           <div className="space-y-3">
@@ -1067,34 +1108,36 @@ export function FosterGuide() {
             </p>
           </div>
 
-          <div className="bg-sky-50 border border-sky-100 p-4 rounded-xl space-y-2">
-            <h4 className="font-bold text-[13px] text-slate-800 flex items-center gap-1.5">
-              <Camera className="w-4 h-4 text-sky-600" />
-              Photography Tips
-            </h4>
-            <ul className="space-y-1.5 text-xs text-stone-600 font-semibold">
-              {[
-                'Take both a headshot and a full-body photo for every animal.',
-                'Get on their level — kneel or lie on the floor to shoot at eye level. Photos from above make animals look small and sad.',
-                'Shoot in natural light near a window or outdoors in shade. Avoid flash.',
-                'Try to get them looking directly at the camera. A treat held just above the lens works well for dogs.',
-                'Capture their personality — a mid-play action shot, a goofy expression, a tender moment.',
-                'Make sure the photo is sharp and in focus. Blurry photos get scrolled past.',
-                'Avoid cluttered backgrounds — a plain wall or clean floor lets the animal be the star.',
-              ].map((item, i) => <li key={i} className="flex gap-2"><span className="text-sky-500 shrink-0">•</span><span>{item}</span></li>)}
-            </ul>
-          </div>
+          <div className="bg-sky-50 border border-sky-100 p-4 rounded-xl space-y-4">
+            <div>
+              <h4 className="font-bold text-[13px] text-slate-800 flex items-center gap-1.5 mb-2">
+                <Camera className="w-4 h-4 text-sky-600" />
+                Photography Tips
+              </h4>
+              <ul className="space-y-1.5 text-xs text-stone-600 font-semibold">
+                {[
+                  'Take both a headshot and a full-body photo for every animal.',
+                  'Get on their level — kneel or lie on the floor to shoot at eye level. Photos from above make animals look small and sad.',
+                  'Shoot in natural light near a window or outdoors in shade. Avoid flash.',
+                  'Try to get them looking directly at the camera. A treat held just above the lens works well for dogs.',
+                  'Capture their personality — a mid-play action shot, a goofy expression, a tender moment.',
+                  'Make sure the photo is sharp and in focus. Blurry photos get scrolled past.',
+                  'Avoid cluttered backgrounds — a plain wall or clean floor lets the animal be the star.',
+                ].map((item, i) => <li key={i} className="flex gap-2"><span className="text-sky-500 shrink-0">•</span><span>{item}</span></li>)}
+              </ul>
+            </div>
 
-          <div className="bg-slate-50 border p-4 rounded-xl space-y-2">
-            <h4 className="font-bold text-[13px] text-slate-800">Video Tips</h4>
-            <ul className="space-y-1.5 text-xs text-stone-600 font-semibold">
-              {[
-                'Always shoot video with your phone held horizontally (landscape mode).',
-                'Keep videos to one minute or less. Shorter videos get watched; long ones get skipped.',
-                'Show the animal in motion — walking, playing, interacting with you.',
-                'A short video of them being calm and cuddly can be just as powerful as a playful one.',
-              ].map((item, i) => <li key={i} className="flex gap-2"><span className="shrink-0">•</span><span>{item}</span></li>)}
-            </ul>
+            <div className="border-t border-sky-200 pt-4">
+              <h4 className="font-bold text-[13px] text-slate-800 mb-2">Video Tips</h4>
+              <ul className="space-y-1.5 text-xs text-stone-600 font-semibold">
+                {[
+                  'Always shoot video with your phone held horizontally (landscape mode).',
+                  'Keep videos to one minute or less. Shorter videos get watched; long ones get skipped.',
+                  'Show the animal in motion — walking, playing, interacting with you.',
+                  'A short video of them being calm and cuddly can be just as powerful as a playful one.',
+                ].map((item, i) => <li key={i} className="flex gap-2"><span className="text-sky-500 shrink-0">•</span><span>{item}</span></li>)}
+              </ul>
+            </div>
           </div>
 
           <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-xl space-y-2">
@@ -1327,20 +1370,30 @@ export function FosterGuide() {
               ))}
             </div>
 
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="cursor-pointer w-full text-left p-3.5 rounded-2xl transition-all flex items-center justify-between border border-indigo-200 bg-indigo-50/60 hover:bg-indigo-600 text-indigo-950 hover:text-white shadow-xs group"
-            >
-              <div className="flex items-center gap-2.5">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="cursor-pointer flex-1 p-3 rounded-2xl transition-all flex items-center gap-2 border border-indigo-200 bg-indigo-50/60 hover:bg-indigo-600 text-indigo-950 hover:text-white shadow-xs group"
+              >
                 <Printer className="w-4 h-4 shrink-0 text-indigo-600 group-hover:text-white" />
-                <div>
-                  <h4 className="text-[13px] font-black truncate">Download / Print Guide (PDF)</h4>
-                  <p className="text-[10px] font-semibold opacity-75 mt-0.5 leading-none">Get the whole handbook as a PDF</p>
+                <div className="text-left">
+                  <h4 className="text-[12px] font-black leading-tight">Save as PDF</h4>
+                  <p className="text-[10px] font-semibold opacity-70 leading-tight">Print-ready</p>
                 </div>
-              </div>
-              <span className="text-[13px]">💾</span>
-            </button>
+              </button>
+              <a
+                href="/RescueKit_Foster_Guide.docx"
+                download="RescueKit_Foster_Guide.docx"
+                className="cursor-pointer flex-1 p-3 rounded-2xl transition-all flex items-center gap-2 border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-600 text-emerald-950 hover:text-white shadow-xs group no-underline"
+              >
+                <FileText className="w-4 h-4 shrink-0 text-emerald-600 group-hover:text-white" />
+                <div className="text-left">
+                  <h4 className="text-[12px] font-black leading-tight">Download DOCX</h4>
+                  <p className="text-[10px] font-semibold opacity-70 leading-tight">Editable in Word</p>
+                </div>
+              </a>
+            </div>
           </div>
 
           {/* Mobile Chapter Dropdown */}
@@ -1358,7 +1411,7 @@ export function FosterGuide() {
           </div>
 
           {/* Chapter Content Panel */}
-          <div className="lg:col-span-8 bg-sky-50/20 border border-sky-100 rounded-2xl p-6 min-h-[460px] relative">
+          <div ref={chapterPanelRef} className="lg:col-span-8 bg-sky-50/20 border border-sky-100 rounded-2xl p-6 min-h-[460px] relative">
             <span className="inline-flex items-center bg-indigo-600 text-white text-[10px] font-black tracking-widest px-3 py-1 rounded-full">CHAPTER {currentChapter + 1} OF {chapters.length}</span>
             <h2 className="text-lg font-black text-slate-900 border-b pb-2 mt-1">{chapters[currentChapter].title}</h2>
             <p className="text-[13px] font-semibold text-slate-400 mt-1 mb-5">{chapters[currentChapter].subtitle}</p>
@@ -1498,14 +1551,14 @@ export function FosterGuide() {
               A foster animal cannot voice pain — their core temperature is the best indicator of silent illnesses or life-threatening conditions.
             </p>
             <div className="space-y-2 border-l-2 border-indigo-200 pl-4 py-1">
-              <p className="text-[11px] font-bold text-stone-600">🎯 <strong>Normal Newborn puppy temperature:</strong> 94–97°F</p>
-              <p className="text-[11px] font-bold text-stone-600">🎯 <strong>Normal Puppies (4+ wks) & Adult dogs:</strong> 100–102.5°F</p>
-              <p className="text-[11px] font-bold text-stone-600">🎯 <strong>Normal Adult cat temperature:</strong> 100.5–102.5°F</p>
+              <p className="text-[11px] font-bold text-stone-600">🎯 <strong>Newborn Puppies (Week 1):</strong> 94–97°F <span className="text-stone-400">(rises to ~100°F by Week 4)</span></p>
+              <p className="text-[11px] font-bold text-stone-600">🎯 <strong>Puppies (4w+) & Adult Dogs:</strong> 99.5–102.5°F</p>
+              <p className="text-[11px] font-bold text-stone-600">🎯 <strong>Adult Cats:</strong> 100.5–102.5°F</p>
             </div>
             <div className="bg-sky-50 p-4 rounded-xl border border-sky-100">
               <h4 className="font-bold text-[13px] text-slate-900 mb-1">How & When to Measure</h4>
               <p className="text-[11px] text-slate-600 leading-normal font-medium">
-                Measure rectally using a pet thermometer and personal lubricant. If you measure under 99°F or above 104°F, this is a severe medical crisis requiring immediate veterinary attention.
+                Measure rectally using a pet thermometer and personal lubricant. For adults and older puppies, below 99°F or above 104°F is a medical emergency. For newborns, below 94°F (or below 97°F after Week 1) is critical — warm them immediately and call your rescue vet.
               </p>
             </div>
           </div>
@@ -1560,7 +1613,7 @@ export function FosterGuide() {
       )}
 
       {/* PRINT-ONLY SECTION */}
-      <div className="hidden print:block bg-white text-slate-800 p-6 font-sans leading-relaxed text-[13px]">
+      <div className="guide-print-container hidden print:block bg-white text-slate-800 p-6 font-sans leading-relaxed text-[13px]">
         <div className="text-center border-b-2 border-slate-300 pb-5 mb-8">
           <h1 className="text-3xl font-black text-indigo-700 tracking-tight">RESCUEKIT FOSTER GUIDE</h1>
           <p className="text-[13px] font-bold text-slate-500 mt-2 uppercase">A Complete Handbook for Foster Families</p>
@@ -1591,12 +1644,12 @@ export function FosterGuide() {
       </div>
 
       {/* PERSISTENT DISCLAIMER NOTE */}
-      <div className="print:hidden mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-5 text-[11px] text-slate-500 font-medium leading-relaxed space-y-2">
+      <div className="print:hidden mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-5 text-[11px] text-amber-900 font-medium leading-relaxed space-y-2">
         <p>
-          <strong className="text-slate-600">For rescue coordinators:</strong> This guide is provided as a free resource by RescueKit and is designed to be a foundation, not a final rulebook. Feel free to adapt it — layer in your own policies, contact details, and organization-specific protocols to make it fully yours.
+          <strong className="text-amber-800">For rescue coordinators:</strong> This guide is provided as a free resource by RescueKit and is designed to be a foundation, not a final rulebook. Feel free to adapt it — layer in your own policies, contact details, and organization-specific protocols to make it fully yours.
         </p>
         <p>
-          <strong className="text-slate-600">For fosters:</strong> This guide covers general best practices, but every rescue operates a little differently. Always check with your coordinator for rules specific to your rescue — including adoption procedures, event attendance, transport policies, and anything else not outlined here.
+          <strong className="text-amber-800">For fosters:</strong> This guide covers general best practices, but every rescue operates a little differently. Always check with your coordinator for rules specific to your rescue — including adoption procedures, event attendance, transport policies, and anything else not outlined here.
         </p>
       </div>
 
