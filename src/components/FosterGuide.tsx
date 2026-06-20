@@ -137,7 +137,7 @@ export function FosterGuide() {
             </p>
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex gap-3">
+          <div className="bg-emerald-100 border border-emerald-300 p-4 rounded-2xl flex gap-3">
             <Heart className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             <p className="text-[13px] text-emerald-950 font-semibold leading-relaxed">
               <strong>Remember:</strong> A "yes" today is a life saved tomorrow. Every animal you foster creates space for another animal in need to be pulled from a shelter. Your home is the bridge between their past and their future.
@@ -245,12 +245,12 @@ export function FosterGuide() {
                 </div>
               ))}
             </div>
-            <div className="mt-2 bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs font-semibold text-amber-900">
+            <div className="mt-2 bg-amber-100 border border-amber-300 p-3 rounded-xl text-xs font-semibold text-amber-900">
               <strong>⚠️ About Garages:</strong> Garages are generally not suitable foster spaces — too many dangerous chemicals, sharp tools, and unsafe items. If you store pet food in a garage, keep it in an airtight container away from chemicals.
             </div>
           </div>
 
-          <div className="border border-amber-200 bg-amber-50/50 p-4 rounded-2xl">
+          <div className="border border-amber-300 bg-amber-100 p-4 rounded-2xl">
             <h4 className="font-extrabold text-amber-950 text-[13px] mb-2 flex items-center gap-1">
               <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
               The Crate Setup
@@ -293,7 +293,7 @@ export function FosterGuide() {
                 <li key={i} className="flex gap-2"><span className="text-sky-500 shrink-0">•</span><span>{item}</span></li>
               ))}
             </ul>
-            <div className="bg-rose-50 border border-rose-200 p-3 rounded-xl text-xs font-semibold text-rose-900">
+            <div className="bg-rose-100 border border-rose-300 p-3 rounded-xl text-xs font-semibold text-rose-900">
               <strong>🩺 Medical Note:</strong> A cat avoiding the litter box can signal a medical issue — UTI, diarrhea, or pain. Blood in the stool, visible worms, or dark potent-smelling urine are reasons to contact your rescue coordinator right away.
             </div>
           </div>
@@ -357,7 +357,7 @@ export function FosterGuide() {
               </ul>
             </div>
 
-            <div className="p-4 bg-emerald-50/60 border border-emerald-100 rounded-xl">
+            <div className="p-4 bg-emerald-100 border border-emerald-300 rounded-xl">
               <h5 className="font-bold text-xs text-emerald-950 flex items-center gap-1 mb-2">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                 Key Tip: Do Not Force Interaction
@@ -383,7 +383,7 @@ export function FosterGuide() {
                 <li key={i} className="flex gap-2"><span className="text-indigo-400 shrink-0">•</span><span>{item}</span></li>
               ))}
             </ul>
-            <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs font-semibold text-amber-900">
+            <div className="bg-amber-100 border border-amber-300 p-3 rounded-xl text-xs font-semibold text-amber-900">
               <strong>⚠️ If Your Foster Gets Loose:</strong> Contact your rescue coordinator immediately. Do not wait to see if the animal returns on its own. Time matters — your coordinator can help coordinate a search right away.
             </div>
           </div>
@@ -406,7 +406,7 @@ export function FosterGuide() {
             </ul>
           </div>
 
-          <div className="bg-rose-50 border border-rose-200 p-3 rounded-xl text-xs font-semibold text-rose-900">
+          <div className="bg-rose-100 border border-rose-300 p-3 rounded-xl text-xs font-semibold text-rose-900">
             <strong>🩺 Stress & URIs in Cats:</strong> Stressed cats can make themselves physically ill. Upper respiratory infections (URIs) are common in cats from shelters. Watch for discharge from the eyes or nose and sneezing. URIs are treatable but should be caught early.
           </div>
 
@@ -438,7 +438,7 @@ export function FosterGuide() {
             </ul>
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs font-semibold text-emerald-900">
+          <div className="bg-emerald-100 border border-emerald-300 p-3 rounded-xl text-xs font-semibold text-emerald-900">
             <strong>💚 Hang In There:</strong> The first 24 hours are often the hardest — for you and for them. It will get better. Most animals begin to visibly relax within a day or two once they realize they are safe.
           </div>
         </div>
@@ -567,7 +567,7 @@ export function FosterGuide() {
                 <li key={i} className="flex gap-2"><span className="text-indigo-400 shrink-0">•</span><span>{item}</span></li>
               ))}
             </ul>
-            <div className="mt-2 bg-rose-50 border border-rose-200 p-3 rounded-xl text-xs font-semibold text-rose-900">
+            <div className="mt-2 bg-rose-100 border border-rose-300 p-3 rounded-xl text-xs font-semibold text-rose-900">
               <strong>⚠️ Never Do This:</strong> Never rub a dog's face in their mess or raise your voice at them for an accident. They will only learn to fear you. Accidents are a training opportunity, not a reason to punish.
             </div>
           </div>
@@ -629,7 +629,7 @@ export function FosterGuide() {
             </ul>
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs font-semibold text-emerald-900">
+          <div className="bg-emerald-100 border border-emerald-300 p-3 rounded-xl text-xs font-semibold text-emerald-900">
             <strong>💚 Why This Matters:</strong> Scratching furniture and jumping on counters are among the most common reasons cats are surrendered to shelters. Addressing these behaviors gently during fostering makes the cat significantly more adoptable.
           </div>
         </div>
@@ -662,7 +662,7 @@ export function FosterGuide() {
             </div>
           </div>
 
-          <div className="bg-rose-50 border border-rose-200 p-4 rounded-xl">
+          <div className="bg-rose-100 border border-rose-300 p-4 rounded-xl">
             <h4 className="font-extrabold text-rose-950 text-[13px] mb-2 flex items-center gap-1">
               <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
               TOXIC Foods — Never Feed These
@@ -684,7 +684,7 @@ export function FosterGuide() {
       subtitle: "Daily checks, warning signs & emergency alerts",
       content: (
         <div className="space-y-4">
-          <div className="p-4 bg-amber-50/60 border border-amber-200 rounded-2xl">
+          <div className="p-4 bg-amber-100 border border-amber-300 rounded-2xl">
             <h4 className="font-black text-amber-950 text-[13px] mb-2 flex items-center gap-1.5">
               <Thermometer className="w-4 h-4 text-amber-600 shrink-0" />
               Temperature Reference
@@ -722,7 +722,7 @@ export function FosterGuide() {
             </div>
           </div>
 
-          <div className="bg-rose-50/60 border border-rose-200 p-4 rounded-xl">
+          <div className="bg-rose-100 border border-rose-300 p-4 rounded-xl">
             <h4 className="font-extrabold text-rose-950 text-[13px] mb-2">Early Warning Signs — Contact Your Rescue</h4>
             <ul className="grid grid-cols-1 gap-1.5 text-xs text-rose-950 font-semibold leading-snug">
               {[
@@ -752,7 +752,7 @@ export function FosterGuide() {
             </div>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl space-y-2">
+          <div className="bg-amber-100 border border-amber-300 p-4 rounded-xl space-y-2">
             <h4 className="font-bold text-[13px] text-amber-950">Recognizing Dehydration</h4>
             <p className="text-xs text-stone-600 font-semibold">Dehydration can develop quickly — especially in young puppies/kittens or any animal that has been vomiting or has diarrhea.</p>
             <ul className="space-y-1.5 text-xs text-stone-600 font-semibold">
@@ -760,7 +760,7 @@ export function FosterGuide() {
               <li><strong>Gum check:</strong> Healthy gums are pink and moist. Dry, tacky, or sticky gums are a sign of dehydration.</li>
               <li><strong>Other signs:</strong> Weakness, sunken eyes, reduced or no urination, and general lethargy.</li>
             </ul>
-            <div className="bg-rose-50 border border-rose-200 p-2 rounded-lg text-xs font-semibold text-rose-900">
+            <div className="bg-rose-100 border border-rose-300 p-2 rounded-lg text-xs font-semibold text-rose-900">
               <strong>⚠️ Puppies & Kittens:</strong> Dehydration can become life-threatening within hours. If you suspect a very young foster is dehydrated, contact your rescue coordinator immediately.
             </div>
           </div>
@@ -790,7 +790,7 @@ export function FosterGuide() {
       subtitle: "Pest identification, treatment rules & hygiene",
       content: (
         <div className="space-y-4">
-          <div className="p-4 border border-rose-200 bg-rose-50/40 rounded-2xl space-y-2">
+          <div className="p-4 border border-rose-300 bg-rose-100 rounded-2xl space-y-2">
             <h4 className="font-bold text-[13px] text-rose-950 flex items-center gap-1">
               <ShieldAlert className="w-4 h-4 text-rose-700" />
               Critical Warning: Over-the-Counter Flea Products
@@ -843,7 +843,7 @@ export function FosterGuide() {
             </div>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl text-xs font-semibold text-amber-900">
+          <div className="bg-amber-100 border border-amber-300 p-4 rounded-xl text-xs font-semibold text-amber-900">
             <strong>🧼 Hygiene Reminder:</strong> Always wash your hands thoroughly after handling stool, cleaning the foster area, or handling foster animals. Keep children away from the stool area. Do not allow other animals to sniff or investigate foster animal waste.
           </div>
         </div>
@@ -882,7 +882,7 @@ export function FosterGuide() {
                   'No baths for at least one week after surgery.',
                 ].map((item, i) => <li key={i} className="flex gap-2"><span className="shrink-0">•</span><span>{item}</span></li>)}
               </ul>
-              <div className="bg-rose-50 border border-rose-200 p-2 rounded-lg text-xs font-semibold text-rose-900">
+              <div className="bg-rose-100 border border-rose-300 p-2 rounded-lg text-xs font-semibold text-rose-900">
                 <strong>⚠️ Critical:</strong> Do NOT allow your foster to lick or bite the incision site. An E-collar (cone) should be worn for at least 5–7 days post-surgery. Licking can cause infection and wound reopening.
               </div>
             </div>
@@ -895,7 +895,7 @@ export function FosterGuide() {
             </div>
           </div>
 
-          <div className="bg-rose-50 border border-rose-200 p-4 rounded-xl text-xs font-bold text-rose-950 space-y-2">
+          <div className="bg-rose-100 border border-rose-300 p-4 rounded-xl text-xs font-bold text-rose-950 space-y-2">
             <h5 className="text-rose-700 font-black text-[13px]">When to Contact Your Rescue Immediately</h5>
             <div className="grid grid-cols-2 gap-1.5 text-xs font-semibold">
               {['Pale or white gums', 'Excessive vomiting (more than 4 times)', 'Discharge or bleeding from the incision', 'Difficulty urinating', 'Labored or rapid breathing', 'Lethargy lasting more than 24 hours', 'Significant swelling or opening at incision site', 'Loss of appetite lasting more than 24 hours'].map((item, i) => (
@@ -945,7 +945,7 @@ export function FosterGuide() {
               <div>
                 <strong className="text-slate-800">Nails</strong>
                 <p className="text-xs font-medium text-stone-600 mt-1">Regular nail trims are important — long nails can cause difficulty walking, posture problems, and pain. If nails are clicking on the floor, they are too long. Notify your rescue coordinator to arrange a trim.</p>
-                <div className="mt-2 bg-amber-50 border border-amber-200 p-2 rounded-lg text-xs font-semibold text-amber-900">
+                <div className="mt-2 bg-amber-100 border border-amber-300 p-2 rounded-lg text-xs font-semibold text-amber-900">
                   <strong>⚠️ Dewclaw Warning:</strong> Pay special attention to dewclaws — the small claw on the inner leg that doesn't touch the ground. Because they cannot be filed down naturally through walking, they can curl and grow into the paw pad if left untrimmed. Check them regularly.
                 </div>
               </div>
@@ -973,7 +973,7 @@ export function FosterGuide() {
                 <li key={i} className="flex gap-2"><span className="text-slate-400 shrink-0">•</span><span>{item}</span></li>
               ))}
             </ul>
-            <div className="bg-rose-50 border border-rose-200 p-2 rounded-lg text-xs font-semibold text-rose-900">
+            <div className="bg-rose-100 border border-rose-300 p-2 rounded-lg text-xs font-semibold text-rose-900">
               <strong>⚠️ Cat Safety — Pine Oil:</strong> Never use cleaners containing pine oil (such as Pine-Sol) around cats. Pine oil is toxic to felines and can cause serious illness even through skin contact or inhalation.
             </div>
           </div>
@@ -1027,7 +1027,7 @@ export function FosterGuide() {
                   'Keep toilet lids closed — small animals can fall in, and toilet cleaning chemicals are toxic.',
                   'Keep all food out of reach.',
                 ].map((item, i) => <div key={i} className="flex gap-2"><span className="shrink-0">•</span><span>{item}</span></div>)}
-                <div className="bg-rose-50 border border-rose-200 p-2 rounded-lg text-xs font-semibold text-rose-900">
+                <div className="bg-rose-100 border border-rose-300 p-2 rounded-lg text-xs font-semibold text-rose-900">
                   <strong>⚠️ Dryer Safety:</strong> Before running the dryer, always check inside for cats and kittens. They are attracted to warm, enclosed spaces and will climb in. This is a life-threatening hazard.
                 </div>
               </div>
@@ -1061,7 +1061,7 @@ export function FosterGuide() {
       subtitle: "Photos, bios, social media & adoption events",
       content: (
         <div className="space-y-4">
-          <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl">
+          <div className="bg-emerald-100 border border-emerald-300 p-4 rounded-2xl">
             <p className="text-[13px] text-emerald-950 font-semibold leading-relaxed">
               You know your foster better than anyone. You have watched them sleep, seen how they greet strangers, observed what makes them light up. That knowledge is the most powerful adoption tool available — and you are the one who has it.
             </p>
@@ -1129,7 +1129,7 @@ export function FosterGuide() {
             </ul>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl space-y-2">
+          <div className="bg-amber-100 border border-amber-300 p-4 rounded-xl space-y-2">
             <h4 className="font-bold text-[13px] text-amber-950">Attend Adoption Events</h4>
             <p className="text-xs font-semibold text-stone-600 leading-relaxed">
               Adoption events are one of the most effective ways to find a match. Meeting an animal in person creates an emotional connection that no photo can replicate.
@@ -1195,7 +1195,7 @@ export function FosterGuide() {
             </div>
           ))}
 
-          <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-xs font-semibold text-emerald-900">
+          <div className="bg-emerald-100 border border-emerald-300 p-4 rounded-xl text-xs font-semibold text-emerald-900">
             <strong>💚 The 3-3-3 Rule:</strong> 3 days to decompress from the shelter environment, 3 weeks to learn your basic household routine, and 3 months to feel truly confident and at home. Most animals transform dramatically in this window.
           </div>
         </div>
@@ -1249,7 +1249,7 @@ export function FosterGuide() {
             </div>
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-[13px] font-semibold text-emerald-950">
+          <div className="bg-emerald-100 border border-emerald-300 p-4 rounded-xl text-[13px] font-semibold text-emerald-950">
             <strong>💚 Always Remember:</strong> When in doubt, contact your rescue coordinator first — even in the middle of the night. They would always rather hear from you than have an animal deteriorate without care. You will never be judged for reaching out. That is what the team is there for.
           </div>
 
@@ -1284,16 +1284,16 @@ export function FosterGuide() {
       {/* SUB NAVIGATION TABS */}
       <div className="flex flex-wrap gap-1.5 shrink-0 bg-sky-50/50 p-1 rounded-2xl border border-sky-100 mb-6">
         {([
-          ['content', '📖 Full Guide'],
-          ['checklist', '📋 Preparation Checklist'],
-          ['toxic', '☠️ Toxic Lookup'],
-          ['health', '🌡️ Temp Analyzer'],
-        ] as const).map(([tab, label]) => (
+          ['content',   '📖 Full Guide',              'bg-indigo-600 text-white shadow-xs', 'text-indigo-600 hover:bg-indigo-50'],
+          ['checklist', '📋 Preparation Checklist',   'bg-emerald-600 text-white shadow-xs', 'text-emerald-600 hover:bg-emerald-50'],
+          ['toxic',     '☠️ Toxic Lookup',            'bg-rose-600 text-white shadow-xs', 'text-rose-600 hover:bg-rose-50'],
+          ['health',    '🌡️ Temp Analyzer',           'bg-amber-500 text-white shadow-xs', 'text-amber-600 hover:bg-amber-50'],
+        ] as const).map(([tab, label, activeClass, inactiveClass]) => (
           <button
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`cursor-pointer px-3.5 py-1.5 text-[13px] font-extrabold rounded-xl transition-all ${activeTab === tab ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`cursor-pointer px-3.5 py-1.5 text-[13px] font-extrabold rounded-xl transition-all ${activeTab === tab ? activeClass : inactiveClass}`}
           >
             {label}
           </button>
@@ -1312,17 +1312,17 @@ export function FosterGuide() {
                   key={idx}
                   type="button"
                   onClick={() => setCurrentChapter(idx)}
-                  className={`cursor-pointer w-full text-left p-3 rounded-xl transition-all flex items-center justify-between border ${
+                  className={`cursor-pointer w-full text-left p-3 rounded-xl transition-all flex items-center justify-between border-y border-r ${
                     currentChapter === idx
-                      ? 'bg-slate-900 border-slate-950 text-white shadow-sm font-bold'
-                      : 'bg-white hover:bg-sky-50 border-sky-50/50 text-slate-700 font-semibold'
+                      ? 'border-l-4 border-l-indigo-500 border-y-indigo-100 border-r-indigo-100 bg-indigo-600 text-white shadow-sm font-bold'
+                      : 'border-l-4 border-l-transparent border-sky-50/50 bg-white hover:bg-indigo-50 hover:border-l-indigo-200 text-slate-700 font-semibold'
                   }`}
                 >
                   <div className="truncate">
                     <h4 className="text-[13px] truncate">{ch.title}</h4>
                     <p className={`text-[11px] truncate ${currentChapter === idx ? 'text-indigo-200' : 'text-slate-400'}`}>{ch.subtitle}</p>
                   </div>
-                  <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${currentChapter === idx ? 'translate-x-1 text-indigo-300' : 'text-slate-350'}`} />
+                  <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${currentChapter === idx ? 'translate-x-1 text-indigo-300' : 'text-slate-300'}`} />
                 </button>
               ))}
             </div>
@@ -1359,7 +1359,7 @@ export function FosterGuide() {
 
           {/* Chapter Content Panel */}
           <div className="lg:col-span-8 bg-sky-50/20 border border-sky-100 rounded-2xl p-6 min-h-[460px] relative">
-            <span className="text-[11px] font-black text-indigo-600 tracking-wider">CHAPTER {currentChapter + 1} OF {chapters.length}</span>
+            <span className="inline-flex items-center bg-indigo-600 text-white text-[10px] font-black tracking-widest px-3 py-1 rounded-full">CHAPTER {currentChapter + 1} OF {chapters.length}</span>
             <h2 className="text-lg font-black text-slate-900 border-b pb-2 mt-1">{chapters[currentChapter].title}</h2>
             <p className="text-[13px] font-semibold text-slate-400 mt-1 mb-5">{chapters[currentChapter].subtitle}</p>
 
@@ -1381,7 +1381,7 @@ export function FosterGuide() {
                 type="button"
                 onClick={() => setCurrentChapter(prev => Math.min(chapters.length - 1, prev + 1))}
                 disabled={currentChapter === chapters.length - 1}
-                className="cursor-pointer px-4 py-2 bg-slate-900 text-white rounded-full text-[13px] font-extrabold hover:bg-slate-800 transition-colors disabled:opacity-40"
+                className="cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-full text-[13px] font-extrabold hover:bg-indigo-700 transition-colors disabled:opacity-40"
               >
                 Next Chapter &rsaquo;
               </button>
@@ -1447,7 +1447,7 @@ export function FosterGuide() {
       {/* TOXIC FOODS TAB */}
       {activeTab === 'toxic' && (
         <div className="space-y-4">
-          <div className="bg-rose-50 border border-rose-200 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="bg-rose-100 border border-rose-300 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="max-w-xl">
               <h3 className="font-extrabold text-rose-950 text-[15px] flex items-center gap-1.5">
                 <ShieldAlert className="w-5 h-5 text-rose-600" />
