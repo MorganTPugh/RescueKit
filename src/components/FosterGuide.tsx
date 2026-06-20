@@ -137,7 +137,7 @@ export function FosterGuide() {
   // Raw Chapters content
   const chapters = [
     {
-      title: "Welcome & Overview",
+      title: "1. Welcome & Overview",
       subtitle: "The Bridge Between Past and Future",
       content: (
         <div className="space-y-4">
@@ -183,7 +183,7 @@ export function FosterGuide() {
       )
     },
     {
-      title: "1. Foster Responsibilities",
+      title: "2. Foster Responsibilities",
       subtitle: "The commitment & what to expect",
       content: (
         <div className="space-y-4">
@@ -241,7 +241,7 @@ export function FosterGuide() {
       )
     },
     {
-      title: "2. Preparing Your Home",
+      title: "3. Preparing Your Home",
       subtitle: "Setup, crating & supplies",
       content: (
         <div className="space-y-4">
@@ -287,7 +287,7 @@ export function FosterGuide() {
       )
     },
     {
-      title: "3. The First Few Days",
+      title: "4. The First Few Days",
       subtitle: "The crucial 72-hour decompression span",
       content: (
         <div className="space-y-4">
