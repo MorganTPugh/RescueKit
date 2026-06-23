@@ -1,6 +1,7 @@
 import React from 'react';
 import { FosterPetData, PosterDesignSettings } from '../types';
 import { THEMES } from '../data';
+import { QRCodeImage } from './QRCodeImage';
 import { 
   Heart, 
   MapPin, 
@@ -34,7 +35,8 @@ const RepositionableImage: React.FC<{
   pet: FosterPetData;
   setPet?: React.Dispatch<React.SetStateAction<FosterPetData>>;
   className?: string;
-}> = ({ src, alt, pet, setPet, className = "" }) => {
+  isSecondary?: boolean;
+}> = ({ src, alt, pet, setPet, className = "", isSecondary = false }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const isDraggingRef = React.useRef(false);
   const startXRef = React.useRef(0);
@@ -45,9 +47,13 @@ const RepositionableImage: React.FC<{
   const pinchStartZoomRef = React.useRef<number>(1);
   const [contextMenu, setContextMenu] = React.useState<{ x: number; y: number } | null>(null);
 
-  const zoomValue = pet.photoZoom ?? 1;
-  const offsetXValue = pet.photoOffsetX ?? 0;
-  const offsetYValue = pet.photoOffsetY ?? 0;
+  const keyZoom = isSecondary ? 'photoZoom2' : 'photoZoom';
+  const keyOffsetX = isSecondary ? 'photoOffsetX2' : 'photoOffsetX';
+  const keyOffsetY = isSecondary ? 'photoOffsetY2' : 'photoOffsetY';
+
+  const zoomValue = pet[keyZoom] ?? 1;
+  const offsetXValue = pet[keyOffsetX] ?? 0;
+  const offsetYValue = pet[keyOffsetY] ?? 0;
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!setPet || e.button !== 0) return;
@@ -56,8 +62,8 @@ const RepositionableImage: React.FC<{
     isDraggingRef.current = true;
     startXRef.current = e.clientX;
     startYRef.current = e.clientY;
-    startOffsetXRef.current = pet.photoOffsetX ?? 0;
-    startOffsetYRef.current = pet.photoOffsetY ?? 0;
+    startOffsetXRef.current = pet[keyOffsetX] ?? 0;
+    startOffsetYRef.current = pet[keyOffsetY] ?? 0;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -73,8 +79,8 @@ const RepositionableImage: React.FC<{
 
     setPet(prev => ({
       ...prev,
-      photoOffsetX: Math.min(150, Math.max(-150, Math.round(startOffsetXRef.current + pctX))),
-      photoOffsetY: Math.min(150, Math.max(-150, Math.round(startOffsetYRef.current + pctY)))
+      [keyOffsetX]: Math.min(150, Math.max(-150, Math.round(startOffsetXRef.current + pctX))),
+      [keyOffsetY]: Math.min(150, Math.max(-150, Math.round(startOffsetYRef.current + pctY)))
     }));
   };
 
@@ -98,12 +104,12 @@ const RepositionableImage: React.FC<{
   };
 
   const handleZoomIn = () => {
-    setPet?.(prev => ({ ...prev, photoZoom: Math.min(3, parseFloat(((prev.photoZoom ?? 1) + 0.25).toFixed(2))) }));
+    setPet?.(prev => ({ ...prev, [keyZoom]: Math.min(3, parseFloat(((prev[keyZoom] ?? 1) + 0.25).toFixed(2))) }));
     setContextMenu(null);
   };
 
   const handleZoomOut = () => {
-    setPet?.(prev => ({ ...prev, photoZoom: Math.max(1, parseFloat(((prev.photoZoom ?? 1) - 0.25).toFixed(2))) }));
+    setPet?.(prev => ({ ...prev, [keyZoom]: Math.max(1, parseFloat(((prev[keyZoom] ?? 1) - 0.25).toFixed(2))) }));
     setContextMenu(null);
   };
 
@@ -114,14 +120,14 @@ const RepositionableImage: React.FC<{
       pinchStartDistRef.current = null;
       startXRef.current = e.touches[0].clientX;
       startYRef.current = e.touches[0].clientY;
-      startOffsetXRef.current = pet.photoOffsetX ?? 0;
-      startOffsetYRef.current = pet.photoOffsetY ?? 0;
+      startOffsetXRef.current = pet[keyOffsetX] ?? 0;
+      startOffsetYRef.current = pet[keyOffsetY] ?? 0;
     } else if (e.touches.length === 2) {
       isDraggingRef.current = false;
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       pinchStartDistRef.current = Math.sqrt(dx * dx + dy * dy);
-      pinchStartZoomRef.current = pet.photoZoom ?? 1;
+      pinchStartZoomRef.current = pet[keyZoom] ?? 1;
     }
   };
 
@@ -136,8 +142,8 @@ const RepositionableImage: React.FC<{
       const pctY = (deltaY / rect.height) * 100 * (1 / zoomValue);
       setPet(prev => ({
         ...prev,
-        photoOffsetX: Math.min(150, Math.max(-150, Math.round(startOffsetXRef.current + pctX))),
-        photoOffsetY: Math.min(150, Math.max(-150, Math.round(startOffsetYRef.current + pctY)))
+        [keyOffsetX]: Math.min(150, Math.max(-150, Math.round(startOffsetXRef.current + pctX))),
+        [keyOffsetY]: Math.min(150, Math.max(-150, Math.round(startOffsetYRef.current + pctY)))
       }));
     } else if (e.touches.length === 2 && pinchStartDistRef.current !== null) {
       const dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -145,7 +151,7 @@ const RepositionableImage: React.FC<{
       const dist = Math.sqrt(dx * dx + dy * dy);
       const scale = dist / pinchStartDistRef.current;
       const newZoom = Math.min(3, Math.max(1, pinchStartZoomRef.current * scale));
-      setPet(prev => ({ ...prev, photoZoom: parseFloat(newZoom.toFixed(2)) }));
+      setPet(prev => ({ ...prev, [keyZoom]: parseFloat(newZoom.toFixed(2)) }));
     }
   };
 
@@ -159,9 +165,9 @@ const RepositionableImage: React.FC<{
     e.preventDefault();
     const zoomDelta = e.deltaY < 0 ? 0.05 : -0.05;
     setPet(prev => {
-      const currentZoom = prev.photoZoom ?? 1;
+      const currentZoom = prev[keyZoom] ?? 1;
       const nextZoom = Math.min(3, Math.max(1, currentZoom + zoomDelta));
-      return { ...prev, photoZoom: parseFloat(nextZoom.toFixed(2)) };
+      return { ...prev, [keyZoom]: parseFloat(nextZoom.toFixed(2)) };
     });
   };
 
@@ -278,7 +284,7 @@ const getDynamicBioStyle = (text: string, templateId: string, isSquare: boolean)
     } else if (templateId === 'comic') {
       maxPx = 21.0;
       minPx = 11.0;
-    } else if (templateId === 'two-photos' || templateId === 'comic-2-photos') {
+    } else if (templateId === 'two-photos' || templateId === 'comic-2-photos' || templateId === 'extreme-duo') {
       maxPx = 21.0;
       minPx = 11.0;
     } else if (templateId === 'bio-only') {
@@ -315,7 +321,7 @@ const getDynamicBioStyle = (text: string, templateId: string, isSquare: boolean)
     } else if (templateId === 'comic') {
       maxPx = 16.5;
       minPx = 10.2;
-    } else if (templateId === 'two-photos' || templateId === 'comic-2-photos') {
+    } else if (templateId === 'two-photos' || templateId === 'comic-2-photos' || templateId === 'extreme-duo') {
       maxPx = 17.0;
       minPx = 10.2;
     } else if (templateId === 'bio-only') {
@@ -469,9 +475,140 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           </div>
 
           {/* Quick info-tag at the bottom */}
-          <div className="border-t border-stone-150 pt-3 mt-3.5 flex items-center justify-between text-[9px] font-mono text-stone-400 uppercase tracking-widest shrink-0 select-none">
-            <span>RescueKit Clipboard Guide</span>
-            <span>Ready for Petfinder & Facebook</span>
+          <div className="border-t border-stone-150 pt-3 mt-3.5 text-center text-[10px] font-medium text-stone-500 shrink-0 select-none leading-relaxed">
+            Copy and paste your final biography to wherever your pet may be seen by others - social media, petfinder, etc. Descriptions are best alongside cute photos!
+          </div>
+        </div>
+      );
+    }
+
+    if (settings.templateId === 'extreme-duo') {
+      const primaryPhoto = pet.photos.length > 0 ? pet.photos[0] : null;
+      const secondaryPhoto = pet.photos.length > 1 ? pet.photos[1] : null;
+
+      return (
+        <div 
+          id="print-poster-card" 
+          className={`${printClass} aspect-ratio-square w-full h-full relative border flex flex-col justify-between overflow-hidden p-[12px] md:p-[14px] selection:bg-rose-105 shadow-2xl bg-white border-slate-250 rounded-2xl ${getFontFamilyClass()} ${currentTheme.textClass}`}
+        >
+          {/* Subtle themed background */}
+          <div className={`absolute inset-0 pointer-events-none -z-10 ${currentTheme.bgClass}`}></div>
+          <div className="absolute inset-2 border border-slate-350/20 rounded-xl pointer-events-none -z-10"></div>
+          
+          {/* 1. Header (Compact and clean) */}
+          <div className="flex items-center justify-between w-full border-b border-stone-250 pb-1 mt-0 select-none shrink-0 leading-none">
+            <div className="text-left py-0.5">
+              <h1 className="text-xl font-bold tracking-tight leading-none text-slate-900 font-sans">
+                Meet {pet.name || 'Lovely Foster'}!
+              </h1>
+            </div>
+            <div className="flex flex-col items-end text-right gap-1 shrink-0 select-none leading-none">
+              <span className={`inline-flex items-center justify-center font-black uppercase tracking-widest text-[7px] px-1.5 py-0.5 rounded leading-none transition-all duration-300 ${getBadgeStyle()}`}>
+                {settings.headingText || 'Adopt Me!'}
+              </span>
+              {pet.breed && (
+                <div className="text-[8.5px] font-black uppercase tracking-wider text-stone-550 block">
+                  🐾 {pet.breed}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 2. Photo Grid (Two GIANT Photos side-by-side, taking up 55% height, reduced margins) */}
+          <div className="grid grid-cols-2 gap-2 mt-1 mb-1 h-[55%] shrink-0 relative">
+            {/* Photo 1 */}
+            <div className="relative h-full rounded-xl overflow-hidden border bg-stone-50 border-slate-250/75 shadow-3xs">
+              {primaryPhoto ? (
+                <RepositionableImage 
+                  src={primaryPhoto} 
+                  alt={`${pet.name} Photo 1`} 
+                  pet={pet} 
+                  setPet={setPet} 
+                  className="rounded-xl"
+                  isSecondary={false}
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center p-3 opacity-80">
+                  <PetSvgIllustration species={pet.species} />
+                </div>
+              )}
+            </div>
+
+            {/* Photo 2 */}
+            <div className="relative h-full rounded-xl overflow-hidden border bg-stone-50 border-slate-250/75 shadow-3xs">
+              {secondaryPhoto ? (
+                <RepositionableImage 
+                  src={secondaryPhoto} 
+                  alt={`${pet.name} Photo 2`} 
+                  pet={pet} 
+                  setPet={setPet} 
+                  className="rounded-xl"
+                  isSecondary={true}
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center p-3 opacity-50">
+                  <PetSvgIllustration species={pet.species} />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 3. Horizontal Story Box (Simple & Focused on the bio description - no scroll bar, expanded space) */}
+          <div className="flex-1 min-h-0 relative select-text text-left pt-1 pb-1 overflow-hidden">
+            <p 
+              className="font-serif whitespace-pre-wrap select-text leading-relaxed text-slate-805"
+              style={getDynamicBioStyle(pet.estimatedBio || "Use our AI generator or write a custom detailed bio for this sweetheart here! Showing giant beautiful photos helps captivate families instantly.", 'extreme-duo', true)}
+            >
+              {pet.estimatedBio || "Use our AI generator or write a custom detailed bio for this sweetheart here! Showing giant beautiful photos helps captivate families instantly."}
+            </p>
+          </div>
+
+          {/* 4. Pure Footer with Rescue Details (No city & state location for extreme-duo) */}
+          <div className="border-t border-slate-200/80 pt-1.5 select-none shrink-0 text-left">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                  <span className="text-[10px] font-black text-rose-600 block uppercase tracking-wider leading-none">
+                    {pet.rescueOrg || 'Independent Foster Direct Adoptions'}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-[8.5px] font-bold text-slate-500 leading-none">
+                  {pet.fosterEmail && (
+                    <span className="flex items-center gap-0.5">
+                      <Mail className="w-2.5 h-2.5 shrink-0 text-slate-400" />
+                      <span className="truncate">{pet.fosterEmail}</span>
+                    </span>
+                  )}
+                  {pet.fosterPhone && (
+                    <span className="flex items-center gap-0.5">
+                      <Phone className="w-2.5 h-2.5 shrink-0 text-slate-400" />
+                      <span>{pet.fosterPhone}</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Website QR Code / Heart placeholder */}
+              <div className="py-1 px-1.5 border border-slate-205 rounded-xl bg-slate-50/10 text-slate-650 flex items-center justify-between gap-1 shrink-0">
+                <div className="flex flex-col text-left min-w-0">
+                  <span className="text-[7.5px] font-extrabold text-[#111827] max-w-[85px] truncate block leading-tight">
+                    {pet.rescueWebsite ? pet.rescueWebsite.replace('https://', '').replace('http://', '').replace('www.', '') : 'Inquire Online'}
+                  </span>
+                </div>
+                <div className="bg-white border border-slate-200 p-0.5 rounded-lg w-7 h-7 relative flex items-center justify-center shrink-0">
+                  {pet.rescueWebsite ? (
+                    <QRCodeImage 
+                      url={pet.rescueWebsite} 
+                      className="w-full h-full object-contain" 
+                      darkColor="#0f172a" 
+                      lightColor="#ffffff00" 
+                    />
+                  ) : (
+                    <Heart className="w-3.5 h-3.5 text-rose-300 animate-pulse" />
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -549,32 +686,24 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                   <PetSvgIllustration species={pet.species} />
                 </div>
               )}
-              <div className={`absolute top-1 right-1 text-white font-mono text-[6.5px] font-black uppercase px-1 py-0.5 rounded tracking-wide z-20 ${
-                isComic2 ? 'bg-pink-600/90' : 'bg-black/60'
-              }`}>
-                Primary
-              </div>
             </div>
 
             {/* Photo 2 Container */}
             <div className={`relative h-full rounded-xl overflow-hidden border bg-slate-50 group ${isComic2 ? 'border-pink-200/80 shadow-3xs' : 'border-slate-200'}`}>
               {secondaryPhoto ? (
-                <img 
+                <RepositionableImage 
                   src={secondaryPhoto} 
                   alt={`${pet.name} Photo 2`} 
-                  className="absolute inset-0 w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
+                  pet={pet} 
+                  setPet={setPet} 
+                  className="rounded-xl"
+                  isSecondary={true}
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center p-3 opacity-60">
                   <PetSvgIllustration species={pet.species} />
                 </div>
               )}
-              <div className={`absolute top-1 right-1 text-white font-mono text-[6.5px] font-black uppercase px-1 py-0.5 rounded tracking-wide ${
-                isComic2 ? 'bg-rose-500/90' : 'bg-indigo-600/85'
-              }`}>
-                Photo 2
-              </div>
             </div>
           </div>
 
@@ -645,13 +774,14 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               {pet.traits.length > 0 && (
                 <div className="flex flex-wrap gap-0.5">
                   {pet.traits.slice(0, 3).map((t, idx) => (
-                    <span key={idx} className={`text-[7.5px] font-bold border px-1 py-0.5 rounded capitalize leading-none ${
+                    <span key={idx} className={`text-[7.5px] font-bold border px-1 py-0.5 rounded capitalize leading-none inline-flex items-center whitespace-nowrap shrink-0 ${
                         isComic2
                           ? 'bg-rose-50 border-pink-200/70 text-rose-600'
                           : 'bg-slate-50 border-slate-200/80 text-slate-700'
                       }`}
                     >
-                      ✨ {t}
+                      <span className="mr-0.5 shrink-0 text-[7px]">✨</span>
+                      <span>{t}</span>
                     </span>
                   ))}
                 </div>
@@ -679,29 +809,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               <div className={`border p-0.5 rounded-lg w-6.5 h-6.5 flex items-center justify-center shrink-0 shadow-3xs ${
                 isComic2 ? 'bg-[#fffcfb] border-pink-200' : 'bg-stone-50 border-stone-200'
               }`}>
-                <svg viewBox="0 0 25 25" className={`w-full h-full fill-current ${isComic2 ? 'text-rose-600' : 'text-stone-900'}`} shapeRendering="crispEdges">
-                  <rect x="0" y="0" width="7" height="7" />
-                  <rect x="1" y="1" width="5" height="5" fill="white" />
-                  <rect x="2" y="2" width="3" height="3" />
-                  <rect x="18" y="0" width="7" height="7" />
-                  <rect x="19" y="1" width="5" height="5" fill="white" />
-                  <rect x="20" y="2" width="3" height="3" />
-                  <rect x="0" y="18" width="7" height="7" />
-                  <rect x="1" y="19" width="5" height="5" fill="white" />
-                  <rect x="2" y="20" width="3" height="3" />
-                  <rect x="9" y="1" width="2" height="1" />
-                  <rect x="12" y="3" width="1" height="3" />
-                  <rect x="15" y="0" width="1" height="2" />
-                  <rect x="9" y="10" width="3" height="1" />
-                  <rect x="14" y="9" width="2" height="2" />
-                  <rect x="21" y="9" width="1" height="3" />
-                  <rect x="10" y="15" width="2" height="2" />
-                  <rect x="15" y="15" width="3" height="1" />
-                  <rect x="9" y="21" width="1" height="2" />
-                  <rect x="12" y="20" width="2" height="1" />
-                  <rect x="16" y="22" width="2" height="2" />
-                  <rect x="22" y="18" width="2" height="1" />
-                </svg>
+                <QRCodeImage 
+                  url={pet.rescueWebsite} 
+                  className="w-full h-full object-contain" 
+                  darkColor={isComic2 ? '#db2777' : '#1c1917'} 
+                  lightColor="#ffffff00"
+                />
               </div>
             ) : (
               <Heart className={`w-4.5 h-4.5 animate-pulse ${isComic2 ? 'text-rose-500' : 'text-rose-300'}`} />
@@ -769,7 +882,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               {settings.templateId === 'whimsical' ? (
                 <div className="flex items-center justify-between gap-1 w-full mt-1.5 border-b border-[#2d5a27]/15 pb-1.5 shrink-0 select-none">
                   <div className="relative inline-block mt-0.5 pl-1">
-                    <h1 className="text-[20px] font-handwritten font-black tracking-tight text-[#0f5c3a] leading-none mb-0.5">
+                    <h1 className="text-[24px] font-handwritten font-black tracking-tight text-[#0f5c3a] leading-none mb-0.5 animate-fade-in">
                       Meet {pet.name || 'Lovely Foster'}!
                     </h1>
                     <svg className="absolute -bottom-1.5 left-1 w-[calc(100%-8px)] h-2 text-rose-350 pointer-events-none" fill="none" viewBox="0 0 100 10" preserveAspectRatio="none">
@@ -857,7 +970,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                     return (
                       <span 
                         key={idx} 
-                        className={`inline-flex items-center text-[10.5px] font-bold font-handwritten px-2.5 py-0.5 text-emerald-955 bg-[#fffdf0] border border-[#2d5a27]/30 shadow-3xs rounded-tl-lg rounded-br-lg rounded-tr-xs rounded-bl-xs ${rotation} print:transform-none`}
+                        className={`inline-flex items-center whitespace-nowrap shrink-0 text-[10.5px] font-bold font-handwritten px-2.5 py-0.5 text-emerald-955 bg-[#fffdf0] border border-[#2d5a27]/30 shadow-3xs rounded-tl-lg rounded-br-lg rounded-tr-xs rounded-bl-xs ${rotation} print:transform-none`}
                       >
                         <span className="font-sans mr-1 text-[11px] text-amber-500 shrink-0">🌸</span>
                         <span>{capTrait}</span>
@@ -867,9 +980,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                   return (
                     <span 
                       key={idx} 
-                      className={`inline-flex items-center text-[8.5px] font-black uppercase px-2 py-0.5 rounded-full ${currentTheme.badgeBg} border border-opacity-45 shadow-3xs`}
+                      className={`inline-flex items-center whitespace-nowrap shrink-0 text-[8.5px] font-black uppercase px-1.5 py-0.5 rounded-full ${currentTheme.badgeBg} border border-opacity-45 shadow-3xs`}
                     >
-                      ✨ {capTrait}
+                      <span className="mr-0.5 shrink-0">✨</span>
+                      <span>{capTrait}</span>
                     </span>
                   );
                 })}
@@ -1001,28 +1115,27 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
             {/* PROFILE STATS MATRIX CARD (Princess / Sweet Romance / Standard designs) */}
             {settings.templateId === 'whimsical' ? (
-              <div className="my-1 p-2 rounded-[24px_8px_16px_32px] border-2 border-dotted border-amber-300/80 bg-[#fffdf5]/80 flex flex-col gap-1 shadow-2xs text-[10.5px] md:text-[11px] font-bold text-[#0f5c3a] font-playful relative overflow-hidden">
-                <div className="grid grid-cols-2 gap-x-2.5 gap-y-1">
-                  <div className="min-w-0 border-b border-dashed border-amber-200 pb-1.5 col-span-2">
-                    <span className="text-[#a27b3e] block text-[9px] md:text-[10px] uppercase font-bold leading-none mb-1 font-handwritten">Breed</span>
-                    <span className="text-stone-850 font-extrabold block text-[12px] md:text-[13px] leading-tight break-words">{pet.breed || 'Unknown'}</span>
+              <div className="my-1.5 p-2.5 rounded-[22px_10px_18px_26px] border-2 border-dotted border-amber-300/80 bg-[#fffdf5]/80 flex flex-col gap-1.5 shadow-2xs text-[10.5px] md:text-[11px] font-bold text-[#0f5c3a] font-playful relative overflow-hidden">
+                <div className="grid grid-cols-2 gap-x-2.5 gap-y-1 font-playful">
+                  <div className="min-w-0 border-b border-dashed border-amber-200 pb-1.5 col-span-2 text-center font-playful">
+                    <span className="text-stone-850 font-extrabold block text-[13.5px] md:text-[14.5px] leading-tight break-words font-playful">{pet.breed || 'Unknown'}</span>
                   </div>
-                  <div className="min-w-0 border-b border-dashed border-amber-200 pb-1">
-                    <span className="text-[#a27b3e] block text-[9px] md:text-[10px] uppercase font-bold leading-none mb-0.5 font-handwritten">Age</span>
-                    <span className="text-stone-850 font-extrabold block truncate leading-none text-[10.5px] md:text-[11.5px]">{pet.age || 'Unknown Age'}</span>
+                  <div className="min-w-0 border-b border-dashed border-amber-200 pb-1 col-span-2 flex justify-between items-center">
+                    <span className="text-[#a27b3e] text-[9.5px] md:text-[10.5px] uppercase font-bold leading-none font-handwritten">Age:</span>
+                    <span className="text-stone-850 font-extrabold leading-none text-[11px] md:text-[12px] font-playful">{pet.age || 'Unknown Age'}</span>
                   </div>
-                  <div className="min-w-0 border-b border-dashed border-amber-200 pb-1">
-                    <span className="text-[#a27b3e] block text-[9px] md:text-[10px] uppercase font-bold leading-none mb-0.5 font-handwritten">Weight</span>
-                    <span className="text-stone-850 font-extrabold block truncate leading-none text-[10.5px] md:text-[11.5px]">{pet.weight || 'Medium'}</span>
+                  <div className="min-w-0 border-b border-dashed border-amber-200 pb-1 col-span-2 flex justify-between items-center">
+                    <span className="text-[#a27b3e] text-[9.5px] md:text-[10.5px] uppercase font-bold leading-none font-handwritten">Weight:</span>
+                    <span className="text-stone-850 font-extrabold leading-none text-[11px] md:text-[12px] font-playful">{pet.weight || 'Medium'}</span>
                   </div>
-                  <div className="min-w-0 border-b border-dashed border-amber-200 pb-1.5 col-span-2">
-                    <span className="text-[#a27b3e] block text-[9px] md:text-[10px] uppercase font-bold leading-none mb-0.5 font-handwritten">Housetrained?</span>
-                    <span className="text-stone-850 font-extrabold block truncate leading-none text-[10.5px] md:text-[11.5px]">
+                  <div className="min-w-0 border-b border-dashed border-amber-200 pb-1.5 col-span-2 flex justify-between items-center">
+                    <span className="text-[#a27b3e] text-[9.5px] md:text-[10.5px] uppercase font-bold leading-none font-handwritten">Housetrained?</span>
+                    <span className="text-stone-850 font-extrabold leading-none text-[11px] md:text-[12px] font-playful">
                       {pet.houseTrained === 'yes' ? '✓ Yup!' : pet.houseTrained === 'working-on-it' ? 'Learning!' : '✗ Not yet'}
                     </span>
                   </div>
                   <div className="min-w-0 col-span-2">
-                    <span className="text-[#a27b3e] block text-[9px] md:text-[10px] uppercase font-bold leading-none mb-0.5 font-handwritten">Gets Along Best With:</span>
+                    <span className="text-[#a27b3e] block text-[9.5px] md:text-[10.5px] uppercase font-bold leading-none mb-1 font-handwritten text-center">Gets Along Best With:</span>
                     <div className="grid grid-cols-3 gap-1 mt-0.5 text-center text-[8.5px] md:text-[9px] font-bold font-sans">
                       <div className="bg-white/90 border border-amber-200 px-0.5 py-0.5 rounded leading-none">
                         <span className="text-[#a27b3e] text-[6.5px] md:text-[7.5px] block font-bold leading-none uppercase font-sans">DOGS</span>
@@ -1142,32 +1255,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               {/* Adoption QR code visualizer */}
               <div className="bg-white border border-slate-200 p-0.5 rounded w-8 h-8 relative flex items-center justify-center shrink-0">
                 {pet.rescueWebsite ? (
-                  <svg viewBox="0 0 25 25" className="w-full h-full text-slate-900 fill-current" shapeRendering="crispEdges">
-                    <rect x="0" y="0" width="7" height="7" />
-                    <rect x="1" y="1" width="5" height="5" fill="white" />
-                    <rect x="2" y="2" width="3" height="3" />
-                    
-                    <rect x="18" y="0" width="7" height="7" />
-                    <rect x="19" y="1" width="5" height="5" fill="white" />
-                    <rect x="20" y="2" width="3" height="3" />
-                    
-                    <rect x="0" y="18" width="7" height="7" />
-                    <rect x="1" y="19" width="5" height="5" fill="white" />
-                    <rect x="2" y="20" width="3" height="3" />
-                    
-                    <rect x="9" y="1" width="2" height="1" />
-                    <rect x="12" y="3" width="1" height="3" />
-                    <rect x="15" y="0" width="1" height="2" />
-                    <rect x="9" y="10" width="3" height="1" />
-                    <rect x="14" y="9" width="2" height="2" />
-                    <rect x="21" y="9" width="1" height="3" />
-                    <rect x="10" y="15" width="2" height="2" />
-                    <rect x="15" y="15" width="3" height="1" />
-                    <rect x="9" y="21" width="1" height="2" />
-                    <rect x="12" y="20" width="2" height="1" />
-                    <rect x="16" y="22" width="2" height="2" />
-                    <rect x="22" y="18" width="2" height="1" />
-                  </svg>
+                  <QRCodeImage 
+                    url={pet.rescueWebsite} 
+                    className="w-full h-full object-contain" 
+                    darkColor="#0f172a" 
+                    lightColor="#ffffff" 
+                  />
                 ) : (
                   <Heart className="w-3.5 h-3.5 text-rose-300 animate-pulse" />
                 )}
@@ -1229,9 +1322,146 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         </div>
 
         {/* Quick info-tag at the bottom */}
-        <div className="border-t border-stone-150 pt-4 mt-5 flex items-center justify-between text-xs font-mono text-stone-400 uppercase tracking-widest shrink-0 select-none">
-          <span>RescueKit Clipboard Guide</span>
-          <span>Ready for Petfinder & Facebook</span>
+        <div className="border-t border-stone-150 pt-4 mt-5 text-center text-xs font-medium text-stone-500 shrink-0 select-none leading-relaxed">
+          Copy and paste your final biography to wherever your pet may be seen by others - social media, petfinder, etc. Descriptions are best alongside cute photos!
+        </div>
+      </div>
+    );
+  }
+
+  if (settings.templateId === 'extreme-duo') {
+    const primaryPhoto = pet.photos.length > 0 ? pet.photos[0] : null;
+    const secondaryPhoto = pet.photos.length > 1 ? pet.photos[1] : null;
+
+    return (
+      <div 
+        id="print-poster-card" 
+        className={`${printClass} poster-proportions w-full h-full relative border flex flex-col justify-between overflow-hidden p-4 md:p-[20px] selection:bg-rose-105 shadow-2xl bg-white border-slate-200 rounded-2xl ${getFontFamilyClass()} ${currentTheme.textClass}`}
+      >
+        {/* Subtle background styles */}
+        <>
+          <div className={`absolute inset-0 pointer-events-none -z-10 ${currentTheme.bgClass}`}></div>
+          <div className="absolute inset-2 border border-slate-350/20 rounded-xl pointer-events-none -z-10"></div>
+        </>
+        
+        {/* 1. Header (Very Compact) */}
+        <div className="flex items-center justify-between w-full border-b border-stone-200 pb-1.5 mt-0 select-none shrink-0 leading-none">
+          <div className="text-left">
+            <h1 className="text-2xl font-black tracking-tight leading-none text-slate-900 font-sans">
+              Meet {pet.name || 'Lovely Foster'}!
+            </h1>
+          </div>
+          {/* Badge & breed on right side above */}
+          <div className="flex flex-col items-end text-right gap-1 shrink-0 select-none">
+            <span className={`inline-flex items-center justify-center font-black uppercase tracking-widest text-[8px] px-2 py-0.5 rounded leading-none transition-all duration-300 ${getBadgeStyle()}`}>
+              {settings.headingText || 'Adopt Me!'}
+            </span>
+            {pet.breed && (
+              <div className="text-[10px] font-bold tracking-wider text-slate-555 uppercase">
+                🐾 {pet.breed}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 2. Photo Grid (Two GIANT Photos side-by-side, taking up 55% vertical height, reduced margins) */}
+        <div className="grid grid-cols-2 gap-3 mt-1.5 mb-1.5 h-[55%] shrink-0 relative">
+          {/* Photo 1 Container */}
+          <div className="relative h-full rounded-2xl overflow-hidden border bg-stone-50 border-slate-200 shadow-sm">
+            {primaryPhoto ? (
+              <RepositionableImage 
+                src={primaryPhoto} 
+                alt={`${pet.name} Photo 1`} 
+                pet={pet} 
+                setPet={setPet} 
+                className="rounded-2xl"
+                isSecondary={false}
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center p-6 bg-stone-50 opacity-80">
+                <PetSvgIllustration species={pet.species} />
+              </div>
+            )}
+          </div>
+
+          {/* Photo 2 Container */}
+          <div className="relative h-full rounded-2xl overflow-hidden border bg-stone-50 border-slate-200 shadow-sm">
+            {secondaryPhoto ? (
+              <RepositionableImage 
+                src={secondaryPhoto} 
+                alt={`${pet.name} Photo 2`} 
+                pet={pet} 
+                setPet={setPet} 
+                className="rounded-2xl"
+                isSecondary={true}
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center p-6 bg-stone-50 opacity-50">
+                <PetSvgIllustration species={pet.species} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 3. Horizontal Story Box (Simple & Focused on the bio description - no scroll bar, expanded space) */}
+        <div className="flex-1 flex flex-col justify-start text-left min-h-0 relative select-text mt-1 mb-1.5 overflow-hidden bg-slate-50/15 p-2.5 rounded-xl border border-slate-100">
+          <p 
+            className="font-serif whitespace-pre-wrap select-text leading-relaxed font-normal text-slate-800"
+            style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or write a custom bio directly!", settings.templateId, false)}
+          >
+            {pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
+          </p>
+        </div>
+
+        {/* 4. Footer Contacts Panel (No location details) */}
+        <div className="mt-1 pt-1.5 border-t grid grid-cols-12 gap-3 items-center z-10 w-full shrink-0 select-text bg-white border-stone-200">
+          <div className="col-span-8 flex flex-col text-left select-text leading-tight">
+            <h4 className="text-[11px] md:text-[12px] font-black truncate text-stone-900">
+              {pet.rescueOrg || 'Independent Rescuer'}
+            </h4>
+            
+            <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[9px] md:text-[9.5px] font-medium select-text text-stone-500">
+              {pet.fosterEmail && (
+                <div className="flex items-center gap-0.5 select-text">
+                  <Mail className="w-3 h-3 inline-block shrink-0 text-stone-400" />
+                  <span className="truncate select-text">{pet.fosterEmail}</span>
+                </div>
+              )}
+              {pet.fosterEmail && pet.fosterPhone && <span className="text-stone-300">•</span>}
+              {pet.fosterPhone && (
+                <div className="flex items-center gap-0.5 select-text">
+                  <Phone className="w-3 h-3 inline-block shrink-0 text-stone-400" />
+                  <span className="select-text">{pet.fosterPhone}</span>
+                </div>
+              )}
+            </div>
+            {pet.rescueWebsite && (
+              <div className="flex items-center gap-0.5 text-[9px] md:text-[9.5px] font-extrabold mt-0.5 select-all text-rose-750">
+                <Globe className="w-3 h-3 shrink-0 text-rose-450" />
+                <span className="truncate hover:underline select-all">{pet.rescueWebsite.replace(/^https?:\/\//, '')}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="col-span-4 flex items-center justify-end gap-2 select-none shrink-0 border-0">
+            <div className="text-right hidden sm:block font-sans">
+              <span className="text-[7px] uppercase font-black block leading-none text-rose-500">Find out more</span>
+              <span className="text-[8px] font-black uppercase block mt-0.5 leading-none text-slate-800">Scan to Site</span>
+            </div>
+            
+            <div className="bg-white border border-slate-200 p-0.5 rounded-lg w-10 h-10 relative flex items-center justify-center shrink-0">
+              {pet.rescueWebsite ? (
+                <QRCodeImage 
+                  url={pet.rescueWebsite} 
+                  className="w-full h-full object-contain" 
+                  darkColor="#0f172a" 
+                  lightColor="#ffffff00" 
+                />
+              ) : (
+                <Heart className="w-4 h-4 text-rose-350 animate-pulse" />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -1311,11 +1541,6 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                 <PetSvgIllustration species={pet.species} />
               </div>
             )}
-            <div className={`absolute top-2 right-2 text-white font-mono text-[7px] font-black uppercase px-2 py-0.5 rounded tracking-wide z-25 ${
-              isComic2 ? 'bg-pink-600/90' : 'bg-black/70 hover:bg-black/80'
-            }`}>
-              Primary
-            </div>
           </div>
 
           {/* Photo 2 Container */}
@@ -1323,22 +1548,19 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             isComic2 ? 'border-pink-100 shadow-3xs' : 'border-slate-200'
           }`}>
             {secondaryPhoto ? (
-              <img 
+              <RepositionableImage 
                 src={secondaryPhoto} 
                 alt={`${pet.name} Photo 2`} 
-                className="absolute inset-0 w-full h-full object-cover rounded-2xl"
-                referrerPolicy="no-referrer"
+                pet={pet} 
+                setPet={setPet} 
+                className="rounded-2xl"
+                isSecondary={true}
               />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center p-6 bg-stone-50 opacity-60">
                 <PetSvgIllustration species={pet.species} />
               </div>
             )}
-            <div className={`absolute top-2 right-2 text-white font-mono text-[7px] font-black uppercase px-2 py-0.5 rounded tracking-wide z-20 ${
-              isComic2 ? 'bg-rose-500/90' : 'bg-indigo-650/90'
-            }`}>
-              Photo 2
-            </div>
           </div>
         </div>
 
@@ -1410,12 +1632,13 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             {pet.traits.length > 0 && (
               <div className="flex flex-wrap gap-0.5 mt-1.5 w-full">
                 {pet.traits.slice(0, 3).map((t, idx) => (
-                  <span key={idx} className={`text-[7.5px] md:text-[8px] font-extrabold border px-1.5 py-0.5 rounded capitalize ${
+                  <span key={idx} className={`inline-flex items-center whitespace-nowrap shrink-0 text-[7.5px] md:text-[8px] font-extrabold border px-1.5 py-0.5 rounded capitalize leading-none ${
                     isComic2 
                       ? 'bg-rose-50 border-pink-200/85 text-rose-600' 
                       : 'bg-[#f8fafc] border-slate-200 text-slate-705'
                   }`}>
-                    ✨ {t}
+                    <span className="mr-0.5 shrink-0 text-[7px]">✨</span>
+                    <span>{t}</span>
                   </span>
                 ))}
               </div>
@@ -1469,29 +1692,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               isComic2 ? 'bg-[#fffcfb] border-pink-200' : 'bg-stone-50 border-stone-200'
             }`}>
               {pet.rescueWebsite ? (
-                <svg viewBox="0 0 25 25" className={`w-full h-full fill-current ${isComic2 ? 'text-rose-600' : 'text-stone-900'}`} shapeRendering="crispEdges">
-                  <rect x="0" y="0" width="7" height="7" />
-                  <rect x="1" y="1" width="5" height="5" fill="white" />
-                  <rect x="2" y="2" width="3" height="3" />
-                  <rect x="18" y="0" width="7" height="7" />
-                  <rect x="19" y="1" width="5" height="5" fill="white" />
-                  <rect x="20" y="2" width="3" height="3" />
-                  <rect x="0" y="18" width="7" height="7" />
-                  <rect x="1" y="19" width="5" height="5" fill="white" />
-                  <rect x="2" y="20" width="3" height="3" />
-                  <rect x="9" y="1" width="2" height="1" />
-                  <rect x="12" y="3" width="1" height="3" />
-                  <rect x="15" y="0" width="1" height="2" />
-                  <rect x="9" y="10" width="3" height="1" />
-                  <rect x="14" y="9" width="2" height="2" />
-                  <rect x="21" y="9" width="1" height="3" />
-                  <rect x="10" y="15" width="2" height="2" />
-                  <rect x="15" y="15" width="3" height="1" />
-                  <rect x="9" y="21" width="1" height="2" />
-                  <rect x="12" y="20" width="2" height="1" />
-                  <rect x="16" y="22" width="2" height="2" />
-                  <rect x="22" y="18" width="2" height="1" />
-                </svg>
+                <QRCodeImage 
+                  url={pet.rescueWebsite} 
+                  className="w-full h-full object-contain" 
+                  darkColor={isComic2 ? '#db2777' : '#1c1917'} 
+                  lightColor="#ffffff00"
+                />
               ) : (
                 <Heart className={`w-5 h-5 animate-pulse ${isComic2 ? 'text-rose-500' : 'text-rose-350'}`} />
               )}
@@ -1556,7 +1762,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         <div className="w-full flex items-center justify-between mt-0 mb-2 z-10 font-sans shrink-0 border-b border-[#2d5a27]/10 pb-1 select-none">
           {/* Left top: Meet Barnaby! */}
           <div className="relative inline-block pl-2 mt-1">
-            <h1 className="text-4.5xl font-handwritten font-black tracking-tight text-[#0f5c3a] leading-none mb-0.5">
+            <h1 className="text-[38px] font-handwritten font-black tracking-tight text-[#0f5c3a] leading-none mb-0.5">
               Meet {pet.name || 'Lovely Foster'}!
             </h1>
             <svg className="absolute -bottom-1 left-2 w-[calc(100%-12px)] h-2 text-rose-350 pointer-events-none" fill="none" viewBox="0 0 100 10" preserveAspectRatio="none">
@@ -1652,10 +1858,17 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
       )}
 
       {/* ==================== 2. PRIMARY 2-COLUMN SPLIT (EXPANDED PHOTO & DESCRIPTION GRIDS) ==================== */}
-      <div className={`grid grid-cols-12 ${settings.templateId === 'whimsical' || settings.templateId === 'editorial' || settings.templateId === 'polaroid' ? 'gap-2 md:gap-2' : 'gap-3 md:gap-3.5'} ${settings.templateId === 'polaroid' ? 'my-0.5' : 'my-1'} z-10 flex-1 h-full items-stretch w-full min-h-0`}>
+      <div 
+        className={`grid ${settings.templateId === 'editorial' ? '' : 'grid-cols-12'} ${settings.templateId === 'whimsical' || settings.templateId === 'editorial' || settings.templateId === 'polaroid' || settings.templateId === 'comic' ? 'gap-2 md:gap-2' : 'gap-3 md:gap-3.5'} ${settings.templateId === 'polaroid' ? 'my-0.5' : 'my-1'} z-10 flex-1 h-full items-stretch w-full min-h-0`}
+        style={
+          settings.templateId === 'editorial' 
+            ? { gridTemplateColumns: '11fr 13fr' } 
+            : undefined
+        }
+      >
         
         {/* LEFT COLUMN: TRAITS, DETAILED STORY BIO */}
-        <div className={`${settings.templateId === 'editorial' ? 'col-span-5' : settings.templateId === 'polaroid' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-stretch h-full select-text mt-0.5 space-y-2 px-0.5 font-sans min-h-0 overflow-hidden`}>
+        <div className={`${settings.templateId === 'editorial' ? '' : settings.templateId === 'polaroid' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-stretch h-full select-text mt-0.5 space-y-2 px-0.5 font-sans min-h-0 overflow-hidden`}>
           
           {settings.templateId === 'comic' ? (
             /* SWEET ROMANCE STYLED TRAITS/STORY WITH CUSTOM HIGH-FIDELITY ICONS */
@@ -1712,7 +1925,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                       return (
                         <span
                           key={idx}
-                          className={`inline-flex items-center text-[10px] font-bold font-handwritten px-2 py-0.5 text-emerald-955 bg-[#fcf9e8] border border-[#2d5a27]/30 shadow-3xs rounded-tl-xl rounded-br-xl rounded-tr-xs rounded-bl-xs ${rotation} print:transform-none`}
+                          className={`inline-flex items-center whitespace-nowrap shrink-0 text-[10px] font-bold font-handwritten px-2 py-0.5 text-emerald-955 bg-[#fcf9e8] border border-[#2d5a27]/30 shadow-3xs rounded-tl-xl rounded-br-xl rounded-tr-xs rounded-bl-xs ${rotation} print:transform-none`}
                         >
                           <span className="font-sans mr-0.5 text-[10px] text-amber-500 shrink-0">🌸</span>
                           <span>{capTrait}</span>
@@ -1722,9 +1935,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                     return (
                       <span 
                         key={idx} 
-                        className={`inline-flex items-center text-[10px] md:text-[11px] font-black uppercase px-2 py-0.5 rounded-full ${currentTheme.badgeBg} border border-opacity-45 shadow-3xs`}
+                        className={`inline-flex items-center whitespace-nowrap shrink-0 text-[10px] md:text-[11px] font-black uppercase px-2 py-0.5 rounded-full ${currentTheme.badgeBg} border border-opacity-45 shadow-3xs`}
                       >
-                        ✨ {capTrait}
+                        <span className="mr-0.5 shrink-0">✨</span>
+                        <span>{capTrait}</span>
                       </span>
                     );
                   })}
@@ -1764,17 +1978,17 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         </div>
 
         {/* RIGHT COLUMN: HERO PHOTO, THUMBNAILS, PRINCESS-STYLE STAT SHEET */}
-        <div className={`${settings.templateId === 'editorial' ? 'col-span-7' : settings.templateId === 'polaroid' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full space-y-1 pb-0.5 mt-0.5 ${settings.templateId === 'whimsical' ? '' : settings.templateId === 'editorial' ? 'border-l border-stone-350 pl-2' : settings.templateId === 'polaroid' ? 'border-l border-stone-200/50 pl-1.5' : 'border-l border-slate-100 pl-2.5'} min-h-0 overflow-hidden`}>
+        <div className={`${settings.templateId === 'editorial' ? '' : settings.templateId === 'polaroid' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full space-y-1 pb-0.5 mt-0.5 ${settings.templateId === 'whimsical' ? '' : settings.templateId === 'editorial' ? 'border-l border-stone-350 pl-2' : settings.templateId === 'polaroid' ? 'border-l border-stone-200/50 pl-1.5' : settings.templateId === 'comic' ? 'border-l border-pink-100/50 pl-2' : 'border-l border-slate-100 pl-2.5'} min-h-0 overflow-hidden`}>
           
           {/* STYLED PHOTO BOX - SCALED OUT TO FILL FULL WIDEST SPAN */}
-          <div className={`w-full relative flex-1 ${settings.templateId === 'whimsical' ? 'max-h-[68%]' : settings.templateId === 'polaroid' ? 'max-h-[56%]' : 'max-h-[58%]'} min-h-[115px] flex flex-col justify-center items-center`}>
+          <div className={`w-full relative flex-1 ${settings.templateId === 'whimsical' ? 'max-h-[68%]' : settings.templateId === 'polaroid' ? 'max-h-[66%]' : 'max-h-[58%]'} min-h-[115px] flex flex-col justify-center items-center ${settings.templateId === 'comic' ? 'p-1' : ''}`}>
             {settings.templateId === 'polaroid' ? (
-              <div className="bg-white p-1.5 pb-2 border border-stone-250 shadow-sm rotate-[1deg] w-full max-w-full aspect-[0.92] flex flex-col shrink-0 group">
+              <div className="bg-white p-1.5 pb-2 border border-stone-250 shadow-sm rotate-[1deg] w-full max-w-full aspect-[0.80] flex flex-col shrink-0 group">
                 <div className="flex-1 h-0 w-full bg-stone-100 relative rounded-sm overflow-hidden border">
                   {primaryPhoto ? (
                     <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center p-4 bg-amber-50">
+                    <div className="absolute inset-0 flex items-center justify-center p-2 bg-amber-50">
                       <PetSvgIllustration species={pet.species} />
                     </div>
                   )}
@@ -1793,7 +2007,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                   </div>
                 )}
                 {/* Beautiful floating brush overlay like the reference */}
-                <div className="absolute bottom-2 right-2 bg-[#db2777]/95 text-white p-1.5 px-2 rounded-xl text-[9px] font-bold leading-tight max-w-[170px] border border-white/20 shadow-lg rotate-1 flex items-center gap-1 z-20">
+                <div className="absolute bottom-1 right-2 bg-[#db2777]/95 text-white p-1.5 px-2 rounded-xl text-[9px] font-bold leading-tight max-w-[170px] border border-white/20 shadow-lg rotate-1 flex items-center gap-1 z-20">
                   <span>Give {pet.name} the chance to be your next best friend! ❤️</span>
                 </div>
               </div>
@@ -1824,7 +2038,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                 )}
               </div>
             ) : (
-              <div className={`w-full max-w-full aspect-[1.15] overflow-hidden relative rounded-xl border ${currentTheme.borderClass} shadow-3xs group flex-1 h-0 shrink-0`}>
+              <div className={`w-full max-w-full ${settings.templateId === 'minimalist' ? 'aspect-[1.58]' : 'aspect-[1.32]'} overflow-hidden relative rounded-xl border ${currentTheme.borderClass} shadow-3xs group flex-1 h-0 shrink-0`}>
                 {primaryPhoto ? (
                   <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
                 ) : (
@@ -1854,36 +2068,39 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
           {/* PRINCESS STYLE COMPREHENSIVE SPREADSHEET INDEX (DETAILED PET PROFILE) */}
           {settings.templateId === 'whimsical' ? (
-            <div className="p-1.5 rounded-[24px_8px_20px_32px] border-2 border-dotted border-amber-300/80 bg-[#fffdf5]/80 flex flex-col gap-0.5 shadow-3xs text-[11.5px] md:text-[12.5px] font-bold text-[#0f5c3a] font-playful relative overflow-hidden shrink-0">
-              <div className="flex flex-col items-start border-b border-dashed border-amber-200 pb-0.5 font-sans">
-                <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Breed</span>
-                <span className="text-stone-850 font-extrabold text-[12.5px] md:text-[13.5px] leading-snug w-full break-words">{pet.breed || 'Unknown'}</span>
+            <div className="p-2.5 rounded-[22px_10px_18px_26px] border-2 border-dotted border-amber-300/80 bg-[#fffdf5]/80 flex flex-col gap-1.5 shadow-2xs text-[11px] md:text-[11.5px] font-bold text-[#0f5c3a] font-playful relative overflow-hidden shrink-0">
+              <div className="text-center border-b border-dashed border-amber-200 pb-1.5 font-playful">
+                <span className="text-stone-850 font-extrabold text-[13.5px] md:text-[14.5px] leading-snug w-full break-words block font-playful">{pet.breed || 'Unknown'}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
-                <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Age</span>
-                <span className="text-stone-850 font-extrabold text-[11px] md:text-[12px]">{pet.age || 'Unknown Age'}</span>
+              <div className="flex flex-col gap-y-1 py-1 border-b border-dashed border-amber-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-[#a27b3e] text-[9.5px] md:text-[10px] uppercase font-bold font-handwritten leading-none">Age:</span>
+                  <span className="text-stone-850 font-extrabold text-[11px] md:text-[11.5px] leading-none font-playful">{pet.age || 'Unknown'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#a27b3e] text-[9.5px] md:text-[10px] uppercase font-bold font-handwritten leading-none">Weight:</span>
+                  <span className="text-stone-850 font-extrabold text-[11px] md:text-[11.5px] leading-none font-playful">{pet.weight || 'Medium'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#a27b3e] text-[9.5px] md:text-[10px] uppercase font-bold font-handwritten leading-none">Housetrained?</span>
+                  <span className="text-stone-850 font-extrabold text-[10.5px] md:text-[11px] leading-none font-playful">
+                    {pet.houseTrained === 'yes' ? '✓ Yup!' : pet.houseTrained === 'working-on-it' ? 'Learning!' : '✗ Nope'}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
-                <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Weight</span>
-                <span className="text-stone-850 font-extrabold text-[11px] md:text-[12px]">{pet.weight || 'Medium size'}</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
-                <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Housetrained?</span>
-                <span className="text-stone-850 font-extrabold uppercase text-[9.5px] md:text-[10.5px]">
-                  {pet.houseTrained === 'yes' ? '✓ Yup!' : pet.houseTrained === 'working-on-it' ? 'Learning!' : '✗ Nope'}
-                </span>
-              </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
-                <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Dog Friendly?</span>
-                {renderTableCheckmark(pet.goodWithDogs)}
-              </div>
-              <div className="flex justify-between items-center border-b border-dashed border-amber-200 pb-0.5">
-                <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Cat Friendly?</span>
-                {renderTableCheckmark(pet.goodWithCats)}
-              </div>
-              <div className="flex justify-between items-center pb-0.5">
-                <span className="text-[#a27b3e] font-bold text-[9.5px] md:text-[10.5px] uppercase font-handwritten">Kid Friendly?</span>
-                {renderTableCheckmark(pet.goodWithKids)}
+              <div className="grid grid-cols-3 gap-1 pt-0.5 text-center text-[8.5px] md:text-[9px] font-bold font-sans w-full">
+                <div className="bg-white/90 border border-amber-200/60 px-0.5 py-0.5 rounded leading-none">
+                  <span className="text-[#a27b3e] text-[6.5px] md:text-[7px] block font-bold leading-none uppercase">DOGS</span>
+                  <span className="text-stone-850 font-black leading-none block mt-0.5 text-[8.5px] md:text-[9px] font-sans">{pet.goodWithDogs === 'yes' ? '✓ OK' : pet.goodWithDogs === 'no' ? '✗ No' : pet.goodWithDogs === 'selective' ? 'Maybe' : '—'}</span>
+                </div>
+                <div className="bg-white/90 border border-amber-200/60 px-0.5 py-0.5 rounded leading-none">
+                  <span className="text-[#a27b3e] text-[6.5px] md:text-[7px] block font-bold leading-none uppercase">CATS</span>
+                  <span className="text-stone-850 font-black leading-none block mt-0.5 text-[8.5px] md:text-[9px] font-sans">{pet.goodWithCats === 'yes' ? '✓ OK' : pet.goodWithCats === 'no' ? '✗ No' : pet.goodWithCats === 'selective' ? 'Maybe' : '—'}</span>
+                </div>
+                <div className="bg-white/90 border border-[#b3cca8]/60 px-0.5 py-0.5 rounded leading-none">
+                  <span className="text-[#a27b3e] text-[6.5px] md:text-[7px] block font-bold leading-none uppercase">KIDS</span>
+                  <span className="text-stone-850 font-black leading-none block mt-0.5 text-[8.5px] md:text-[9px] font-sans">{pet.goodWithKids === 'yes' ? '✓ OK' : pet.goodWithKids === 'no' ? '✗ No' : pet.goodWithKids === 'selective' ? 'Maybe' : '—'}</span>
+                </div>
               </div>
             </div>
           ) : settings.templateId === 'comic' ? (
@@ -1938,7 +2155,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                 </div>
                 <div className="flex justify-between items-center border-b border-dashed border-slate-200/40 pb-0.5 font-sans">
                   <span className="text-slate-400 font-extrabold text-[7.5px] uppercase shrink-0">
-                    {settings.templateId === 'minimalist' ? 'weight' : 'Weight / Size'}
+                    {settings.templateId === 'minimalist' || settings.templateId === 'polaroid' ? 'weight' : 'Weight / Size'}
                   </span>
                   <span className="text-slate-900 font-black">{pet.weight || 'Medium size'}</span>
                 </div>
@@ -2014,32 +2231,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           
           <div className="bg-stone-50 border border-stone-200 p-0.5 rounded-lg w-14 h-14 relative flex items-center justify-center shadow-3xs shrink-0">
             {pet.rescueWebsite ? (
-              <svg viewBox="0 0 25 25" className="w-full h-full text-stone-900 fill-current" shapeRendering="crispEdges">
-                <rect x="0" y="0" width="7" height="7" />
-                <rect x="1" y="1" width="5" height="5" fill="white" />
-                <rect x="2" y="2" width="3" height="3" />
-                
-                <rect x="18" y="0" width="7" height="7" />
-                <rect x="19" y="1" width="5" height="5" fill="white" />
-                <rect x="20" y="2" width="3" height="3" />
-                
-                <rect x="0" y="18" width="7" height="7" />
-                <rect x="1" y="19" width="5" height="5" fill="white" />
-                <rect x="2" y="20" width="3" height="3" />
-                
-                <rect x="9" y="1" width="2" height="1" />
-                <rect x="12" y="3" width="1" height="3" />
-                <rect x="15" y="0" width="1" height="2" />
-                <rect x="9" y="10" width="3" height="1" />
-                <rect x="14" y="9" width="2" height="2" />
-                <rect x="21" y="9" width="1" height="3" />
-                <rect x="10" y="15" width="2" height="2" />
-                <rect x="15" y="15" width="3" height="1" />
-                <rect x="9" y="21" width="1" height="2" />
-                <rect x="12" y="20" width="2" height="1" />
-                <rect x="16" y="22" width="2" height="2" />
-                <rect x="22" y="18" width="2" height="1" />
-              </svg>
+              <QRCodeImage 
+                url={pet.rescueWebsite} 
+                className="w-full h-full object-contain" 
+                darkColor="#1c1917" 
+                lightColor="#ffffff00"
+              />
             ) : (
               <Heart className="w-7 h-7 text-rose-300 animate-pulse" />
             )}

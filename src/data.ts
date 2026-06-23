@@ -117,12 +117,12 @@ export const SAMPLE_PETS: Record<string, FosterPetData> = {
     funnyHabit: "Snores exactly like an old outboard motor and sleeps with all four feet pointing straight at the ceiling.",
     perfectDay: "Going to the park, falling awkwardly into a mud puddle, and then sleeping on your clean rug.",
     loveLanguage: "Placing his massive wet chin directly on your keyboard during work calls until you surrender a kiss.",
-    estimatedBio: "Meet Barnaby! He’s a gorgeous Golden Retriever mix who has never met a mud puddle he didn't fit into. At just 1.5 years old, Barnaby represents the pinnacle of goofy, high-octane joy. His love language is full-body snuggles, and he will happily use your feet as his personal pillow. Barnaby is fully house trained and gets along wonderfully with kids and other dogs. If you have been looking for an elite velcro pet who will cheer you up 24/7, Barnaby is your boy!",
+    estimatedBio: "Barnaby is a gorgeous Golden Retriever mix who has never met a mud puddle he didn't fit into. At just 1.5 years old, Barnaby represents the pinnacle of goofy, high-octane joy. His love language is full-body snuggles, and he will happily use your feet as his personal pillow. Barnaby is fully house trained and gets along wonderfully with kids and other dogs. If you have been looking for an elite velcro pet who will cheer you up 24/7, Barnaby is your boy!",
     fosterName: "Sarah M.",
-    rescueOrg: "Hopeful Paws Rescue",
+    rescueOrg: "Grateful Paws Rescue",
     fosterEmail: "sarah.fosters@example.org",
-    fosterPhone: "512-555-0192",
-    rescueWebsite: "https://www.hopefulpaws.org",
+    fosterPhone: "",
+    rescueWebsite: "https://www.gratefulpawsrescue.org",
     photos: [] // Will be loaded dynamically with beautiful local illustrations or base64 samples
   },
   luna: {
@@ -146,7 +146,7 @@ export const SAMPLE_PETS: Record<string, FosterPetData> = {
     fosterName: "Marcus Vance",
     rescueOrg: "Whiskers & Co",
     fosterEmail: "marcus.v@example.org",
-    fosterPhone: "206-555-0138",
+    fosterPhone: "",
     rescueWebsite: "https://www.whiskersseattle.com",
     photos: []
   },

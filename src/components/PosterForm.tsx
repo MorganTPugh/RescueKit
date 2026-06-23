@@ -29,6 +29,7 @@ interface PosterFormProps {
   isGeneratingBio: boolean;
   onLoadPreset: (presetKey: string) => void;
   onSwitchToPreview?: () => void;
+  onStartFresh?: () => void;
 }
 
 export const PosterForm: React.FC<PosterFormProps> = ({
@@ -39,7 +40,8 @@ export const PosterForm: React.FC<PosterFormProps> = ({
   onGenerateBio,
   isGeneratingBio,
   onLoadPreset,
-  onSwitchToPreview
+  onSwitchToPreview,
+  onStartFresh
 }) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [customTraitInput, setCustomTraitInput] = useState<string>('');
@@ -174,20 +176,30 @@ export const PosterForm: React.FC<PosterFormProps> = ({
       <div className="mb-4 bg-sky-50/60 border border-sky-100 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 animate-fade-in">
         <div className="flex items-center gap-1.5">
           <Workflow className="w-4 h-4 text-indigo-500" />
-          <span className="text-xs font-bold text-slate-700">Want a head start? Load an example:</span>
+          <span className="text-xs font-black text-slate-800">Need a blank form or example?</span>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
+          {onStartFresh && (
+            <button
+              id="start-fresh-btn"
+              onClick={onStartFresh}
+              className="text-[11px] font-black bg-orange-50 border border-orange-200 hover:bg-orange-100 hover:border-orange-400 text-orange-700 hover:text-orange-900 px-3 py-1 rounded-full shadow-xs transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+            >
+              <Trash2 className="w-3 h-3 text-orange-600 shrink-0" />
+              <span>✧ Start Fresh / Clear All</span>
+            </button>
+          )}
           <button
             id="load-barnaby-btn"
             onClick={() => onLoadPreset('barnaby')}
-            className="text-[11px] font-bold bg-white border border-sky-100 hover:bg-sky-100 hover:border-sky-300 text-slate-700 hover:text-indigo-750 px-2.5 py-1 rounded-full shadow-2xs transition-all cursor-pointer"
+            className="text-[11px] font-extrabold bg-amber-50 border border-amber-200 hover:bg-amber-100 hover:border-amber-400 text-amber-800 hover:text-amber-905 px-2.5 py-1 rounded-full shadow-2xs transition-all cursor-pointer"
           >
-            🐶 Barnaby (Golden mix)
+            🐶 Barnaby (Dog)
           </button>
           <button
             id="load-luna-btn"
             onClick={() => onLoadPreset('luna')}
-            className="text-[11px] font-bold bg-white border border-sky-100 hover:bg-sky-100 hover:border-sky-300 text-slate-700 hover:text-indigo-750 px-2.5 py-1 rounded-full shadow-2xs transition-all cursor-pointer"
+            className="text-[11px] font-extrabold bg-rose-50 border border-rose-200 hover:bg-rose-100 hover:border-rose-450 text-rose-800 hover:text-rose-905 px-2.5 py-1 rounded-full shadow-2xs transition-all cursor-pointer"
           >
             🐱 Penelope (Cat)
           </button>
@@ -203,7 +215,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             className={`flex items-center gap-1.5 sm:gap-2 pb-2.5 border-b-2 text-xs font-semibold shrink-0 transition-all cursor-pointer ${
               activeStep === idx 
                 ? 'border-indigo-500 text-indigo-600 font-bold' 
-                : 'border-transparent text-slate-400 hover:text-slate-750'
+                : 'border-transparent text-slate-500 hover:text-slate-750'
             }`}
           >
             <div className={`w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
@@ -228,7 +240,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Pet Name *</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Pet Name *</label>
               <input
                 id="pet-name-input"
                 type="text"
@@ -241,7 +253,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             </div>
             
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Species</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Species</label>
               <select
                 id="pet-species-select"
                 name="species"
@@ -258,7 +270,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           {pet.species === 'other' && (
             <div className="animate-slide-up">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Specify Species Name</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Specify Species Name</label>
               <input
                 id="pet-custom-species-input"
                 type="text"
@@ -273,7 +285,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Breed / Mix *</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Breed / Mix *</label>
               <input
                 id="pet-breed-input"
                 type="text"
@@ -285,7 +297,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
               />
             </div>
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Age *</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Age *</label>
               <input
                 id="pet-age-input"
                 type="text"
@@ -300,7 +312,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Gender</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Gender</label>
               <select
                 id="pet-gender-select"
                 name="gender"
@@ -314,7 +326,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
               </select>
             </div>
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Size / Weight</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Size / Weight</label>
               <input
                 id="pet-weight-input"
                 type="text"
@@ -326,7 +338,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
               />
             </div>
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Location *</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Location *</label>
               <input
                 id="pet-location-input"
                 type="text"
@@ -344,7 +356,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             <h4 className="text-xs font-black text-slate-800 mb-2">Social & Potty Compatibility</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
-                <label className="text-[10px] font-black text-slate-405 uppercase tracking-widest block mb-1">Good with dogs?</label>
+                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Good with dogs?</label>
                 <select
                   id="pet-compat-dogs"
                   name="goodWithDogs"
@@ -359,7 +371,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-black text-slate-405 uppercase tracking-widest block mb-1">Good with cats?</label>
+                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Good with cats?</label>
                 <select
                   id="pet-compat-cats"
                   name="goodWithCats"
@@ -374,7 +386,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-black text-slate-405 uppercase tracking-widest block mb-1">Good with kids? *</label>
+                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Good with kids? *</label>
                 <select
                   id="pet-compat-kids"
                   name="goodWithKids"
@@ -389,7 +401,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-black text-slate-405 uppercase tracking-widest block mb-1">Potty Trained?</label>
+                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Potty Trained?</label>
                 <select
                   id="pet-compat-potty"
                   name="houseTrained"
@@ -414,12 +426,12 @@ export const PosterForm: React.FC<PosterFormProps> = ({
       {activeStep === 1 && (
         <div className="space-y-4 animate-fade-in text-slate-805">
           <div>
-            <h3 className="text-sm font-black text-slate-850 mb-1">Personality Traits & Humorous Habits</h3>
+            <h3 className="text-sm font-black text-slate-850 mb-1">Personality Traits</h3>
             <p className="text-xs text-slate-500">Describe what makes them wonderfully quirky, or add custom tags!</p>
           </div>
 
           <div className="border border-sky-100 rounded-2xl p-4 bg-sky-50/50">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Select Core Traits (Up to 4)</label>
+            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-2">Select Core Traits (Up to 4)</label>
             <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
               {PRESET_TRAITS.map((trait, idx) => {
                 const isSelected = pet.traits.includes(trait);
@@ -463,8 +475,8 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Core Foster Survey Questionnaire Questions condensed into 1 larger description box */}
           <div className="space-y-3.5 pt-2 border-t border-sky-50">
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 leading-relaxed">
-                Describe what people should know about this pet (favorite activities, how they show love, traits people should know, etc) *
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1.5 leading-relaxed">
+                Describe this pet (favorite activities, how they show love, etc.) *
               </label>
               <textarea
                 name="estimatedBio"
@@ -536,7 +548,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                   <div className="absolute bottom-0 text-center inset-x-0 bg-slate-800/80 text-[9px] py-0.5 text-white tracking-widest uppercase">
-                    {idx === 0 ? 'Primary' : `Slide ${idx + 1}`}
+                    {idx === 0 ? 'Photo 1' : `Photo ${idx + 1}`}
                   </div>
                 </div>
               ))}
@@ -549,7 +561,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
               <div>
                 <h4 className="text-xs font-black text-slate-900">📸 Photo Framing</h4>
                 <p className="text-[10px] text-slate-400 font-semibold mt-0.5 leading-relaxed">
-                  Drag photo to reposition · Scroll wheel or pinch (mobile) to zoom · Right-click for zoom options
+                  Drag photo in the preview section to reposition · Right-click for zoom options
                 </p>
               </div>
               <button
@@ -565,17 +577,17 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Contact Details & Rescue Information */}
           <div className="space-y-3 pt-3 border-t border-sky-50">
             <h4 className="text-xs font-black text-slate-850 mb-0.5 flex items-center gap-1.5"><HeartHandshake className="w-4 h-4 text-indigo-550" /> Organization Contact Information</h4>
-            <p className="text-[10px] font-semibold text-slate-400 mb-1.5">Only add what you want to show on the flyer</p>
+            <p className="text-[10px] font-semibold text-slate-600 mb-1.5">Only add details that should show on the flyer</p>
             
             <div className="grid grid-cols-1 gap-3">
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Rescue or Shelter Organization *</label>
+                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Rescue or Shelter Organization *</label>
                 <input
                   type="text"
                   name="rescueOrg"
                   value={pet.rescueOrg}
                   onChange={handleTextChange}
-                  placeholder="e.g. Hopeful Paws Rescue"
+                  placeholder="e.g. Grateful Paws Rescue"
                   className="w-full text-xs font-semibold bg-sky-50/70 border-2 border-sky-100 focus:border-indigo-400 rounded-xl p-2.5 outline-none placeholder:text-slate-400"
                 />
               </div>
@@ -583,7 +595,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">
                   Contact Email
                 </label>
                 <input
@@ -596,7 +608,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 />
               </div>
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">
                   Contact Phone
                 </label>
                 <input
@@ -611,7 +623,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             </div>
 
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Rescue Website URL (Auto-generates QR Code!)</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Rescue Website URL (Auto-generates QR Code!)</label>
               <input
                 type="text"
                 name="rescueWebsite"
@@ -636,39 +648,94 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           </div>
 
           {/* Template Choice Selectors */}
-          <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Choose Poster Style / Layout</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              {[
-                { id: 'whimsical', name: '🐱 Cute Whimsical', desc: 'Soft pastel bubbles' },
-                { id: 'minimalist', name: '◽ Clean Modern', desc: 'Sleek asymmetric grid' },
-                { id: 'editorial', name: '📰 Editorial Cover', desc: 'Bold classic serif headers' },
-                { id: 'comic', name: '💖 Sweet Romance', desc: 'Elegant pink & custom icons' },
-                { id: 'comic-2-photos', name: '💖 Sweet Romance - 2 photos', desc: 'Elegant pink layout with 2 photos' },
-                { id: 'polaroid', name: '📸 Polaroid Classic', desc: 'Cozy diary snapshot' },
-                { id: 'two-photos', name: '🖼️ 2 Photos', desc: 'Twin large pictures, concise info' },
-                { id: 'bio-only', name: '📝 Biography Only', desc: 'Simple text for Adoption Bios' }
-              ].map(t => (
-                <button
-                  key={t.id}
-                  id={`template-btn-${t.id}`}
-                  onClick={() => setSettings(prev => ({ ...prev, templateId: t.id as PosterTemplateId }))}
-                  className={`p-2.5 text-left border rounded-xl flex flex-col justify-between h-20 transition-all cursor-pointer ${
-                    settings.templateId === t.id 
-                      ? 'border-indigo-400 bg-indigo-50/40 shadow-xs' 
-                      : 'border-sky-100 bg-white hover:border-indigo-305 hover:bg-sky-50/20'
-                  }`}
-                >
-                  <span className="text-[11px] font-extrabold text-slate-900 block leading-tight">{t.name}</span>
-                  <span className="text-[9px] text-slate-500 block leading-tight mt-1">{t.desc}</span>
-                </button>
-              ))}
+          <div className="space-y-4">
+            <div>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-2">Choose Poster Style / Layout</label>
+              
+              {/* Row 1: Single-Photo Classics */}
+              <div className="mb-4">
+                <span className="text-[9.5px] font-black text-indigo-505 uppercase tracking-wider block mb-1.5 opacity-80">Single-Photo Layouts</span>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                  {[
+                    { id: 'editorial', name: '📰 Editorial Cover', desc: 'Bold classic serif headers' },
+                    { id: 'minimalist', name: '◽ Clean Modern', desc: 'Sleek asymmetric grid' },
+                    { id: 'whimsical', name: '🐱 Cute Whimsical', desc: 'Soft pastel bubbles' },
+                    { id: 'polaroid', name: '📸 Polaroid Classic', desc: 'Cozy diary snapshot' },
+                    { id: 'comic', name: '💖 Sweet Romance', desc: 'Elegant pink & custom icons' }
+                  ].map(t => (
+                    <button
+                      key={t.id}
+                      id={`template-btn-${t.id}`}
+                      onClick={() => setSettings(prev => ({ ...prev, templateId: t.id as PosterTemplateId }))}
+                      className={`p-2 hover:scale-[1.01] text-left border rounded-xl flex flex-col justify-between h-20 transition-all cursor-pointer ${
+                        settings.templateId === t.id 
+                          ? 'border-indigo-400 bg-indigo-50/45 shadow-xs font-semibold' 
+                          : 'border-sky-100 bg-white hover:border-indigo-305 hover:bg-sky-50/20'
+                      }`}
+                    >
+                      <span className="text-[10px] font-extrabold text-slate-900 block leading-tight">{t.name}</span>
+                      <span className="text-[8.5px] text-slate-500 block leading-tight mt-1">{t.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Row 2: Photo-Focused & Dual-Photo Layouts */}
+              <div className="mb-4">
+                <span className="text-[9.5px] font-black text-indigo-505 uppercase tracking-wider block mb-1.5 opacity-80">Two-Photo Layouts</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  {[
+                    { id: 'comic-2-photos', name: '💖 2 Photos- Sweet Romance', desc: 'Elegant pink layout with 2 photos' },
+                    { id: 'two-photos', name: '🖼️ 2 Photos - Modern', desc: 'Twin large pictures, concise info' },
+                    { id: 'extreme-duo', name: '📷 Photo-Focused', desc: 'Maximized pictures, limited info' }
+                  ].map(t => (
+                    <button
+                      key={t.id}
+                      id={`template-btn-${t.id}`}
+                      onClick={() => setSettings(prev => ({ ...prev, templateId: t.id as PosterTemplateId }))}
+                      className={`p-2 hover:scale-[1.01] text-left border rounded-xl flex flex-col justify-between h-20 transition-all cursor-pointer ${
+                        settings.templateId === t.id 
+                          ? 'border-indigo-400 bg-indigo-50/45 shadow-xs font-semibold' 
+                          : 'border-sky-100 bg-white hover:border-indigo-305 hover:bg-sky-50/20'
+                      }`}
+                    >
+                      <span className="text-[10px] font-extrabold text-slate-900 block leading-tight">{t.name}</span>
+                      <span className="text-[8.5px] text-slate-550 block leading-tight mt-1">{t.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Row 3: Biography-Only Layouts */}
+              <div>
+                <span className="text-[9.5px] font-black text-indigo-505 uppercase tracking-wider block mb-1.5 opacity-80">Text Only - Copy / Paste for captions or descriptions</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  {[
+                    { id: 'bio-only', name: '📝 Biography Only', desc: 'Simple text for Adoption Bios' }
+                  ].map(t => (
+                    <button
+                      key={t.id}
+                      id={`template-btn-${t.id}`}
+                      onClick={() => setSettings(prev => ({ ...prev, templateId: t.id as PosterTemplateId }))}
+                      className={`p-2 hover:scale-[1.01] text-left border rounded-xl flex flex-col justify-between h-20 transition-all cursor-pointer ${
+                        settings.templateId === t.id 
+                          ? 'border-indigo-400 bg-indigo-50/45 shadow-xs font-semibold' 
+                          : 'border-sky-100 bg-white hover:border-indigo-305 hover:bg-sky-50/20'
+                      }`}
+                    >
+                      <span className="text-[10px] font-extrabold text-slate-900 block leading-tight">{t.name}</span>
+                      <span className="text-[8.5px] text-slate-505 block leading-tight mt-1">{t.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
 
           {/* Preset Color Themes */}
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Choose Color Palette</label>
+            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-2">Choose Color Palette</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {THEMES.map(theme => (
                 <button
@@ -691,7 +758,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Header Title Accent badge text */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Poster Title Preset</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Poster Title Preset</label>
               <select
                 value={settings.headingText}
                 onChange={e => setSettings(prev => ({ ...prev, headingText: e.target.value }))}
@@ -703,7 +770,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
               </select>
             </div>
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Custom Header</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Custom Header</label>
               <input
                 type="text"
                 value={settings.headingText}
@@ -762,7 +829,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             )}
 
             <div>
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Pet Description - Final Version (editable)</label>
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Pet Description - Final Version (editable)</label>
               <textarea
                 name="estimatedBio"
                 value={pet.estimatedBio}

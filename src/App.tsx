@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toPng } from 'html-to-image';
+import { jsPDF } from 'jspdf';
 import { FosterPetData, PosterDesignSettings } from './types';
 import { SAMPLE_PETS } from './data';
 import { PosterForm } from './components/PosterForm';
@@ -7,6 +8,7 @@ import { PosterTemplates } from './components/PosterTemplates';
 import { FosterGuide } from './components/FosterGuide';
 import { RescueGrants } from './components/RescueGrants';
 import { PosterPreviewWrapper } from './components/PosterPreviewWrapper';
+import { RescueNeedsFlyers } from './components/RescueNeedsFlyers';
 import { 
   Heart, 
   Printer, 
@@ -31,6 +33,7 @@ export default function App() {
   const [showFeedbackModal, setShowFeedbackModal] = useState<boolean>(false);
   const [feedbackSuccess, setFeedbackSuccess] = useState<boolean>(false);
   const [isSendingFeedback, setIsSendingFeedback] = useState<boolean>(false);
+  const [feedbackError, setFeedbackError] = useState<string | null>(null);
   const [feedbackForm, setFeedbackForm] = useState({
     name: '',
     email: '',
@@ -38,11 +41,37 @@ export default function App() {
     message: ''
   });
 
-  // Pre-load Barnaby dog preset so user has lovely populated state instantly
+  // Start with a blank slate so users can enter details fresh or choose an example preset
   const [pet, setPet] = useState<FosterPetData>({
-    ...SAMPLE_PETS.barnaby,
-    // Add default template-friendly photos or let standard vector fallback do its lovely work
-    photos: [] 
+    name: '',
+    species: 'dog',
+    breed: '',
+    age: '',
+    gender: 'not-specified',
+    weight: '',
+    location: '',
+    traits: [],
+    goodWithDogs: 'unknown',
+    goodWithCats: 'unknown',
+    goodWithKids: 'unknown',
+    houseTrained: 'unknown',
+    favoriteActivity: '',
+    funnyHabit: '',
+    perfectDay: '',
+    loveLanguage: '',
+    estimatedBio: '',
+    fosterName: '',
+    rescueOrg: '',
+    fosterEmail: '',
+    fosterPhone: '',
+    rescueWebsite: '',
+    photos: [],
+    photoZoom: 1,
+    photoOffsetX: 0,
+    photoOffsetY: 0,
+    photoZoom2: 1,
+    photoOffsetX2: 0,
+    photoOffsetY2: 0
   });
 
   const [settings, setSettings] = useState<PosterDesignSettings>({
@@ -58,7 +87,7 @@ export default function App() {
   const [showHowToPrintModal, setShowHowToPrintModal] = useState<boolean>(false);
   const [showFullPreview, setShowFullPreview] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
-  const [activeSection, setActiveSection] = useState<'posters' | 'guide' | 'grants'>('posters');
+  const [activeSection, setActiveSection] = useState<'posters' | 'guide' | 'rescue-flyers' | 'grants'>('posters');
   const [posterMobileTab, setPosterMobileTab] = useState<'edit' | 'preview'>('edit');
 
   // Overwrite state on preset load request
@@ -68,6 +97,42 @@ export default function App() {
       setSuccessToast(`Successfully loaded ${SAMPLE_PETS[presetKey].name}'s details! Customize them below.`);
       setTimeout(() => setSuccessToast(null), 4000);
     }
+  };
+
+  const handleStartFresh = () => {
+    setPet({
+      name: '',
+      species: 'dog',
+      breed: '',
+      age: '',
+      gender: 'not-specified',
+      weight: '',
+      location: '',
+      traits: [],
+      goodWithDogs: 'unknown',
+      goodWithCats: 'unknown',
+      goodWithKids: 'unknown',
+      houseTrained: 'unknown',
+      favoriteActivity: '',
+      funnyHabit: '',
+      perfectDay: '',
+      loveLanguage: '',
+      estimatedBio: '',
+      fosterName: '',
+      rescueOrg: '',
+      fosterEmail: '',
+      fosterPhone: '',
+      rescueWebsite: '',
+      photos: [],
+      photoZoom: 1,
+      photoOffsetX: 0,
+      photoOffsetY: 0,
+      photoZoom2: 1,
+      photoOffsetX2: 0,
+      photoOffsetY2: 0
+    });
+    setSuccessToast("Blank slate ready! Start entering your foster pet's details.");
+    setTimeout(() => setSuccessToast(null), 4000);
   };
 
   // Safe handler to fetch generated bios from server API endpoint
@@ -99,16 +164,12 @@ export default function App() {
     }
   };
 
-  const handlePrint = () => {
-    // Standard high-quality browser printing call
-    window.print();
-  };
-
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!feedbackForm.message.trim()) return;
 
     setIsSendingFeedback(true);
+    setFeedbackError(null);
     try {
       const response = await fetch('/api/feedback', {
         method: 'POST',
@@ -118,13 +179,19 @@ export default function App() {
       
       if (response.ok) {
         setFeedbackSuccess(true);
+        setFeedbackForm({
+          name: '',
+          email: '',
+          subject: 'RescueKit Suggestion/Feedback',
+          message: ''
+        });
       } else {
         const data = await response.json();
-        setErrorMessage(data.error || 'Failed to submit feedback.');
+        setFeedbackError(data.error || 'Failed to submit feedback.');
       }
     } catch (err: any) {
       console.error(err);
-      setErrorMessage('Failed to send feedback. Please try again.');
+      setFeedbackError('Failed to send feedback. Please try again.');
     } finally {
       setIsSendingFeedback(false);
     }
@@ -157,19 +224,38 @@ export default function App() {
         }
       });
       
-      const link = document.createElement('a');
-      const filename = `${pet.name ? pet.name.toLowerCase().replace(/[^a-z0-9]/g, '_') : 'pet'}_${targetRatio}.png`;
-      link.download = filename;
-      link.href = dataUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      if (targetRatio === 'flyer') {
+        // PDF Export - Create a standard letter-sized portrait page (8.5 x 11 inches)
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'in',
+          format: [8.5, 11]
+        });
+        
+        // Add the high-resolution rendered image spanning the full page width and height
+        pdf.addImage(dataUrl, 'PNG', 0, 0, 8.5, 11, undefined, 'FAST');
+        
+        const filename = `${pet.name ? pet.name.toLowerCase().replace(/[^a-z0-9]/g, '_') : 'pet'}_poster.pdf`;
+        pdf.save(filename);
+        
+        setSuccessToast(`Successfully saved ${pet.name || 'your pet'}'s Printable Poster as a high-resolution 8.5x11 PDF!`);
+      } else {
+        // PNG export for Instagram square
+        const link = document.createElement('a');
+        const filename = `${pet.name ? pet.name.toLowerCase().replace(/[^a-z0-9]/g, '_') : 'pet'}_${targetRatio}.png`;
+        link.download = filename;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        setSuccessToast(`Successfully saved ${pet.name || 'your pet'}'s Instagram Square as a high-resolution PNG image!`);
+      }
       
-      setSuccessToast(`Successfully saved ${pet.name || 'your pet'}'s ${targetRatio === 'flyer' ? 'Printable Poster' : 'Instagram Square'} as a high-resolution PNG image!`);
       setTimeout(() => setSuccessToast(null), 5000);
     } catch (err: any) {
       console.error(err);
-      setErrorMessage(`Failed to export image: ${err.message || 'Error occurred during graphic rendering.'}`);
+      setErrorMessage(`Failed to export: ${err.message || 'Error occurred during graphic rendering.'}`);
     } finally {
       if (previousRatio !== targetRatio) {
         setSettings(prev => ({ ...prev, aspectRatio: previousRatio }));
@@ -195,7 +281,7 @@ export default function App() {
             </div>
             <div>
               <span className="text-2xl font-black text-slate-800 tracking-tight">Rescue<span className="text-indigo-600">Kit</span></span>
-              <p className="hidden sm:block text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5">Free Support Tools for Rescues & Fosters</p>
+              <p className="hidden sm:block text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5">Free Support Tools for Animal Rescues, Fosters, and Volunteers</p>
             </div>
           </div>
 
@@ -210,7 +296,7 @@ export default function App() {
               }`}
             >
               <span className="text-[11px] sm:text-xs font-black flex items-center gap-1">🎨 Flyers & Bios</span>
-              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'posters' ? 'text-indigo-100' : 'text-slate-400'}`}>For fosters and rescues</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'posters' ? 'text-indigo-100' : 'text-slate-400'}`}>For Adoptable Animals</span>
             </button>
             <button
               onClick={() => setActiveSection('guide')}
@@ -222,6 +308,17 @@ export default function App() {
             >
               <span className="text-[11px] sm:text-xs font-black flex items-center gap-1">📖 Foster Guide</span>
               <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'guide' ? 'text-indigo-100' : 'text-slate-400'}`}>Tips & Tricks</span>
+            </button>
+            <button
+              onClick={() => setActiveSection('rescue-flyers')}
+              className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition-all flex flex-col items-start gap-0.5 text-left ${
+                activeSection === 'rescue-flyers'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-150'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-sky-100/50'
+              }`}
+            >
+              <span className="text-[11px] sm:text-xs font-black flex items-center gap-1">📢 Flyers</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'rescue-flyers' ? 'text-indigo-100' : 'text-slate-400'}`}>For Rescue Needs</span>
             </button>
             <button
               onClick={() => setActiveSection('grants')}
@@ -338,6 +435,7 @@ export default function App() {
               onGenerateBio={handleGenerateBio}
               isGeneratingBio={isGeneratingBio}
               onLoadPreset={handleLoadPreset}
+              onStartFresh={handleStartFresh}
               onSwitchToPreview={() => setPosterMobileTab('preview')}
             />
 
@@ -422,14 +520,14 @@ export default function App() {
                   onClick={() => handleDownloadImageSpecific('flyer')}
                   disabled={isDownloading}
                   className="cursor-pointer flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-extrabold text-[11px] sm:text-xs py-3 px-2 rounded-xl transition-all shadow-md shadow-emerald-100 hover:shadow-lg hover:scale-[1.01] active:scale-95 text-center leading-none"
-                  title="Save high resolution vertical poster (8.5x11)"
+                  title="Save high resolution vertical poster as PDF (8.5x11)"
                 >
                   {isDownloading ? (
                     <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                   ) : (
                     <Download className="w-4 h-4 shrink-0" />
                   )}
-                  <span>Save Poster (8.5x11 PNG)</span>
+                  <span>Save Poster (8.5x11 PDF)</span>
                 </button>
 
                 <button
@@ -448,16 +546,6 @@ export default function App() {
                   <span>Save Instagram Square (PNG)</span>
                 </button>
               </div>
-
-              <button
-                id="print-pdf-panel-btn"
-                type="button"
-                onClick={handlePrint}
-                className="cursor-pointer w-full flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs py-3 px-4 rounded-xl transition-all shadow-md shadow-indigo-100 hover:shadow-lg hover:scale-[1.01] active:scale-95 text-center leading-none"
-              >
-                <Printer className="w-4 h-4" />
-                <span>Print Poster (8.5x11 PDF)</span>
-              </button>
             </div>
 
             <div className="no-print text-center max-w-sm mt-3">
@@ -467,7 +555,7 @@ export default function App() {
                 </p>
               ) : (
                 <p className="text-xs text-stone-400 font-medium animate-fade-in">
-                  📄 <strong className="text-stone-600">Printable Poster active:</strong> Standard vertical poster sizes (8.5x11 in). Print as PDF and pin it around town—on coffee shop bulletin boards, local parks, and vets!
+                  📄 <strong className="text-stone-600">Printable Poster:</strong> Save/Print as PDF and pin it around town—on coffee shop bulletin boards, local parks, and vets!
                 </p>
               )}
             </div>
@@ -478,6 +566,10 @@ export default function App() {
       ) : activeSection === 'guide' ? (
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
           <FosterGuide />
+        </main>
+      ) : activeSection === 'rescue-flyers' ? (
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8">
+          <RescueNeedsFlyers />
         </main>
       ) : (
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
@@ -492,15 +584,14 @@ export default function App() {
             <PawPrint className="w-64 h-64" />
           </div>
           <div className="relative z-10 text-left max-w-3xl">
-            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400 block mb-1">Volunteers & Rescues Suggestions</span>
             <h3 className="text-xl font-black tracking-tight font-fraunces">Help Us Perfect RescueKit 🌟</h3>
             <p className="text-stone-300 text-xs md:text-sm font-medium mt-1.5 leading-relaxed font-sans">
-              We are always looking to make RescueKit a helpful tool for rescues, fosters, and volunteers. For feedback or suggestions, please reach out! Let us know how we can make our free flyer systems or resource guides more impactful for adoptable animals.
+              We're always looking to make RescueKit a helpful tool for rescues, fosters, and volunteers. Please reach out with feedback or suggestions on how to make our tools and guides more impactful for the rescue community.
             </p>
           </div>
           <button 
             type="button"
-            onClick={() => { setShowFeedbackModal(true); setFeedbackSuccess(false); }}
+            onClick={() => { setShowFeedbackModal(true); setFeedbackSuccess(false); setFeedbackError(null); }}
             className="cursor-pointer relative z-10 shrink-0 bg-white text-indigo-950 hover:bg-slate-50 active:scale-95 font-black px-6 py-3 rounded-2xl shadow-lg shadow-indigo-950/25 transition-all text-sm flex items-center justify-center gap-2 group border border-slate-100 font-sans"
           >
             <Mail className="w-4 h-4 text-indigo-650 group-hover:scale-110 transition-transform" />
@@ -566,16 +657,20 @@ export default function App() {
                 <Printer className="w-3.5 h-3.5" />
                 <span>Print Poster</span>
               </button>
-              <button
-                onClick={() => setShowFullPreview(false)}
-                className="p-1.5 text-stone-400 hover:text-white rounded-full hover:bg-white/10 transition-colors cursor-pointer"
-                id="close-preview-modal"
-                aria-label="Close Preview"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              {/* Close button removed from header to be rendered as a prominent floating icon at top-right of the viewport instead */}
             </div>
           </div>
+
+          {/* Floating close button - positioned further to the right, clearly visible, and always on top of the scaled poster image */}
+          <button
+            onClick={() => setShowFullPreview(false)}
+            className="fixed top-4 right-4 sm:top-6 sm:right-6 p-2.5 bg-stone-900/95 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-850 rounded-full transition-all duration-200 shadow-2xl hover:scale-110 active:scale-95 z-55 cursor-pointer group"
+            id="close-preview-modal"
+            aria-label="Close Preview"
+            title="Close Preview (Esc)"
+          >
+            <X className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
+          </button>
 
           {/* High-fidelity vector layout scaled to screen visually */}
           <div className="overflow-visible flex items-center justify-center py-6 px-4 w-full h-full min-h-[580px]" onClick={e => e.stopPropagation()}>
@@ -705,6 +800,11 @@ export default function App() {
                 </p>
 
                 <form onSubmit={handleFeedbackSubmit} className="space-y-4 font-sans text-left">
+                  {feedbackError && (
+                    <div className="bg-rose-50 border border-rose-100 text-rose-800 p-3 rounded-2xl text-xs font-semibold animate-fade-in">
+                      ⚠️ {feedbackError}
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
                       <label className="text-[10px] font-black uppercase text-stone-400 tracking-wider block mb-1">Your Name</label>

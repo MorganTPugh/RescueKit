@@ -1313,14 +1313,14 @@ export function FosterGuide() {
       <div className="no-print bg-gradient-to-r from-sky-50/40 to-indigo-50/20 p-6 rounded-2xl border border-sky-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
           <span className="text-[11px] font-black tracking-wider uppercase text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100 inline-block mb-1.5">
-            🎓 RescueKit Education Hub
+            🎓 RESCUEKIT KNOWLEDGE HUB
           </span>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">RescueKit Foster Guide</h1>
-          <p className="text-[13px] text-slate-500 font-bold mt-1">A complete handbook for foster families</p>
+          <h1 className="text-2xl font-black text-slate-800 tracking-tight">RescueKit Foster Guide & Tools</h1>
+          <p className="text-[13px] text-slate-500 font-bold mt-1">A complete handbook, prep checklist, and diagnostic tools for fosters</p>
         </div>
         <div className="hidden md:block text-right bg-white/80 p-2.5 px-4 rounded-2xl border border-sky-100 shrink-0">
-          <span className="text-[11px] font-black text-emerald-600 block">15 chapters · Prepare, learn & decompress 🏡❤️</span>
-          <span className="text-[10px] font-semibold text-slate-400 block mt-0.5">Offline-ready support resource</span>
+          <span className="text-[11px] font-black text-emerald-600 block">Compassionate, expert-backed care 🏡❤️</span>
+          <span className="text-[10px] font-semibold text-slate-400 block mt-0.5">offline-ready support resources</span>
         </div>
       </div>
 

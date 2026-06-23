@@ -37,9 +37,14 @@ export interface FosterPetData {
   photoZoom?: number;
   photoOffsetX?: number;
   photoOffsetY?: number;
+
+  // Position, zoom & crop controls for secondary photo
+  photoZoom2?: number;
+  photoOffsetX2?: number;
+  photoOffsetY2?: number;
 }
 
-export type PosterTemplateId = 'whimsical' | 'minimalist' | 'editorial' | 'comic' | 'polaroid' | 'bio-only' | 'two-photos' | 'comic-2-photos';
+export type PosterTemplateId = 'whimsical' | 'minimalist' | 'editorial' | 'comic' | 'polaroid' | 'bio-only' | 'two-photos' | 'comic-2-photos' | 'extreme-duo';
 
 export type FontStyleId = 'playful' | 'elegant' | 'modern' | 'mono';
 
