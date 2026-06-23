@@ -387,7 +387,7 @@ export default function App() {
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              👁️ View Poster Preview
+              👁️ View Flyer
             </button>
           </div>
           
@@ -447,8 +447,8 @@ export default function App() {
             {/* FORMAT RATIO SELECTOR CONTROL BOX */}
             <div className="no-print w-full bg-white border border-sky-100 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-left">
-                <span className="text-[10px] uppercase tracking-widest text-indigo-500 font-extrabold block">POSTER CONFIGURATION</span>
-                <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Choose your presentation medium</p>
+                <span className="text-[10px] uppercase tracking-widest text-indigo-500 font-extrabold block">FORMAT</span>
+                <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Choose your format — or save both!</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
@@ -461,7 +461,7 @@ export default function App() {
                       : 'bg-sky-50/60 text-slate-600 border border-sky-100 hover:bg-sky-100/50'
                   }`}
                 >
-                  <span>📄 Printable Poster (8.5x11)</span>
+                  <span>📄 Flyer (Print & Share)</span>
                 </button>
                 <button
                   id="layout-square-btn"
@@ -478,37 +478,33 @@ export default function App() {
               </div>
             </div>
 
-            {/* Current Canvas Status Flag */}
-            <div className="no-print w-full flex justify-between items-center bg-stone-100 py-2 px-4 rounded-xl text-xs text-stone-500 font-semibold border border-stone-200">
-              <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-ping"></span>
-                Live Canvas View: {settings.aspectRatio === 'square' ? 'Instagram (1:1)' : 'Printable Poster (8.5x11)'}
-              </span>
+            {/* Live preview grey area — matches Flyers section style */}
+            <div className="no-print w-full bg-gradient-to-br from-slate-100 via-slate-100 to-indigo-100/40 border border-slate-200 rounded-3xl p-5 flex items-start justify-center relative shadow-inner">
+              <div className="absolute top-3.5 left-4 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full border border-slate-200 shadow-sm pointer-events-none">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-black text-slate-600">Live Preview</span>
+              </div>
               <button
                 type="button"
                 onClick={() => setShowFullPreview(true)}
-                className="cursor-pointer flex items-center gap-1.5 bg-indigo-600 text-white hover:bg-indigo-700 py-1.5 px-3 rounded-lg active:scale-95 transition-all text-[11px] font-bold shadow-xs hover:shadow-sm"
-                title="Scale Poster to Screen View"
+                className="absolute top-3 right-3.5 cursor-pointer flex items-center gap-1.5 bg-slate-900 hover:bg-slate-700 text-white py-1.5 px-3 rounded-xl text-[11px] font-extrabold shadow-sm transition-all active:scale-95"
+                title="Full Preview"
               >
                 <Maximize2 className="w-3.5 h-3.5" />
-                <span>Scale to screen</span>
+                <span>Full Preview</span>
               </button>
-            </div>
-
-            {/* The Poster canvas card frame */}
-            <div className={`w-full bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all border border-stone-200/85 p-0 relative overflow-hidden ${
-              settings.aspectRatio === 'square'
-                ? 'max-w-[480px]'
-                : 'max-w-[420px]'
-            }`}>
-              <PosterPreviewWrapper aspectRatio={settings.aspectRatio}>
-                <PosterTemplates
-                  pet={pet}
-                  settings={settings}
-                  setPet={setPet}
-                  isPrintable={!showFullPreview}
-                />
-              </PosterPreviewWrapper>
+              <div className={`w-full mt-2 mx-auto ${settings.aspectRatio === 'square' ? 'max-w-[420px]' : 'max-w-[380px]'}`}>
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-stone-200/85">
+                  <PosterPreviewWrapper aspectRatio={settings.aspectRatio}>
+                    <PosterTemplates
+                      pet={pet}
+                      settings={settings}
+                      setPet={setPet}
+                      isPrintable={!showFullPreview}
+                    />
+                  </PosterPreviewWrapper>
+                </div>
+              </div>
             </div>
 
             {/* Sizable Action Buttons for Quick Image Export and Print Options */}

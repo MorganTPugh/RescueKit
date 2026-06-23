@@ -17,7 +17,8 @@ import {
   Layers,
   Palette,
   HeartHandshake,
-  Workflow
+  Workflow,
+  Copy
 } from 'lucide-react';
 
 interface PosterFormProps {
@@ -498,7 +499,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
       {activeStep === 2 && (
         <div className="space-y-4 animate-fade-in text-slate-800">
           <div>
-            <h3 className="text-sm font-black text-slate-800 mb-1">Upload Pet Photo/s (Up to 2)</h3>
+            <h3 className="text-sm font-black text-slate-800 mb-1">Upload Pet Photo/s</h3>
             <p className="text-xs text-slate-500">Drag & drop or browse.</p>
           </div>
 
@@ -616,7 +617,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                   name="fosterPhone"
                   value={pet.fosterPhone}
                   onChange={handleTextChange}
-                  placeholder="e.g. 512-555-0100"
+                  placeholder=""
                   className="w-full text-xs font-semibold bg-sky-50/70 border-2 border-sky-100 focus:border-indigo-400 rounded-xl p-2.5 outline-none placeholder:text-slate-400"
                 />
               </div>
@@ -650,7 +651,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Template Choice Selectors */}
           <div className="space-y-4">
             <div>
-              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-2">Choose Poster Style / Layout</label>
+              <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest block mb-2">Choose Poster Style / Layout</label>
               
               {/* Row 1: Single-Photo Classics */}
               <div className="mb-4">
@@ -706,36 +707,13 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 </div>
               </div>
 
-              {/* Row 3: Biography-Only Layouts */}
-              <div>
-                <span className="text-[9.5px] font-black text-indigo-505 uppercase tracking-wider block mb-1.5 opacity-80">Text Only - Copy / Paste for captions or descriptions</span>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                  {[
-                    { id: 'bio-only', name: '📝 Biography Only', desc: 'Simple text for Adoption Bios' }
-                  ].map(t => (
-                    <button
-                      key={t.id}
-                      id={`template-btn-${t.id}`}
-                      onClick={() => setSettings(prev => ({ ...prev, templateId: t.id as PosterTemplateId }))}
-                      className={`p-2 hover:scale-[1.01] text-left border rounded-xl flex flex-col justify-between h-20 transition-all cursor-pointer ${
-                        settings.templateId === t.id 
-                          ? 'border-indigo-400 bg-indigo-50/45 shadow-xs font-semibold' 
-                          : 'border-sky-100 bg-white hover:border-indigo-305 hover:bg-sky-50/20'
-                      }`}
-                    >
-                      <span className="text-[10px] font-extrabold text-slate-900 block leading-tight">{t.name}</span>
-                      <span className="text-[8.5px] text-slate-505 block leading-tight mt-1">{t.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
 
             </div>
           </div>
 
           {/* Preset Color Themes */}
           <div>
-            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-2">Choose Color Palette</label>
+            <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest block mb-2">Choose Color Palette</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {THEMES.map(theme => (
                 <button
@@ -758,7 +736,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Header Title Accent badge text */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Poster Title Preset</label>
+              <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest block mb-1">Poster Title Preset</label>
               <select
                 value={settings.headingText}
                 onChange={e => setSettings(prev => ({ ...prev, headingText: e.target.value }))}
@@ -770,7 +748,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
               </select>
             </div>
             <div>
-              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Custom Header</label>
+              <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest block mb-1">Custom Header</label>
               <input
                 type="text"
                 value={settings.headingText}
@@ -799,7 +777,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 onClick={() => onGenerateBio('tinder')}
                 className="cursor-pointer bg-[#451a03] text-white font-extrabold hover:bg-stone-850 leading-tight text-[10px] py-2 px-1.5 rounded-full transition-transform hover:scale-[1.02] text-center"
               >
-                🔥 Tinder Style
+                ⚡ Short & Sweet
               </button>
               <button
                 type="button"
@@ -829,7 +807,23 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             )}
 
             <div>
-              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Pet Description - Final Version (editable)</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Pet Description - Final Version (editable)</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (pet.estimatedBio) {
+                      navigator.clipboard.writeText(pet.estimatedBio);
+                    }
+                  }}
+                  disabled={!pet.estimatedBio}
+                  title="Copy bio to clipboard"
+                  className="flex items-center gap-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-800 disabled:text-slate-300 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                >
+                  <Copy className="w-3 h-3" />
+                  Copy
+                </button>
+              </div>
               <textarea
                 name="estimatedBio"
                 value={pet.estimatedBio}

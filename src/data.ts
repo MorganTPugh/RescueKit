@@ -91,8 +91,7 @@ export const PRESET_TRAITS = [
 export const HEADING_PRESETS = [
   'ADOPT ME!',
   'Need a foster!',
-  'MEET THIS LEGEND!',
-  'COULD I BE YOURS?',
+  'Could I Be Yours?',
   'Be my Human!',
   'Looking for my forever home!',
   'Ready to Love',
