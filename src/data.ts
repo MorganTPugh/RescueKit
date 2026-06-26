@@ -3,7 +3,7 @@ import { StyleTheme, FosterPetData } from './types';
 export const THEMES: StyleTheme[] = [
   {
     id: 'vibrant',
-    name: 'Indigo (Modern & Playful)',
+    name: 'Vibrant Indigo (Modern & Playful)',
     bgClass: 'bg-[#f0f9ff]/50',
     accentClass: 'bg-indigo-600 text-white',
     borderClass: 'border-sky-250',
@@ -14,7 +14,7 @@ export const THEMES: StyleTheme[] = [
   },
   {
     id: 'peach',
-    name: 'Coral (Warm & Whimsical)',
+    name: 'Coral Peach (Warm & Whimsical)',
     bgClass: 'bg-amber-50/50',
     accentClass: 'bg-rose-500 text-white',
     borderClass: 'border-rose-200',
@@ -25,7 +25,7 @@ export const THEMES: StyleTheme[] = [
   },
   {
     id: 'sage',
-    name: 'Emerald (Calm & Elegant)',
+    name: 'Emerald Sage (Calm & Elegant)',
     bgClass: 'bg-emerald-50/50',
     accentClass: 'bg-emerald-700 text-white',
     borderClass: 'border-emerald-200',
@@ -36,7 +36,7 @@ export const THEMES: StyleTheme[] = [
   },
   {
     id: 'gold',
-    name: 'Marigold (Happy & Bright)',
+    name: 'Sunny Marigold (Happy & Bright)',
     bgClass: 'bg-amber-50/70',
     accentClass: 'bg-amber-500 text-amber-950',
     borderClass: 'border-amber-200',
@@ -46,19 +46,19 @@ export const THEMES: StyleTheme[] = [
     themeColorHex: '#f59e0b'
   },
   {
-    id: 'terra',
-    name: 'Terracotta (Earthy & Warm)',
-    bgClass: 'bg-orange-50/50',
-    accentClass: 'bg-orange-700 text-white',
-    borderClass: 'border-orange-200',
-    textClass: 'text-orange-950',
-    badgeBg: 'bg-orange-100 text-orange-800 border-orange-300',
-    gradientBg: 'from-orange-50 to-amber-100',
-    themeColorHex: '#c2410c'
+    id: 'sky',
+    name: 'Cool Sky (Fresh & Playful)',
+    bgClass: 'bg-sky-50/50',
+    accentClass: 'bg-sky-600 text-white',
+    borderClass: 'border-sky-200',
+    textClass: 'text-sky-950',
+    badgeBg: 'bg-sky-100 text-sky-800 border-sky-300',
+    gradientBg: 'from-sky-50 to-indigo-100',
+    themeColorHex: '#0284c7'
   },
   {
     id: 'berry',
-    name: 'Plum (Bold & Modern)',
+    name: 'Plum Grapefruit (Bold & Modern)',
     bgClass: 'bg-fuchsia-50/50',
     accentClass: 'bg-fuchsia-700 text-white',
     borderClass: 'border-fuchsia-200',
@@ -91,7 +91,8 @@ export const PRESET_TRAITS = [
 export const HEADING_PRESETS = [
   'ADOPT ME!',
   'Need a foster!',
-  'Could I Be Yours?',
+  'MEET THIS LEGEND!',
+  'COULD I BE YOURS?',
   'Be my Human!',
   'Looking for my forever home!',
   'Ready to Love',

@@ -74,13 +74,6 @@ export function FosterGuide() {
   const [currentChapter, setCurrentChapter] = useState<number>(0);
   const chapterPanelRef = useRef<HTMLDivElement>(null);
 
-  const scrollToChapterPanel = () => {
-    if (chapterPanelRef.current) {
-      const top = chapterPanelRef.current.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
-  };
-
   // Checklist State (localStorage)
   const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>(() => {
     try {
@@ -132,6 +125,12 @@ export function FosterGuide() {
     }
   }, [tempSpecies, tempValue]);
 
+  useEffect(() => {
+    if (chapterPanelRef.current) {
+      const top = chapterPanelRef.current.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, [currentChapter]);
 
   // Toxic Food Search
   const [foodSearch, setFoodSearch] = useState<string>('');
@@ -1311,14 +1310,17 @@ export function FosterGuide() {
     <div id="foster-guide-dashboard" className="w-full bg-white border border-sky-100 rounded-2xl md:rounded-3xl p-6 shadow-sm font-sans">
 
       {/* GUIDE HEADER BANNER */}
-      <div className="no-print bg-gradient-to-r from-sky-50 via-blue-50/50 to-sky-50/40 p-6 rounded-2xl border border-sky-200/70 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div className="no-print bg-gradient-to-r from-sky-50/40 to-indigo-50/20 p-6 rounded-2xl border border-sky-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight font-fraunces">Foster Care Handbook & Tools</h1>
-          <p className="text-sm text-sky-800/80 font-bold mt-1.5">A complete handbook, prep checklist, and diagnostic tools for fosters</p>
+          <span className="text-[11px] font-black tracking-wider uppercase text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100 inline-block mb-1.5">
+            🎓 RESCUEKIT KNOWLEDGE HUB
+          </span>
+          <h1 className="text-2xl font-black text-slate-800 tracking-tight">RescueKit Foster Guide & Tools</h1>
+          <p className="text-[13px] text-slate-500 font-bold mt-1">A complete handbook, prep checklist, and diagnostic tools for fosters</p>
         </div>
-        <div className="hidden md:block text-right bg-white/70 p-2.5 px-4 rounded-2xl border border-sky-100 shrink-0">
+        <div className="hidden md:block text-right bg-white/80 p-2.5 px-4 rounded-2xl border border-sky-100 shrink-0">
           <span className="text-[11px] font-black text-emerald-600 block">Compassionate, expert-backed care 🏡❤️</span>
-          <span className="text-[10px] font-semibold text-sky-700/60 block mt-0.5">Offline-ready support resources</span>
+          <span className="text-[10px] font-semibold text-slate-400 block mt-0.5">offline-ready support resources</span>
         </div>
       </div>
 
@@ -1352,7 +1354,7 @@ export function FosterGuide() {
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => { setCurrentChapter(idx); scrollToChapterPanel(); }}
+                  onClick={() => setCurrentChapter(idx)}
                   className={`cursor-pointer w-full text-left p-3 rounded-xl transition-all flex items-center justify-between border-y border-r ${
                     currentChapter === idx
                       ? 'border-l-4 border-l-indigo-500 border-y-indigo-100 border-r-indigo-100 bg-indigo-600 text-white shadow-sm font-bold'
@@ -1399,7 +1401,7 @@ export function FosterGuide() {
             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-1">Select Guide Chapter</label>
             <select
               value={currentChapter}
-              onChange={(e) => { setCurrentChapter(Number(e.target.value)); scrollToChapterPanel(); }}
+              onChange={(e) => setCurrentChapter(Number(e.target.value))}
               className="w-full bg-white border border-sky-200 text-slate-700 font-semibold p-3.5 rounded-xl outline-none shadow-2xs cursor-pointer text-[13px]"
             >
               {chapters.map((ch, idx) => (
@@ -1421,7 +1423,7 @@ export function FosterGuide() {
             <div className="flex justify-between items-center border-t border-sky-100 pt-4 mt-8">
               <button
                 type="button"
-                onClick={() => { setCurrentChapter(prev => Math.max(0, prev - 1)); scrollToChapterPanel(); }}
+                onClick={() => setCurrentChapter(prev => Math.max(0, prev - 1))}
                 disabled={currentChapter === 0}
                 className="cursor-pointer px-4 py-2 border rounded-full text-[13px] font-extrabold text-slate-600 hover:bg-sky-50 hover:text-slate-900 transition-colors disabled:opacity-40"
               >
@@ -1430,7 +1432,7 @@ export function FosterGuide() {
               <span className="text-[11px] font-semibold text-slate-400">{currentChapter + 1} / {chapters.length}</span>
               <button
                 type="button"
-                onClick={() => { setCurrentChapter(prev => Math.min(chapters.length - 1, prev + 1)); scrollToChapterPanel(); }}
+                onClick={() => setCurrentChapter(prev => Math.min(chapters.length - 1, prev + 1))}
                 disabled={currentChapter === chapters.length - 1}
                 className="cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-full text-[13px] font-extrabold hover:bg-indigo-700 transition-colors disabled:opacity-40"
               >
