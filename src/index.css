@@ -67,6 +67,11 @@
     visibility: visible !important;
   }
 
+  /* Hide drag/zoom hint in print */
+  .poster-drag-hint {
+    display: none !important;
+  }
+
   /* Set the guide print section and its descendants as visible */
   .guide-print-container,
   .guide-print-container * {

@@ -29,7 +29,9 @@ import {
   Compass,
   ArrowRight,
   Maximize2,
-  X
+  X,
+  Copy,
+  Share2
 } from 'lucide-react';
 
 // Use Cases Definitions
@@ -66,14 +68,14 @@ const PRESETS: Record<FlyerUseCase, RescueFlyerData> = {
       'Washable Fleece Blankets & Large Bath Towels',
       'Training Treats and Chew-Proof Dog Toys'
     ],
-    thankYouMessage: 'A heartfelt thank you from our board, fosters, and most of all, the animals. You’re helping the mission!',
-    ctaLabel: 'Where to Drop Off or Donate online:',
-    ctaDetails: 'Drop off in our donation boxes at Grateful Vet Clinic, or donate securely via our website.',
+    thankYouMessage: "A heartfelt thank you from our board, fosters, and most of all, the animals. You're helping the mission!",
+    ctaLabel: '',
+    ctaDetails: '',
     orgName: 'Grateful Paws Rescue',
-    email: 'contact@gratefulpawsrescue.org',
-    phone: '415-555-0192',
-    website: 'https://www.gratefulpawsrescue.org',
-    showQRCode: true
+    email: '',
+    phone: '',
+    website: '',
+    showQRCode: false
   },
   ongoing_volunteers: {
     useCase: 'ongoing_volunteers',
@@ -87,13 +89,13 @@ const PRESETS: Record<FlyerUseCase, RescueFlyerData> = {
       'Event Handler: Introduce pets to potential adopters at community fairs.'
     ],
     thankYouMessage: 'Join local action. No prior experience is required—full coaching and rescue gear are proudly provided!',
-    ctaLabel: 'How to Join Our Team:',
-    ctaDetails: 'Apply on our website under /volunteer or attend our monthly orientation event.',
+    ctaLabel: '',
+    ctaDetails: '',
     orgName: 'Grateful Paws Rescue',
-    email: 'contact@gratefulpawsrescue.org',
-    phone: '415-555-0192',
-    website: 'https://www.gratefulpawsrescue.org',
-    showQRCode: true
+    email: '',
+    phone: '',
+    website: '',
+    showQRCode: false
   },
   event_volunteers: {
     useCase: 'event_volunteers',
@@ -106,13 +108,13 @@ const PRESETS: Record<FlyerUseCase, RescueFlyerData> = {
       'Shift-C (3:00 PM - 5:30 PM): Event clean-up, material loading, and pet safety transport.'
     ],
     thankYouMessage: 'Your time makes real magic happen. Lunch, volunteer shirts, and cold refreshments will be provided!',
-    ctaLabel: 'Event Details & Register:',
-    ctaDetails: 'August 15, 10:00 AM - 3:00 PM at Town Square Park. Sign up on our website events page!',
+    ctaLabel: '',
+    ctaDetails: '',
     orgName: 'Grateful Paws Rescue',
-    email: 'contact@gratefulpawsrescue.org',
-    phone: '415-555-0192',
-    website: 'https://www.gratefulpawsrescue.org',
-    showQRCode: true
+    email: '',
+    phone: '',
+    website: '',
+    showQRCode: false
   },
   fosters: {
     useCase: 'fosters',
@@ -126,13 +128,13 @@ const PRESETS: Record<FlyerUseCase, RescueFlyerData> = {
       'The Joy of Transformation: Watch a once-scared, shut-down animal blossom in your living room.'
     ],
     thankYouMessage: 'Fostering is entirely free, richly satisfying, and the absolute cornerstone of our safety net.',
-    ctaLabel: 'Apply to Foster Today:',
-    ctaDetails: 'Complete the short, zero-obligation foster questionnaire on our main website today!',
+    ctaLabel: '',
+    ctaDetails: '',
     orgName: 'Grateful Paws Rescue',
-    email: 'contact@gratefulpawsrescue.org',
-    phone: '415-555-0192',
-    website: 'https://www.gratefulpawsrescue.org',
-    showQRCode: true
+    email: '',
+    phone: '',
+    website: '',
+    showQRCode: false
   }
 };
 
@@ -444,12 +446,18 @@ export const RescueNeedsFlyers: React.FC = () => {
   
   const [successToast, setSuccessToast] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
+  const [isCopying, setIsCopying] = useState<boolean>(false);
+  const [canWebShare, setCanWebShare] = useState<boolean>(false);
   const [showFullPreview, setShowFullPreview] = useState<boolean>(false);
   const [mobileTab, setMobileTab] = useState<'edit' | 'preview'>('edit');
   const [newItemInput, setNewItemInput] = useState<string>('');
-  
+
   // File upload refs
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setCanWebShare(typeof navigator.share === 'function');
+  }, []);
 
   const handleUseCaseChange = (uc: FlyerUseCase) => {
     const preset = PRESETS[uc];
@@ -588,18 +596,79 @@ export const RescueNeedsFlyers: React.FC = () => {
     }
   };
 
+  const getFlyerPngBlob = async (): Promise<Blob | null> => {
+    const previousRatio = aspectRatio;
+    try {
+      if (previousRatio !== 'square') {
+        setAspectRatio('square');
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+      const el = document.getElementById('rescue-flyer-render-container');
+      if (!el) return null;
+      const dataUrl = await toPng(el, { quality: 1.0, pixelRatio: 3, backgroundColor: '#ffffff' });
+      const res = await fetch(dataUrl);
+      return await res.blob();
+    } catch {
+      return null;
+    } finally {
+      if (previousRatio !== 'square') setAspectRatio(previousRatio);
+    }
+  };
+
+  const copyToClipboard = async () => {
+    if (!data.orgName.trim()) {
+      setSuccessToast('⚠️ Please enter your rescue organization name first.');
+      setTimeout(() => setSuccessToast(null), 4000);
+      return;
+    }
+    setIsCopying(true);
+    try {
+      const blob = await getFlyerPngBlob();
+      if (!blob) throw new Error('Could not generate image');
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      setSuccessToast('Flyer copied! Paste it into Instagram, Facebook, or any message app.');
+      setTimeout(() => setSuccessToast(null), 5000);
+    } catch {
+      setSuccessToast('Copy failed — use "Save Social PNG" to download instead.');
+      setTimeout(() => setSuccessToast(null), 4000);
+    } finally {
+      setIsCopying(false);
+    }
+  };
+
+  const shareToSocial = async () => {
+    if (!data.orgName.trim()) {
+      setSuccessToast('⚠️ Please enter your rescue organization name first.');
+      setTimeout(() => setSuccessToast(null), 4000);
+      return;
+    }
+    setIsCopying(true);
+    try {
+      const blob = await getFlyerPngBlob();
+      if (!blob) throw new Error('Could not generate image');
+      const file = new File([blob], `${data.orgName.toLowerCase().replace(/[^a-z0-9]/g, '_')}_flyer.png`, { type: 'image/png' });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: data.header || 'Rescue Outreach Flyer',
+          text: `${data.orgName} needs your help! ${data.subtitle || ''}`.trim(),
+        });
+      }
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') {
+        setSuccessToast('Share failed — use "Save Social PNG" to download instead.');
+        setTimeout(() => setSuccessToast(null), 4000);
+      }
+    } finally {
+      setIsCopying(false);
+    }
+  };
+
+
   // Renders the specific photos grid
   const renderPhotoGrid = (heightClassOne: string, heightClassTwo: string, heightClassThree: string) => {
     if (photos.length === 0) {
-      return (
-        <div className="border border-dashed border-indigo-200 bg-sky-50/15 rounded-xl p-2.5 py-3 text-center space-y-1 max-h-[110px] shrink-0">
-          <Heart className="w-4 h-4 text-indigo-400 mx-auto animate-pulse" />
-          <p className="text-[9px] font-black tracking-widest text-indigo-950 uppercase">INSPIRATIONAL IMAGES</p>
-          <p className="text-[8.5px] text-indigo-700/80 font-bold px-4 leading-normal">
-            Upload outreach photos of volunteers, foster pets, or donations on the left side to activate layout frames!
-          </p>
-        </div>
-      );
+      return null;
     }
 
     return (
@@ -913,41 +982,34 @@ export const RescueNeedsFlyers: React.FC = () => {
               {renderBullets()}
             </div>
 
-            {/* Bento block: Image gallery / placeholder list */}
-            {!noPhoto && (
+            {/* Bento block: Image gallery — only shown when photos are uploaded */}
+            {!noPhoto && photos.length > 0 && (
               <div className="bg-white p-2 rounded-xl border-2 border-stone-900 shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] flex flex-col justify-center">
-                {photos.length > 0 ? (
-                  <div className="grid grid-cols-1 gap-1.5">
-                    <div className="h-16 rounded-lg overflow-hidden border border-stone-900 relative">
-                      <RepositionableOutreachImage
-                        id={0}
-                        src={photos[0]}
-                        alt="Bento box lead image"
-                        zoom={photoZooms[0] || 1}
-                        offsetX={photoOffsetsX[0] || 0}
-                        offsetY={photoOffsetsY[0] || 0}
-                        updateZoom={updatePhotoZoom}
-                        updateOffsetX={updatePhotoOffsetX}
-                        updateOffsetY={updatePhotoOffsetY}
-                      />
-                    </div>
-                    {photos.length > 1 && (
-                      <div className="grid grid-cols-2 gap-1 text-center text-[7.5px] font-black">
-                        <div className="bg-amber-100 p-0.5 rounded border border-stone-900">
-                          📁 {photos.length} Photos
-                        </div>
-                        <div className="bg-stone-100 p-0.5 rounded border border-stone-900">
-                          🐾 Active pet
-                        </div>
+                <div className="grid grid-cols-1 gap-1.5">
+                  <div className="h-16 rounded-lg overflow-hidden border border-stone-900 relative">
+                    <RepositionableOutreachImage
+                      id={0}
+                      src={photos[0]}
+                      alt="Bento box lead image"
+                      zoom={photoZooms[0] || 1}
+                      offsetX={photoOffsetsX[0] || 0}
+                      offsetY={photoOffsetsY[0] || 0}
+                      updateZoom={updatePhotoZoom}
+                      updateOffsetX={updatePhotoOffsetX}
+                      updateOffsetY={updatePhotoOffsetY}
+                    />
+                  </div>
+                  {photos.length > 1 && (
+                    <div className="grid grid-cols-2 gap-1 text-center text-[7.5px] font-black">
+                      <div className="bg-amber-100 p-0.5 rounded border border-stone-900">
+                        📁 {photos.length} Photos
                       </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="h-full bg-amber-50/40 p-2.5 rounded-lg border border-dashed border-amber-400 flex flex-col items-center justify-center text-center space-y-0.5 min-h-[70px]">
-                    <Gift className="w-4 h-4 text-amber-500 animate-bounce" />
-                    <span className="text-[7.5px] font-black uppercase text-amber-950">Supply visual gallery active</span>
-                  </div>
-                )}
+                      <div className="bg-stone-100 p-0.5 rounded border border-stone-900">
+                        🐾 Active pet
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -1181,42 +1243,42 @@ export const RescueNeedsFlyers: React.FC = () => {
   };
 
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      
+    <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
       {/* HEADER BAR */}
-      <div className="col-span-full bg-white border border-sky-100 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="col-span-full bg-gradient-to-r from-sky-50 via-blue-50/50 to-sky-50/40 border border-sky-200/70 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="relative z-10">
-          <h2 className="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-2 font-fraunces">
-            Create Rescue Outreach Flyers in Minutes
-          </h2>
-          <p className="text-sm text-slate-500 font-bold mt-1.5">
-            Easily design and print outreach material for rescue item donations, foster signups, and volunteer roles.
+          <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight font-fraunces">
+            Make Flyers for Every Rescue Need
+          </h1>
+          <p className="text-sm text-sky-800/80 font-semibold mt-1.5">
+            Design printable or social media flyers for donations, fosters, volunteers, or events — in minutes.
           </p>
         </div>
-        <div className="hidden md:block text-right bg-sky-50/50 p-2.5 px-4 rounded-2xl border border-sky-100 shrink-0">
-          <span className="text-[11px] md:text-[11.5px] font-black text-rose-500 block">Designed for rescues, fosters & volunteers</span>
-          <span className="text-[9.5px] md:text-[10.5px] font-semibold text-slate-400 block mt-1">Resource & Support Flyer Builder</span>
+        <div className="hidden md:flex items-center gap-2 shrink-0 flex-wrap justify-end">
+          {(['donation', 'fosters', 'ongoing_volunteers', 'event_volunteers'] as FlyerUseCase[]).map(uc => (
+            <button key={uc} onClick={() => handleUseCaseChange(uc)}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-black border transition-all cursor-pointer ${
+                data.useCase === uc ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
+              }`}
+            >
+              {uc === 'donation' ? '🎁 Donations' : uc === 'fosters' ? '🐾 Fosters' : uc === 'ongoing_volunteers' ? '🙌 Volunteers' : '📅 Events'}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* MOBILE TAB CONTROLLER */}
       <div className="col-span-full lg:hidden bg-sky-100/80 p-1 rounded-2xl border border-sky-200 flex">
-        <button
-          onClick={() => setMobileTab('edit')}
-          className={`flex-1 text-center py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all ${
-            mobileTab === 'edit' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600'
-          }`}
-        >
-          📝 Customize Contents
-        </button>
-        <button
-          onClick={() => setMobileTab('preview')}
-          className={`flex-1 text-center py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all ${
-            mobileTab === 'preview' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600'
-          }`}
-        >
-          👁️ Live Flyer Preview
-        </button>
+        {(['edit', 'preview'] as const).map(tab => (
+          <button key={tab} onClick={() => setMobileTab(tab)}
+            className={`flex-1 text-center py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all ${
+              mobileTab === tab ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600'
+            }`}
+          >
+            {tab === 'edit' ? '📝 Customize' : '👁️ View Flyer'}
+          </button>
+        ))}
       </div>
 
       {/* SUCCESS TOAST FIELD */}
@@ -1227,552 +1289,377 @@ export const RescueNeedsFlyers: React.FC = () => {
         </div>
       )}
 
-      {/* LEFT COLUMN: EDITABLE FORMS & THEME CHANGER */}
-      <div className={`col-span-full lg:col-span-6 space-y-6 ${mobileTab === 'edit' ? 'block' : 'hidden lg:block'}`}>
-        
-        {/* COMBINED FLYER PURPOSE & THEME/LAYOUT SELECTOR */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 md:p-6 shadow-xs space-y-5">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
-                1
-              </div>
-              <div>
-                <h3 className="text-sm font-black text-slate-800">Choose Flyer Purpose</h3>
-                <p className="text-[11px] text-slate-400 font-bold">This shifts the form fields and advice to help you quickly fill details</p>
-              </div>
-            </div>
+      {/* ── LEFT COLUMN ── */}
+      <div className={`col-span-full lg:col-span-5 space-y-4 ${mobileTab === 'edit' ? 'block' : 'hidden lg:block'}`}>
 
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { id: 'donation', label: 'Donation Needs', icon: <Gift className="w-4 h-4 text-emerald-500" />, desc: 'Food, toys, blankets' },
-                { id: 'fosters', label: 'Foster Hero Recruitment', icon: <Heart className="w-4 h-4 text-rose-500" />, desc: 'Help save lives' },
-                { id: 'ongoing_volunteers', label: 'Volunteer Recruitment', icon: <Users className="w-4 h-4 text-indigo-500" />, desc: 'Drivers, staff roles' },
-                { id: 'event_volunteers', label: 'Specific Event Support', icon: <Calendar className="w-4 h-4 text-amber-500" />, desc: 'Clean-ups, adoption days' }
-              ].map(uc => (
-                <button
-                  key={uc.id}
-                  onClick={() => handleUseCaseChange(uc.id as FlyerUseCase)}
-                  className={`flex flex-col items-start p-3.5 rounded-2xl border text-left cursor-pointer transition-all ${
-                    data.useCase === uc.id
-                      ? 'border-indigo-600 bg-indigo-50/45 ring-2 ring-indigo-600/10'
-                      : 'border-slate-200 bg-white hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5 font-black text-xs text-slate-800 mb-1">
-                    {uc.icon}
-                    <span>{uc.label}</span>
-                  </div>
-                  <p className="text-[10px] text-slate-400 font-bold">{uc.desc}</p>
-                </button>
-              ))}
+        {/* STEP 1: Flyer Type */}
+        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">1</div>
+            <div>
+              <h3 className="text-sm font-black text-slate-800">What type of flyer?</h3>
+              <p className="text-[11px] text-slate-400 font-semibold">Pre-fills the form with content for your specific need</p>
             </div>
           </div>
-
-          <div className="h-[1px] bg-slate-100" />
-
-          {/* FLYER THEME SELECTOR - COMBINED BELOW */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-650 flex items-center justify-center font-bold text-sm">
-                🎨
-              </div>
-              <div>
-                <h3 className="text-sm font-black text-slate-800">Select Flyer Theme & Layout</h3>
-                <p className="text-[11px] text-slate-400 font-bold">This changes typography, borders, AND structural layout style!</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {FLYER_THEMES.map(theme => (
-                <button
-                  key={theme.id}
-                  onClick={() => {
-                    setActiveTheme(theme);
-                  }}
-                  className={`flex flex-col items-start justify-between p-3 rounded-2xl border text-left cursor-pointer transition-all min-h-[92px] h-auto ${
-                    activeTheme.id === theme.id
-                      ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600/10'
-                      : 'border-slate-200 bg-slate-50 hover:bg-slate-100/80 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="text-[11px] font-black text-slate-850">
-                    {theme.name}
-                  </div>
-                  <div className="flex flex-col gap-1 w-full mt-1">
-                    <div className="text-[8px] font-bold text-indigo-600 uppercase tracking-tight bg-white px-1.5 py-0.5 rounded border border-slate-100 inline-block w-fit">
-                      {theme.layoutName}
-                    </div>
-                    {theme.id === 'terracotta' && (
-                      <span className="text-[7.5px] font-black text-emerald-600 uppercase tracking-tight leading-none mt-0.5">
-                        👍 Best for longest text
-                      </span>
-                    )}
-                    {theme.id === 'playful' && (
-                      <span className="text-[7.5px] font-black text-rose-600 uppercase tracking-tight leading-none mt-0.5">
-                        ✨ Best for photos
-                      </span>
-                    )}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* STEP 2: DETAILS FORM */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 md:p-6 shadow-xs space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
-              2
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-slate-800">Main Message</h3>
-              <p className="text-[11px] text-slate-400 font-bold">Modify headline, subtitle, and description</p>
-            </div>
-          </div>
-
-          <div className="space-y-3.5">
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Headline</label>
-              <input
-                type="text"
-                name="header"
-                value={data.header}
-                onChange={handleInputChange}
-                className="w-full bg-slate-50/70 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 select-all outline-none font-bold animate-fade-in"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Action Subtitle</label>
-              <input
-                type="text"
-                name="subtitle"
-                value={data.subtitle}
-                onChange={handleInputChange}
-                className="w-full bg-slate-50/70 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 outline-none font-bold"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">1-2 sentences about the rescue's needs</label>
-              <textarea
-                name="intro"
-                value={data.intro}
-                rows={3}
-                onChange={handleInputChange}
-                className="w-full bg-slate-50/70 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 outline-none font-medium leading-relaxed"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* STEP 3: ITEMS LIST BUILDER */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 md:p-6 shadow-xs space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
-              3
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-slate-800">
-                {data.useCase === 'donation' ? 'Requested Items' : data.useCase === 'fosters' ? 'Key Highlights' : 'Volunteer Positions/Shifts'}
-              </h3>
-              <p className="text-[11px] text-slate-400 font-bold">List specific materials or schedules clearly to make the flyer readable</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleAddBulletItem} className="flex gap-2">
-            <input
-              type="text"
-              placeholder={data.useCase === 'donation' ? 'e.g. Grain-free Puppy Dry Food' : 'e.g. Transport Drivers (We provide cage gears)'}
-              value={newItemInput}
-              onChange={e => setNewItemInput(e.target.value)}
-              className="flex-1 bg-slate-50/75 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 outline-none font-semibold"
-            />
-            <button
-              type="submit"
-              className="p-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black flex items-center gap-1 shadow-sm shrink-0 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add</span>
-            </button>
-          </form>
-
-          <div className="space-y-1.5 divide-y divide-slate-100 max-h-56 overflow-y-auto pr-1">
-            {data.items.length === 0 ? (
-              <p className="text-[11px] text-slate-400 font-bold py-2">No bullets added yet. Add items above to build your flyer layout.</p>
-            ) : (
-              data.items.map((bullet, idx) => (
-                <div key={idx} className="flex items-center justify-between py-2 text-xs font-medium text-slate-700">
-                  <span className="flex-1 pr-4 leading-relaxed font-semibold">{bullet}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveBulletItem(idx)}
-                    className="p-1 px-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                    title="Delete item"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+          <div className="grid grid-cols-2 gap-2.5">
+            {[
+              { id: 'donation' as FlyerUseCase, label: 'Donation Drive', icon: <Gift className="w-5 h-5" />, desc: 'Food, supplies & blankets', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600', activeBorder: 'border-emerald-500', activeBg: 'bg-emerald-50/40', activeRing: 'ring-emerald-500/20' },
+              { id: 'fosters' as FlyerUseCase, label: 'Foster Recruitment', icon: <Heart className="w-5 h-5" />, desc: 'Open your home, save a life', iconBg: 'bg-rose-50', iconColor: 'text-rose-500', activeBorder: 'border-rose-400', activeBg: 'bg-rose-50/40', activeRing: 'ring-rose-500/20' },
+              { id: 'ongoing_volunteers' as FlyerUseCase, label: 'Volunteer Signup', icon: <Users className="w-5 h-5" />, desc: 'Drivers, handlers & more', iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600', activeBorder: 'border-indigo-500', activeBg: 'bg-indigo-50/40', activeRing: 'ring-indigo-500/20' },
+              { id: 'event_volunteers' as FlyerUseCase, label: 'Event Help', icon: <Calendar className="w-5 h-5" />, desc: 'Adoption fairs & fundraisers', iconBg: 'bg-amber-50', iconColor: 'text-amber-600', activeBorder: 'border-amber-400', activeBg: 'bg-amber-50/40', activeRing: 'ring-amber-500/20' },
+            ].map(uc => (
+              <button key={uc.id} onClick={() => handleUseCaseChange(uc.id)}
+                className={`flex flex-row items-center gap-2.5 p-3.5 rounded-2xl border-2 text-left cursor-pointer transition-all ${
+                  data.useCase === uc.id
+                    ? `${uc.activeBorder} ${uc.activeBg} ring-2 ${uc.activeRing}`
+                    : 'border-slate-200 bg-white hover:bg-slate-50'
+                }`}
+              >
+                <div className={`w-9 h-9 rounded-xl ${uc.iconBg} ${uc.iconColor} flex items-center justify-center shrink-0`}>{uc.icon}</div>
+                <div>
+                  <div className="font-black text-[12px] text-slate-800 leading-tight">{uc.label}</div>
+                  <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{uc.desc}</p>
                 </div>
-              ))
-            )}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* STEP 4: ORGANIZATIONAL BASELINE INFO */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 md:p-6 shadow-xs space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
-              4
-            </div>
+        {/* STEP 2: Photos — moved up for immediate visual impact */}
+        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">2</div>
             <div>
-              <h3 className="text-sm font-black text-slate-800">Call to Action & Contact Information</h3>
-              <p className="text-[11px] text-slate-400 font-bold">Add a closing statement and relevant contact information. Only add what should be on the flyer, most fields are not required</p>
+              <h3 className="text-sm font-black text-slate-800">Add Photos <span className="font-semibold text-slate-400">(optional)</span></h3>
+              <p className="text-[11px] text-slate-400 font-semibold">Drag or scroll on the preview to crop & zoom</p>
             </div>
           </div>
 
-          <div className="space-y-3.5">
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">A "thank you" statement or mission statement</label>
-              <textarea
-                name="thankYouMessage"
-                value={data.thankYouMessage}
-                rows={2}
-                onChange={handleInputChange}
-                className="w-full bg-slate-50/70 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 outline-none font-medium leading-relaxed"
-              />
-            </div>
+          <label className="flex items-center gap-2.5 cursor-pointer select-none bg-slate-50 p-3 rounded-2xl border border-slate-200">
+            <input type="checkbox" checked={noPhoto} onChange={e => setNoPhoto(e.target.checked)}
+              className="w-4 h-4 rounded cursor-pointer accent-indigo-600" />
+            <span className="text-xs font-bold text-slate-600">Text-only layout (no image area)</span>
+          </label>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">
-                  Rescue Organization <span className="text-rose-500 font-black">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="orgName"
-                  required
-                  value={data.orgName}
-                  onChange={handleInputChange}
-                  className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-indigo-605 outline-none transition-colors ${
-                    !data.orgName.trim() ? 'border-amber-400 bg-amber-50/20 focus:border-amber-500' : 'border-slate-200'
-                  }`}
-                  placeholder="Required Field"
-                />
-                {!data.orgName.trim() && (
-                  <span className="text-[9px] font-extrabold text-amber-600 block mt-1">Required to download/print!</span>
-                )}
-              </div>
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Website URL</label>
-                <input
-                  type="text"
-                  name="website"
-                  value={data.website}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-indigo-600 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Contact Email</label>
-                <input
-                  type="text"
-                  name="email"
-                  value={data.email}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-indigo-600 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Contact Phone</label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={data.phone}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-indigo-600 outline-none"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between bg-stone-50 p-3 rounded-xl border border-stone-200/60 font-semibold text-xs text-stone-600">
-              <span className="flex items-center gap-1.5">
-                <Globe className="w-4 h-4 text-indigo-500" />
-                <span>Show website scan QR Code?</span>
-              </span>
-              <input
-                type="checkbox"
-                checked={data.showQRCode}
-                onChange={e => setData(prev => ({ ...prev, showQRCode: e.target.checked }))}
-                className="w-4.5 h-4.5 rounded text-indigo-600 border-slate-200 focus:ring-indigo-600 cursor-pointer"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 border-t border-slate-100 pt-3.5">
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Call to Action Heading</label>
-                <input
-                  type="text"
-                  name="ctaLabel"
-                  value={data.ctaLabel}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-50/70 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 outline-none font-bold"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Call to Action Details</label>
-                <input
-                  type="text"
-                  name="ctaDetails"
-                  value={data.ctaDetails}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-50/70 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 outline-none font-semibold"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* STEP 5: VISUALLY APPEALING OUTFLOW OF PHOTOS */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 md:p-6 shadow-xs space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
-              5
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-slate-800">Upload Photo/s (Up to 3)</h3>
-              <p className="text-[11px] text-slate-400 font-bold">Upload highly active pictures. Drag or scroll directly on the flyer preview to perfectly zoom, pan, and center your photos!</p>
-            </div>
-          </div>
-
-          {/* "No Photo" Toggle Checkbox */}
-          <div className="flex items-center gap-3 bg-rose-50/50 p-3 rounded-2xl border border-rose-100/60">
-            <label className="flex items-center gap-2.5 cursor-pointer select-none text-xs font-black text-slate-700 w-full">
-              <input
-                type="checkbox"
-                checked={noPhoto}
-                onChange={e => setNoPhoto(e.target.checked)}
-                className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer accent-indigo-600"
-              />
-              <div className="flex flex-col">
-                <span>Disable Photos / Hide Image Area completely</span>
-                <span className="text-[10px] text-slate-400 font-bold leading-normal">
-                  Removes image frames and lets text layout fill the flyer space seamlessly!
-                </span>
-              </div>
-            </label>
-          </div>
-
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            ref={fileInputRef}
-            onChange={handleImgUpload}
-            className="hidden"
-          />
+          <input type="file" multiple accept="image/*" ref={fileInputRef} onChange={handleImgUpload} className="hidden" />
 
           {!noPhoto ? (
             <>
               {photos.length < 3 && (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-8 border-2 border-dashed border-sky-200/70 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-indigo-600 hover:border-indigo-500 transition-all cursor-pointer bg-sky-50/20 hover:bg-sky-50/40"
+                <button type="button" onClick={() => fileInputRef.current?.click()}
+                  className="w-full py-6 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center gap-1.5 text-slate-400 hover:text-indigo-600 hover:border-indigo-400 transition-all cursor-pointer bg-sky-50/20 hover:bg-indigo-50/30"
                 >
-                  <ImageIcon className="w-8 h-8 text-sky-400" />
-                  <span className="text-xs font-black">Upload Outreach Photos ({photos.length}/3)</span>
-                  <p className="text-[9.5px] text-slate-400 font-medium">Select JPEG or PNG files. They stay local to your browser.</p>
+                  <ImageIcon className="w-7 h-7" />
+                  <span className="text-xs font-black">Upload Photos ({photos.length}/3)</span>
+                  <p className="text-[9.5px] font-medium">JPEG or PNG — stay local to your browser</p>
                 </button>
               )}
-
               {photos.length > 0 && (
-                <div className="space-y-4 pt-1">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Configure Crop & Scale for each image:</p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {photos.map((url, index) => (
-                      <div key={index} className="bg-slate-50 p-3 rounded-2xl border border-slate-200/70 relative">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-black text-slate-700">Photo #{index + 1}</span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemovePhoto(index)}
-                            className="text-[10px] font-black text-rose-500 hover:text-rose-700 flex items-center gap-0.5 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 inline" /> Remove
+                <div className="space-y-2">
+                  {photos.map((url, index) => (
+                    <div key={index} className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                      <div className="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 relative shrink-0 bg-stone-100">
+                        <img src={url} alt="" className="absolute w-full h-full object-cover" referrerPolicy="no-referrer"
+                          style={{ transform: `scale(${photoZooms[index]||1}) translate(${photoOffsetsX[index]||0}px,${photoOffsetsY[index]||0}px)` }} />
+                      </div>
+                      <div className="flex-1 space-y-1.5 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black text-slate-700">Photo {index + 1}</span>
+                          <button type="button" onClick={() => handleRemovePhoto(index)} className="text-rose-400 hover:text-rose-600 cursor-pointer p-1">
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
-
-                    <div className="w-full h-24 rounded-lg overflow-hidden border border-slate-200 bg-stone-150 relative mb-3 mx-auto max-w-[160px]">
-                      <img
-                        src={url}
-                        alt={`Preview crop config ${index}`}
-                        className="absolute object-cover transition-transform"
-                        referrerPolicy="no-referrer"
-                        style={{
-                          transform: `scale(${photoZooms[index] || 1}) translate(${photoOffsetsX[index] || 0}px, ${photoOffsetsY[index] || 0}px)`,
-                          width: '100%',
-                          height: '100%'
-                        }}
-                      />
-                    </div>
-
-                    <div className="space-y-1.5 text-[10px]">
-                      <div>
-                        <div className="flex justify-between font-bold text-slate-500">
-                          <span>Scale Size:</span>
-                          <span>{(photoZooms[index] || 1).toFixed(1)}x</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0.5"
-                          max="3"
-                          step="0.05"
-                          value={photoZooms[index] || 1}
-                          onChange={e => updatePhotoZoom(index, parseFloat(e.target.value))}
-                          className="w-full accent-indigo-600"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <div className="flex justify-between font-bold text-slate-500">
-                            <span>Move x:</span>
-                            <span>{photoOffsetsX[index] || 0}px</span>
+                          <div className="flex justify-between text-[10px] font-semibold text-slate-400 mb-0.5">
+                            <span>Zoom</span><span>{(photoZooms[index]||1).toFixed(1)}×</span>
                           </div>
-                          <input
-                            type="range"
-                            min="-100"
-                            max="100"
-                            value={photoOffsetsX[index] || 0}
-                            onChange={e => updatePhotoOffsetX(index, parseInt(e.target.value))}
-                            className="w-full accent-indigo-600"
-                          />
-                        </div>
-                        <div>
-                          <div className="flex justify-between font-bold text-slate-500">
-                            <span>Move y:</span>
-                            <span>{photoOffsetsY[index] || 0}px</span>
-                          </div>
-                          <input
-                            type="range"
-                            min="-100"
-                            max="100"
-                            value={photoOffsetsY[index] || 0}
-                            onChange={e => updatePhotoOffsetY(index, parseInt(e.target.value))}
-                            className="w-full accent-indigo-600"
-                          />
+                          <input type="range" min="0.5" max="3" step="0.05" value={photoZooms[index]||1}
+                            onChange={e => updatePhotoZoom(index, parseFloat(e.target.value))} className="w-full accent-indigo-600" />
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="py-4 border border-dashed border-slate-200 rounded-2xl text-center">
+              <p className="text-xs font-bold text-slate-400">Photos disabled — flyer uses text-only layout</p>
             </div>
           )}
-        </>
-      ) : (
-        <div className="p-4 py-6 border border-dashed border-sky-100 bg-indigo-50/15 rounded-2xl text-center space-y-1">
-          <span className="text-xl">🎴</span>
-          <p className="text-xs font-black text-slate-700">Photos Disabled</p>
-          <p className="text-[10px] text-slate-400 font-bold px-6 leading-normal">
-            To upload images or adjust crop sizes, uncheck the "Disable Photos" box above.
-          </p>
         </div>
-      )}
 
-    </div>
+        {/* STEP 3: Style */}
+        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">3</div>
+            <div>
+              <h3 className="text-sm font-black text-slate-800">Choose a Style</h3>
+              <p className="text-[11px] text-slate-400 font-semibold">Each style uses a unique color palette and layout</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {([
+              { t: FLYER_THEMES[0], swatches: ['#ea580c','#fb923c','#fef3c7'], desc: 'Warm & professional — works for any use case' },
+              { t: FLYER_THEMES[1], swatches: ['#065f46','#059669','#d1fae5'], desc: 'Editorial with a bold photo banner at the top' },
+              { t: FLYER_THEMES[2], swatches: ['#4f46e5','#7dd3fc','#e0f2fe'], desc: 'Clean two-column layout — great with photos' },
+              { t: FLYER_THEMES[3], swatches: ['#d97706','#fcd34d','#fef3c7'], desc: 'Bold graphic style with high-contrast sections' },
+              { t: FLYER_THEMES[4], swatches: ['#e11d48','#fda4af','#fff1f2'], desc: 'Vibrant and eye-catching — best with action photos' },
+            ]).map(({ t, swatches, desc }) => (
+              <button key={t.id} onClick={() => setActiveTheme(t)}
+                className={`w-full flex items-center gap-3 p-3 rounded-2xl border-2 text-left cursor-pointer transition-all ${
+                  activeTheme.id === t.id ? 'border-indigo-500 bg-indigo-50/40 ring-2 ring-indigo-500/15' : 'border-slate-200 bg-white hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex gap-0.5 shrink-0">
+                  {swatches.map((c, i) => (
+                    <div key={i} className={`w-4 h-10 ${i === 0 ? 'rounded-l-lg' : ''} ${i === swatches.length - 1 ? 'rounded-r-lg' : ''}`}
+                      style={{ backgroundColor: c }} />
+                  ))}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[12px] font-black text-slate-800">{t.name}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold leading-tight mt-0.5">{desc}</div>
+                </div>
+                {activeTheme.id === t.id && (
+                  <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* STEP 4: Message Content */}
+        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">4</div>
+            <div>
+              <h3 className="text-sm font-black text-slate-800">Your Message</h3>
+              <p className="text-[11px] text-slate-400 font-semibold">Edit the headline, subtitle, and opening paragraph</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Headline</label>
+              <input type="text" name="header" value={data.header} onChange={handleInputChange}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-bold" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Subtitle</label>
+              <input type="text" name="subtitle" value={data.subtitle} onChange={handleInputChange}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-bold" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Opening Paragraph (1–2 sentences)</label>
+              <textarea name="intro" value={data.intro} rows={3} onChange={handleInputChange}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-medium leading-relaxed" />
+            </div>
+          </div>
+        </div>
+
+        {/* STEP 5: Key Points */}
+        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">5</div>
+            <div>
+              <h3 className="text-sm font-black text-slate-800">
+                {data.useCase === 'donation' ? 'Requested Items' : data.useCase === 'fosters' ? 'Key Highlights' : 'Roles or Shifts'}
+              </h3>
+              <p className="text-[11px] text-slate-400 font-semibold">Bullet points on the flyer — up to 5 shown</p>
+            </div>
+          </div>
+          <form onSubmit={handleAddBulletItem} className="flex gap-2">
+            <input type="text"
+              placeholder={data.useCase === 'donation' ? 'e.g. Grain-free Puppy Dry Food' : 'e.g. Transport Driver (gear provided)'}
+              value={newItemInput} onChange={e => setNewItemInput(e.target.value)}
+              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-semibold" />
+            <button type="submit" className="p-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black flex items-center gap-1 shadow-sm cursor-pointer">
+              <Plus className="w-4 h-4" /><span>Add</span>
+            </button>
+          </form>
+          <div className="divide-y divide-slate-100 max-h-52 overflow-y-auto">
+            {data.items.length === 0 ? (
+              <p className="text-[11px] text-slate-400 font-semibold py-2">No items yet — add some above.</p>
+            ) : data.items.map((bullet, idx) => (
+              <div key={idx} className="flex items-center justify-between py-2 gap-3">
+                <span className="flex-1 text-xs font-semibold text-slate-700 leading-snug">{bullet}</span>
+                <button type="button" onClick={() => handleRemoveBulletItem(idx)} className="text-rose-400 hover:text-rose-600 cursor-pointer p-1 shrink-0">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* STEP 6: Contact & CTA */}
+        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">6</div>
+            <div>
+              <h3 className="text-sm font-black text-slate-800">Contact & Call to Action</h3>
+              <p className="text-[11px] text-slate-400 font-semibold">Only include what you want printed on the flyer</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="sm:col-span-2">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">
+                Rescue Organization <span className="text-rose-500">*</span>
+              </label>
+              <input type="text" name="orgName" required value={data.orgName} onChange={handleInputChange}
+                placeholder="Your rescue's name"
+                className={`w-full border rounded-xl px-3 py-2 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 transition-colors ${
+                  !data.orgName.trim() ? 'border-amber-400 bg-amber-50/30' : 'border-slate-200 bg-slate-50'
+                }`} />
+              {!data.orgName.trim() && <span className="text-[9px] font-bold text-amber-600 mt-0.5 block">Required to download</span>}
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Website</label>
+              <input type="text" name="website" value={data.website} onChange={handleInputChange}
+                placeholder="e.g. www.yourrescue.org"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 placeholder:text-slate-300" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Email</label>
+              <input type="text" name="email" value={data.email} onChange={handleInputChange}
+                placeholder="e.g. hello@yourrescue.org"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 placeholder:text-slate-300" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Phone</label>
+              <input type="text" name="phone" value={data.phone} onChange={handleInputChange}
+                placeholder="e.g. (555) 123-4567"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 placeholder:text-slate-300" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Call to Action Heading</label>
+              <input type="text" name="ctaLabel" value={data.ctaLabel} onChange={handleInputChange}
+                placeholder={
+                  data.useCase === 'donation' ? 'e.g. Where to Drop Off or Donate:' :
+                  data.useCase === 'fosters' ? 'e.g. Apply to Foster Today:' :
+                  data.useCase === 'ongoing_volunteers' ? 'e.g. How to Join Our Team:' :
+                  'e.g. Event Details & How to Register:'
+                }
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-bold placeholder:font-normal placeholder:text-slate-300" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Call to Action Details</label>
+              <input type="text" name="ctaDetails" value={data.ctaDetails} onChange={handleInputChange}
+                placeholder={
+                  data.useCase === 'donation' ? 'e.g. Drop off at our vet clinic or donate on our website' :
+                  data.useCase === 'fosters' ? 'e.g. Fill out the short questionnaire at our website' :
+                  data.useCase === 'ongoing_volunteers' ? 'e.g. Visit our website under /volunteer to apply' :
+                  'e.g. Aug 15, 10 AM–3 PM at Town Square Park'
+                }
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-semibold placeholder:font-normal placeholder:text-slate-300" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Thank You / Closing Statement</label>
+              <textarea name="thankYouMessage" value={data.thankYouMessage} rows={2} onChange={handleInputChange}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-medium leading-relaxed" />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-600 font-bold">
+            <span className="flex items-center gap-1.5">
+              <Globe className="w-4 h-4 text-indigo-400" />
+              Show QR code linking to website
+            </span>
+            <input type="checkbox" checked={data.showQRCode} onChange={e => setData(prev => ({ ...prev, showQRCode: e.target.checked }))}
+              className="w-4 h-4 rounded text-indigo-600 cursor-pointer accent-indigo-600" />
+          </div>
+        </div>
 
       </div>
 
-      {/* RIGHT COLUMN: REASSURING LIVE PREVIEW WITH TWO RATIO SELECTS & SCALING OPTION */}
-      <div className={`col-span-full lg:col-span-6 flex flex-col items-center justify-start gap-4 ${mobileTab === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
-        
-        {/* MEDIUM CONFIG SELECTOR */}
-        <div className="w-full bg-white border border-sky-100 rounded-3xl p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-left">
-            <span className="text-[10px] uppercase tracking-widest text-indigo-500 font-extrabold block">PRESENTATION MEDIUM</span>
-            <p className="text-[10.5px] text-slate-400 font-bold">Select presentation medium</p>
+      {/* ── RIGHT COLUMN — sticky preview ── */}
+      <div className={`col-span-full lg:col-span-7 lg:sticky lg:top-24 flex flex-col gap-4 ${mobileTab === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
+
+        {/* Format + fullscreen bar */}
+        <div className="bg-white border border-sky-100 rounded-3xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+          <div className="flex flex-col gap-0.5 hidden sm:flex">
+            <span className="text-[10px] uppercase tracking-widest text-indigo-500 font-extrabold">Format</span>
+            <span className="text-[10px] text-slate-400 font-semibold">Choose your format — or save both!</span>
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={() => setAspectRatio('flyer')}
-              className={`px-4 py-2 rounded-full font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 ${
-                aspectRatio === 'flyer'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-150'
-                  : 'bg-slate-50 text-slate-600 border border-slate-205 hover:bg-slate-100'
-              }`}
-            >
-              <span>📄 Printable Poster (8.5x11)</span>
-            </button>
-            <button
-              onClick={() => setAspectRatio('square')}
-              className={`px-4 py-2 rounded-full font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 ${
-                aspectRatio === 'square'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-150'
-                  : 'bg-slate-50 text-slate-600 border border-slate-205 hover:bg-slate-100'
-              }`}
-            >
-              <span>📸 Instagram square (1:1)</span>
-            </button>
+            {([
+              { val: 'flyer', label: '📄 Flyer (Print & Share)' },
+              { val: 'square', label: '📸 Social Square (1:1)' },
+            ] as const).map(opt => (
+              <button key={opt.val} onClick={() => setAspectRatio(opt.val)}
+                className={`px-4 py-2 rounded-full font-bold text-xs transition-all cursor-pointer ${
+                  aspectRatio === opt.val ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
+                }`}
+              >{opt.label}</button>
+            ))}
           </div>
-        </div>
-
-        {/* STATUS AND SCALE-TO-SCREEN COMMAND BAR */}
-        <div className="no-print w-full flex justify-between items-center bg-stone-100 py-2.5 px-4 rounded-2xl text-xs text-stone-600 font-extrabold border border-stone-250">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-ping"></span>
-            <span>Live Layout: {aspectRatio === 'square' ? 'Instagram Square (1:1)' : 'Printable Flyer (8.5" x 11")'}</span>
-          </span>
-          <button
-            type="button"
-            onClick={() => setShowFullPreview(true)}
-            className="cursor-pointer flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-lg active:scale-95 transition-all text-[11px] font-extrabold shadow-sm"
-            title="Scale flyer to entire viewport"
+          <button type="button" onClick={() => setShowFullPreview(true)}
+            className="cursor-pointer flex items-center gap-1.5 bg-slate-900 hover:bg-slate-700 text-white py-2 px-3.5 rounded-xl text-[11px] font-extrabold shadow-sm transition-all"
           >
             <Maximize2 className="w-3.5 h-3.5" />
-            <span>Scale to screen</span>
+            Full Preview
           </button>
         </div>
 
-        {/* EXCELENTLY DESIGNED POSTER PREVIEW */}
-        <div 
-          className={`w-full bg-slate-50 border border-slate-200/85 rounded-3xl shadow-lg relative flex items-center justify-center p-4 overflow-hidden ${
-            aspectRatio === 'square' ? 'max-w-md' : 'max-w-[420px]'
-          }`}
-        >
-          {renderFlyerMainContainerHTML(false)}
+        {/* LIVE PREVIEW */}
+        <div className="w-full bg-gradient-to-br from-slate-100 via-slate-100 to-indigo-100/40 border border-slate-200 rounded-3xl p-5 flex items-start justify-center relative shadow-inner">
+          <div className="absolute top-3.5 left-4 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full border border-slate-200 shadow-sm pointer-events-none">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-black text-slate-600">Live Preview</span>
+          </div>
+          <div className={`w-full mt-2 mx-auto ${aspectRatio === 'square' ? 'max-w-sm' : 'max-w-[440px]'}`}>
+            {renderFlyerMainContainerHTML(false)}
+          </div>
         </div>
 
-        {/* SAVE OUTFLOW TRIGGERS */}
-        <div className="w-full flex flex-col gap-2.5 max-w-[420px] mt-1">
-          <div className="grid grid-cols-2 gap-3.5">
-            <button
-              onClick={() => triggerDownload('flyer')}
-              disabled={isDownloading}
-              className={`cursor-pointer flex items-center justify-center gap-2 text-white font-extrabold text-xs py-3.5 px-2 rounded-2xl transition-all shadow-md active:scale-95 leading-none bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400`}
-              title="Save vertical printable flyer as vector PDF"
+        {/* DOWNLOAD + SHARE BUTTONS */}
+        <div className="space-y-2.5">
+          {/* Row 1: Save buttons */}
+          <div className="grid grid-cols-2 gap-2.5">
+            <button onClick={() => triggerDownload('flyer')} disabled={isDownloading || isCopying}
+              className="cursor-pointer flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-extrabold text-xs py-3.5 rounded-2xl transition-all shadow-md active:scale-95"
             >
-              {isDownloading ? (
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-              ) : (
-                <Download className="w-4.5 h-4.5" />
-              )}
-              <span>Save Flyer (PDF)</span>
+              {isDownloading
+                ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                : <Download className="w-4 h-4" />}
+              Save as PDF
             </button>
-            <button
-              onClick={() => triggerDownload('square')}
-              disabled={isDownloading}
-              className={`cursor-pointer flex items-center justify-center gap-2 text-white font-extrabold text-xs py-3.5 px-2 rounded-2xl transition-all shadow-md active:scale-95 leading-none bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400`}
-              title="Save square social media flyer as PNG"
+            <button onClick={() => triggerDownload('square')} disabled={isDownloading || isCopying}
+              className="cursor-pointer flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-extrabold text-xs py-3.5 rounded-2xl transition-all shadow-md active:scale-95"
             >
-              {isDownloading ? (
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-              ) : (
-                <Smartphone className="w-4.5 h-4.5" />
-              )}
-              <span>Save Square (PNG)</span>
+              {isDownloading
+                ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                : <Smartphone className="w-4 h-4" />}
+              Save PNG
             </button>
           </div>
+
+          {/* Row 2: Copy + Share (social) */}
+          <div className={`grid gap-2.5 ${canWebShare ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            <button onClick={copyToClipboard} disabled={isDownloading || isCopying}
+              className="cursor-pointer flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-800 disabled:opacity-50 text-white font-extrabold text-xs py-3 rounded-2xl transition-all shadow-sm active:scale-95"
+            >
+              {isCopying
+                ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                : <Copy className="w-4 h-4" />}
+              Copy to Clipboard
+            </button>
+            {canWebShare && (
+              <button onClick={shareToSocial} disabled={isDownloading || isCopying}
+                className="cursor-pointer flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white font-extrabold text-xs py-3 rounded-2xl transition-all shadow-sm active:scale-95"
+              >
+                {isCopying
+                  ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  : <Share2 className="w-4 h-4" />}
+                Share...
+              </button>
+            )}
+          </div>
+          <p className="text-center text-[10px] text-slate-400 font-semibold">
+            Copy & Share export as a square image — ideal for Instagram, Facebook & messaging apps
+          </p>
         </div>
 
       </div>
