@@ -1246,12 +1246,12 @@ export const RescueNeedsFlyers: React.FC = () => {
     <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
       {/* HEADER BAR */}
-      <div className="col-span-full bg-white border border-sky-100 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="col-span-full bg-gradient-to-r from-sky-50 via-blue-50/50 to-sky-50/40 border border-sky-200/70 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="relative z-10">
-          <h2 className="text-3xl font-black text-slate-800 tracking-tight font-fraunces">
-            Create Rescue Outreach Flyers
-          </h2>
-          <p className="text-sm text-slate-500 font-semibold mt-1">
+          <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight font-fraunces">
+            Make Flyers for Every Rescue Need
+          </h1>
+          <p className="text-sm text-sky-800/80 font-semibold mt-1.5">
             Design printable or social media flyers for donations, fosters, volunteers, or events — in minutes.
           </p>
         </div>

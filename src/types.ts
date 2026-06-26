@@ -44,7 +44,7 @@ export interface FosterPetData {
   photoOffsetY2?: number;
 }
 
-export type PosterTemplateId = 'whimsical' | 'minimalist' | 'editorial' | 'comic' | 'polaroid' | 'bio-only' | 'two-photos' | 'comic-2-photos' | 'extreme-duo';
+export type PosterTemplateId = 'whimsical' | 'minimalist' | 'editorial' | 'comic' | 'polaroid' | 'bio-only' | 'two-photos' | 'comic-2-photos' | 'extreme-duo' | 'editorial-2-photos';
 
 export type FontStyleId = 'playful' | 'elegant' | 'modern' | 'mono';
 
