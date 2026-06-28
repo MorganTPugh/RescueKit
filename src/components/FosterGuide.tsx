@@ -1300,7 +1300,7 @@ export function FosterGuide() {
           <div className="text-center py-4 border-t border-sky-100">
             <p className="text-[15px] font-black text-slate-700">Thank you for fostering.</p>
             <p className="text-[13px] font-medium text-stone-500 mt-1">Every animal that passes through your home carries your kindness forward.<br/>The love you give them teaches them to trust again.</p>
-            <p className="text-[11px] font-bold text-indigo-500 mt-2 uppercase tracking-wider">🐾 RescueKit — Free tools for the rescue community 🐾</p>
+            <p className="text-[11px] font-bold text-indigo-500 mt-2 uppercase tracking-wider">🐾 Rescue-Kit — Free tools for the rescue community 🐾</p>
           </div>
         </div>
       ),
@@ -1313,7 +1313,7 @@ export function FosterGuide() {
       {/* GUIDE HEADER BANNER */}
       <div className="no-print bg-gradient-to-r from-sky-50 via-blue-50/50 to-sky-50/40 p-6 rounded-2xl border border-sky-200/70 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight font-fraunces">Foster Care Handbook & Tools</h1>
+          <h1 className="text-[22.8px] md:text-[34.2px] font-black text-slate-900 tracking-tight font-fraunces">Foster Care Handbook & Tools</h1>
           <p className="text-sm text-sky-800/80 font-bold mt-1.5">A complete handbook, prep checklist, and diagnostic tools for fosters</p>
         </div>
         <div className="hidden md:block text-right bg-white/70 p-2.5 px-4 rounded-2xl border border-sky-100 shrink-0">
@@ -1613,10 +1613,10 @@ export function FosterGuide() {
       {/* PRINT-ONLY SECTION */}
       <div className="guide-print-container hidden print:block bg-white text-slate-800 p-6 font-sans leading-relaxed text-[13px]">
         <div className="text-center border-b-2 border-slate-300 pb-5 mb-8">
-          <h1 className="text-3xl font-black text-indigo-700 tracking-tight">RESCUEKIT FOSTER GUIDE</h1>
+          <h1 className="text-3xl font-black text-indigo-700 tracking-tight">RESCUE-KIT FOSTER GUIDE</h1>
           <p className="text-[13px] font-bold text-slate-500 mt-2 uppercase">A Complete Handbook for Foster Families</p>
           <div className="mt-4 text-[11px] text-slate-400 font-bold">
-            Provided as a free resource by RescueKit • rescuekit.org
+            Provided as a free resource by Rescue-Kit • rescue-kit.org
           </div>
         </div>
 
@@ -1637,14 +1637,14 @@ export function FosterGuide() {
           <p className="text-xs font-bold text-stone-500">
             Thank you for fostering. Every animal that passes through your home carries your kindness forward.
           </p>
-          <span className="text-[10px] text-stone-400 block mt-1">🐾 RescueKit Community Hub</span>
+          <span className="text-[10px] text-stone-400 block mt-1">🐾 Rescue-Kit Community Hub</span>
         </div>
       </div>
 
       {/* PERSISTENT DISCLAIMER NOTE */}
       <div className="print:hidden mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-5 text-[11px] text-amber-900 font-medium leading-relaxed space-y-2">
         <p>
-          <strong className="text-amber-800">For rescue coordinators:</strong> This guide is provided as a free resource by RescueKit and is designed to be a foundation, not a final rulebook. Feel free to adapt it — layer in your own policies, contact details, and organization-specific protocols to make it fully yours.
+          <strong className="text-amber-800">For rescue coordinators:</strong> This guide is provided as a free resource by Rescue-Kit and is designed to be a foundation, not a final rulebook. Feel free to adapt it — layer in your own policies, contact details, and organization-specific protocols to make it fully yours.
         </p>
         <p>
           <strong className="text-amber-800">For fosters:</strong> This guide covers general best practices, but every rescue operates a little differently. Always check with your coordinator for rules specific to your rescue — including adoption procedures, event attendance, transport policies, and anything else not outlined here.
@@ -1660,7 +1660,7 @@ export function FosterGuide() {
           </p>
         </div>
         <div>
-          <span className="font-bold text-[11px] text-indigo-500 uppercase tracking-wider">RescueKit Community Tools</span>
+          <span className="font-bold text-[11px] text-indigo-500 uppercase tracking-wider">Rescue-Kit Community Tools</span>
         </div>
       </div>
 

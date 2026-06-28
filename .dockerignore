@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.github
+.claude
+.impeccable
+Dockerfile
+.dockerignore
+.env
+.env.local
+*.log
+feedback_submissions.json

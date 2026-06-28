@@ -9,6 +9,7 @@ import { FosterGuide } from './components/FosterGuide';
 import { RescueGrants } from './components/RescueGrants';
 import { PosterPreviewWrapper } from './components/PosterPreviewWrapper';
 import { RescueNeedsFlyers } from './components/RescueNeedsFlyers';
+import { RescueForms } from './components/RescueForms';
 import {
   Heart,
   Printer,
@@ -24,7 +25,8 @@ import {
   Megaphone,
   Coins,
   PenLine,
-  Eye
+  Eye,
+  FileText
 } from 'lucide-react';
 
 const LS_PET_KEY = 'rescuekit_pet';
@@ -94,7 +96,7 @@ export default function App() {
   const [feedbackForm, setFeedbackForm] = useState({
     name: '',
     email: '',
-    subject: 'RescueKit Suggestion/Feedback',
+    subject: 'Rescue-Kit Suggestion/Feedback',
     message: ''
   });
 
@@ -121,7 +123,7 @@ export default function App() {
   const [showHowToPrintModal, setShowHowToPrintModal] = useState<boolean>(false);
   const [showFullPreview, setShowFullPreview] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
-  const [activeSection, setActiveSection] = useState<'posters' | 'guide' | 'rescue-flyers' | 'grants'>('posters');
+  const [activeSection, setActiveSection] = useState<'posters' | 'guide' | 'rescue-flyers' | 'grants' | 'forms'>('posters');
   const [posterMobileTab, setPosterMobileTab] = useState<'edit' | 'preview'>('edit');
 
   // Autosave pet + settings to localStorage (debounced 500ms)
@@ -227,7 +229,7 @@ export default function App() {
         setFeedbackForm({
           name: '',
           email: '',
-          subject: 'RescueKit Suggestion/Feedback',
+          subject: 'Rescue-Kit Suggestion/Feedback',
           message: ''
         });
       } else {
@@ -318,7 +320,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50/60 via-stone-50 to-teal-50/30 text-slate-800 flex flex-col justify-between selection:bg-sky-100">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50/60 via-stone-50 to-teal-50/30 text-slate-800 flex flex-col justify-between">
 
       {/* 1. APP HEADER - HIDDEN IN PRINTING OUTPUT (.no-print) */}
       <header className="no-print bg-sky-50/90 backdrop-blur-sm px-4 py-3 md:px-8 md:py-4 sticky top-0 z-20 shadow-sm border-b-2 border-sky-200">
@@ -335,8 +337,8 @@ export default function App() {
               <path d="M35 14 L35.8 16.2 L38 17 L35.8 17.8 L35 20 L34.2 17.8 L32 17 L34.2 16.2 Z" fill="#7dd3fc" opacity="0.8"/>
             </svg>
             <div>
-              <span className="text-3xl md:text-4xl font-black text-sky-950 tracking-tight font-display">Rescue<span className="text-sky-600">Kit</span></span>
-              <p className="hidden sm:block text-[11px] font-semibold text-sky-700 leading-none mt-0.5">Free tools for animal fosters & rescue orgs</p>
+              <span className="text-3xl md:text-4xl font-black tracking-tight font-display" style={{background:'linear-gradient(90deg,#082f49 0%,#082f49 40%,#0284c7 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Rescue-Kit</span>
+              <p className="hidden sm:block text-[11px] font-semibold text-sky-700 leading-none mt-0.5">Free tools for animal rescues, fosters, and volunteers</p>
             </div>
           </div>
 
@@ -347,44 +349,55 @@ export default function App() {
               className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition-all duration-200 flex flex-col items-start gap-0.5 text-left ${
                 activeSection === 'posters'
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-200'
-                  : 'text-sky-900/75 hover:text-sky-950 hover:bg-white/80'
+                  : 'text-sky-950 hover:bg-white/80'
               }`}
             >
               <span className="text-[11px] sm:text-xs font-black flex items-center gap-1.5"><Layers className="w-3.5 h-3.5" /> Flyers & Bios</span>
-              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'posters' ? 'text-white/70' : 'text-sky-800/60'}`}>For Adoptable Animals</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'posters' ? 'text-white/70' : 'text-sky-900/80'}`}>For Adoptable Animals</span>
             </button>
             <button
               onClick={() => setActiveSection('rescue-flyers')}
               className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition-all duration-200 flex flex-col items-start gap-0.5 text-left ${
                 activeSection === 'rescue-flyers'
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-200'
-                  : 'text-sky-900/75 hover:text-sky-950 hover:bg-white/80'
+                  : 'text-sky-950 hover:bg-white/80'
               }`}
             >
-              <span className="text-[11px] sm:text-xs font-black flex items-center gap-1.5"><Megaphone className="w-3.5 h-3.5" /> Flyers</span>
-              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'rescue-flyers' ? 'text-white/70' : 'text-sky-800/60'}`}>For Rescue Needs</span>
+              <span className="text-[11px] sm:text-xs font-black flex items-center gap-1.5"><Megaphone className="w-3.5 h-3.5" /> Outreach Flyers</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'rescue-flyers' ? 'text-white/70' : 'text-sky-900/80'}`}>For Rescue Needs</span>
             </button>
             <button
               onClick={() => setActiveSection('guide')}
               className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition-all duration-200 flex flex-col items-start gap-0.5 text-left ${
                 activeSection === 'guide'
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-200'
-                  : 'text-sky-900/75 hover:text-sky-950 hover:bg-white/80'
+                  : 'text-sky-950 hover:bg-white/80'
               }`}
             >
               <span className="text-[11px] sm:text-xs font-black flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5" /> Foster Guide</span>
-              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'guide' ? 'text-white/70' : 'text-sky-800/60'}`}>Tips & Tricks</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'guide' ? 'text-white/70' : 'text-sky-900/80'}`}>Tips & Tricks</span>
             </button>
             <button
               onClick={() => setActiveSection('grants')}
               className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition-all duration-200 flex flex-col items-start gap-0.5 text-left ${
                 activeSection === 'grants'
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-200'
-                  : 'text-sky-900/75 hover:text-sky-950 hover:bg-white/80'
+                  : 'text-sky-950 hover:bg-white/80'
               }`}
             >
               <span className="text-[11px] sm:text-xs font-black flex items-center gap-1.5"><Coins className="w-3.5 h-3.5" /> Grants Hub</span>
-              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'grants' ? 'text-white/70' : 'text-sky-800/60'}`}>Grants & Prep</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'grants' ? 'text-white/70' : 'text-sky-900/80'}`}>Grants & Prep</span>
+            </button>
+            <button
+              onClick={() => setActiveSection('forms')}
+              className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition-all duration-200 flex flex-col items-start gap-0.5 text-left ${
+                activeSection === 'forms'
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-200'
+                  : 'text-sky-950 hover:bg-white/80'
+              }`}
+            >
+              <span className="text-[11px] sm:text-xs font-black flex items-center gap-1.5"><FileText className="w-3.5 h-3.5" /> Rescue Forms</span>
+              <span className={`hidden sm:block text-[9px] font-bold ${activeSection === 'forms' ? 'text-white/70' : 'text-sky-900/80'}`}>Starter Documents</span>
             </button>
           </div>
 
@@ -399,7 +412,7 @@ export default function App() {
           <div className="no-print col-span-full bg-gradient-to-r from-sky-50 via-blue-50/50 to-sky-50/40 border border-sky-200/70 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_theme(colors.sky.100/50),_transparent_60%)] pointer-events-none" />
             <div className="relative z-10">
-              <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-2 font-fraunces">Create Adoption Flyers in Minutes</h1>
+              <h1 className="text-[22.8px] md:text-[34.2px] font-black text-slate-900 tracking-tight flex items-center gap-2 font-fraunces">Create Adoption Flyers in Minutes</h1>
               <p className="text-sm text-sky-800 font-bold mt-1.5">Generate printable flyers or AI-written adoption bios — free, private, no sign-up needed.</p>
             </div>
           </div>
@@ -614,9 +627,13 @@ export default function App() {
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8">
           <RescueNeedsFlyers />
         </main>
-      ) : (
+      ) : activeSection === 'grants' ? (
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
           <RescueGrants />
+        </main>
+      ) : (
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8">
+          <RescueForms />
         </main>
       )}
 
@@ -641,7 +658,7 @@ export default function App() {
       {/* FOOTER */}
       <footer className="no-print bg-sky-50/40 border-t border-sky-100/80 py-6 text-center text-xs text-sky-800/50 font-semibold">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p>© 2026 RescueKit Community. Open-source & free tools for rescue and foster volunteers worldwide.</p>
+          <p>© 2026 Rescue-Kit Community. Open-source & free tools for rescue and foster volunteers worldwide.</p>
           <div className="flex gap-4">
             {activeSection === 'posters' && (
               <>
@@ -819,7 +836,7 @@ export default function App() {
                 </div>
                 <h3 className="text-xl font-black text-slate-900 font-fraunces">Thank you for your feedback!</h3>
                 <p className="text-sm font-semibold text-stone-500 mt-2 leading-relaxed max-w-sm">
-                  We appreciate ideas of how to make RescueKit more helpful! Your insights are queued.
+                  We appreciate ideas of how to make Rescue-Kit more helpful! Your insights are queued.
                 </p>
 
                 <button
@@ -837,12 +854,12 @@ export default function App() {
                     <MessageSquare className="w-4 h-4" />
                   </div>
                   <h3 className="text-lg font-black text-slate-900 font-display">
-                    Send Message to RescueKit Team
+                    Send Message to Rescue-Kit Team
                   </h3>
                 </div>
 
                 <p className="text-xs text-stone-500 leading-relaxed mb-5">
-                  We are always looking to make RescueKit a helpful tool for rescues, fosters, and volunteers. For feedback or suggestions, please reach out! Your email message will be securely shared with the platform maintainers.
+                  We are always looking to make Rescue-Kit a helpful tool for rescues, fosters, and volunteers. For feedback or suggestions, please reach out! Your email message will be securely shared with the platform maintainers.
                 </p>
 
                 <form onSubmit={handleFeedbackSubmit} className="space-y-4 font-sans text-left">

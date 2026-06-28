@@ -62,11 +62,12 @@ const PRESETS: Record<FlyerUseCase, RescueFlyerData> = {
     subtitle: 'Every little bit makes a massive difference for our animals',
     intro: 'Our shelter and foster home supply reserves are running critically low. Help us restock essential food and medical supplies so we can continue rescuing local animals!',
     items: [
-      'Puppy & Kitten Wet Food (Paté style preferred)',
-      'High-Durability Plastic Pet Crates (Medium & Large)',
-      'Clumping Clay Unscented Cat Litter',
-      'Washable Fleece Blankets & Large Bath Towels',
-      'Training Treats and Chew-Proof Dog Toys'
+      'Dog food - any brand',
+      'High-Durability Plastic Pet Crates',
+      'Cat litter',
+      'Washable Fleece Blankets & Bath Towels',
+      'Training Treats and Chew-Proof Dog Toys',
+      'Gift cards to pet supply stores'
     ],
     thankYouMessage: "A heartfelt thank you from our board, fosters, and most of all, the animals. You're helping the mission!",
     ctaLabel: '',
@@ -180,7 +181,7 @@ const FLYER_THEMES: ThemeStyle[] = [
     textBody: 'text-slate-800 font-serif',
     badgeBg: 'bg-emerald-600/10',
     badgeText: 'text-emerald-800',
-    accentBorder: 'border-emerald-350',
+    accentBorder: 'border-emerald-300',
     accentBtn: 'bg-emerald-700 hover:bg-emerald-800 text-white',
     bulletIconColor: 'text-emerald-700',
     fontFamily: 'font-serif'
@@ -209,9 +210,9 @@ const FLYER_THEMES: ThemeStyle[] = [
     textHeader: 'text-amber-950 font-outfit',
     textBody: 'text-stone-700 font-sans',
     badgeBg: 'bg-amber-500/15',
-    badgeText: 'text-amber-850 font-extrabold',
+    badgeText: 'text-amber-800 font-extrabold',
     accentBorder: 'border-amber-300',
-    accentBtn: 'bg-amber-500 hover:bg-amber-600 text-stone-950',
+    accentBtn: 'bg-amber-500 hover:bg-amber-600 text-amber-950',
     bulletIconColor: 'text-amber-600',
     fontFamily: 'font-outfit'
   },
@@ -229,7 +230,7 @@ const FLYER_THEMES: ThemeStyle[] = [
     accentBtn: 'bg-rose-500 hover:bg-rose-600 text-white',
     bulletIconColor: 'text-rose-500',
     fontFamily: 'font-playful'
-  }
+  },
 ];
 
 interface RepositionableOutreachImageProps {
@@ -439,7 +440,7 @@ export const RescueNeedsFlyers: React.FC = () => {
   
   // Custom uploaded photos state
   const [photos, setPhotos] = useState<string[]>([]);
-  const [photoZooms, setPhotoZooms] = useState<number[]>([1, 1, 1]);
+  const [photoZooms, setPhotoZooms] = useState<number[]>([1.5, 1.5, 1.5]);
   const [photoOffsetsX, setPhotoOffsetsX] = useState<number[]>([0, 0, 0]);
   const [photoOffsetsY, setPhotoOffsetsY] = useState<number[]>([0, 0, 0]);
   const [noPhoto, setNoPhoto] = useState<boolean>(false);
@@ -515,7 +516,7 @@ export const RescueNeedsFlyers: React.FC = () => {
   const handleRemovePhoto = (idx: number) => {
     setPhotos(prev => prev.filter((_, i) => i !== idx));
     // Reset positions
-    setPhotoZooms(prev => prev.map((z, i) => i === idx ? 1 : z));
+    setPhotoZooms(prev => prev.map((z, i) => i === idx ? 1.5 : z));
     setPhotoOffsetsX(prev => prev.map((x, i) => i === idx ? 0 : x));
     setPhotoOffsetsY(prev => prev.map((y, i) => i === idx ? 0 : y));
   };
@@ -535,7 +536,7 @@ export const RescueNeedsFlyers: React.FC = () => {
   const triggerDownload = async (targetRatio: 'flyer' | 'square') => {
     // Rescue Organization is a required field! Validate here before any download.
     if (!data.orgName.trim()) {
-      setSuccessToast(`⚠️ Warning: "Rescue Organization" is a required field! Please enter the organization name in Step 4.`);
+      setSuccessToast(`⚠️ Warning: "Rescue Organization" is a required field! Please enter the organization name under Contact & Publish.`);
       setTimeout(() => setSuccessToast(null), 5000);
       return;
     }
@@ -684,19 +685,16 @@ export const RescueNeedsFlyers: React.FC = () => {
             : '';
 
           return (
-            <div 
-              key={index} 
-              className={`relative rounded-2xl overflow-hidden border-2 shadow-md bg-stone-100 transition-transform duration-200 ${
+            <div
+              key={index}
+              className={`relative rounded-xl overflow-hidden border-2 shadow-md bg-stone-100 transition-transform duration-200 ${
                 activeTheme.accentBorder
               } ${rotationClass} ${
-                photos.length === 1 ? heightClassOne : 
-                photos.length === 2 ? heightClassTwo : 
+                photos.length === 1 ? heightClassOne :
+                photos.length === 2 ? heightClassTwo :
                 heightClassThree
               }`}
             >
-              <div className="absolute top-1 left-1.5 bg-white/95 backdrop-blur-xs text-[7px] font-black px-2 py-0.5 rounded shadow-2xs uppercase tracking-widest z-10 text-stone-800">
-                ★ OUTREACH
-              </div>
               <RepositionableOutreachImage
                 id={index}
                 src={src}
@@ -715,43 +713,46 @@ export const RescueNeedsFlyers: React.FC = () => {
     );
   };
 
-  // Renders the materials/shifts bullets
-  const renderBullets = () => {
+  // Renders the materials/shifts bullets — used by emerald, breezy, playful themes
+  const renderBullets = (accentColor: string = 'text-indigo-600', bgColor: string = 'bg-indigo-50') => {
+    const displayedItems = data.items.slice(0, 10);
+    const labelMap: Record<string, string> = {
+      donation: 'WHAT WE NEED',
+      fosters: 'WHY FOSTER WITH US',
+      ongoing_volunteers: 'HOW YOU CAN HELP',
+      event_volunteers: 'VOLUNTEER SHIFTS',
+    };
+    const BulletIcon = activeTheme.id === 'playful' ? Sparkles : activeTheme.id === 'emerald' ? Heart : HeartHandshake;
     return (
-      <div className="space-y-2">
-        <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider block mb-1">
-          {data.useCase === 'donation' ? '📌 REQUIRED MATERIALS:' : data.useCase === 'fosters' ? '📌 WHY FOSTER WITH US:' : '📌 HOW YOU CAN ASSIST:'}
+      <div className="space-y-1.5">
+        <span className={`text-[9px] font-black uppercase tracking-wider block mb-1 ${accentColor}`}>
+          {labelMap[data.useCase] ?? 'HOW YOU CAN HELP'}
         </span>
-        
         <div className="grid grid-cols-1 gap-1.5">
-          {data.items.slice(0, 5).map((bullet, index) => {
+          {displayedItems.map((bullet, index) => {
             const colonIndex = bullet.indexOf(':');
             const hasColon = colonIndex > -1;
             const headline = hasColon ? bullet.substring(0, colonIndex) : bullet;
             const detail = hasColon ? bullet.substring(colonIndex + 1) : '';
-
-            // Playful theme custom bullet marker
-            const BulletIcon = activeTheme.id === 'playful' ? Sparkles : HeartHandshake;
-
             return (
-              <div key={index} className="flex items-start gap-1.5 text-stone-800 text-[9px] md:text-[9.5px] w-full">
-                <div className={`p-[2px] mt-0.5 bg-indigo-50/50 rounded-full shrink-0 ${activeTheme.bulletIconColor}`}>
+              <div key={index} className="flex items-start gap-2 text-stone-800 text-[10px] w-full">
+                <div className={`p-[3px] mt-[1px] ${bgColor} rounded-full shrink-0 ${accentColor}`}>
                   <BulletIcon className="w-3 h-3 shrink-0" />
                 </div>
-                <div className="leading-tight flex-1 text-left">
+                <div className="leading-snug flex-1 text-left">
                   {hasColon ? (
                     <p className="font-semibold text-slate-800">
-                      <strong className="text-slate-900 font-extrabold">{headline}:</strong> {detail}
+                      <strong className="text-slate-900 font-extrabold">{headline}:</strong>{detail}
                     </p>
                   ) : (
-                    <p className="font-bold text-slate-705">{bullet}</p>
+                    <p className="font-bold text-slate-700">{bullet}</p>
                   )}
                 </div>
               </div>
             );
           })}
           {data.items.length === 0 && (
-            <p className="text-[10px] text-slate-400 italic">No checklist items specified yet. Add highlights in Step 3!</p>
+            <p className="text-[10px] text-slate-400 italic">No items yet — add highlights in Step 2!</p>
           )}
         </div>
       </div>
@@ -764,106 +765,147 @@ export const RescueNeedsFlyers: React.FC = () => {
     
     // Theme 2: emerald - Editorial / Magazine Banner Layout
     if (activeTheme.id === 'emerald') {
-      return (
-        <div className="flex-grow flex flex-col justify-between h-full space-y-2.5">
-          {/* Cover image banner across the top */}
-          {!noPhoto && (
-            <div className="-mx-3.5 -mt-3.5 md:-mx-4.5 md:-mt-4.5 mb-1">
-              {photos.length > 0 ? (
-                <div className="relative h-22 md:h-28 overflow-hidden border-b-4 border-emerald-800 bg-stone-200">
-                  <div className="absolute top-1.5 left-3.5 bg-emerald-900 text-white text-[7px] font-black px-2 py-0.5 rounded z-15 tracking-widest uppercase pointer-events-none">
-                    OFFICIAL BANNER
+      const hasPhoto = !noPhoto && photos.length > 0;
+
+      if (isSquare) {
+        return (
+          <div className="flex-grow flex flex-col h-full">
+            {/* Square: photo fills top 42%, editorial content below */}
+            <div className="-mx-3.5 -mt-3.5 shrink-0" style={{ height: '42%' }}>
+              {hasPhoto ? (
+                <div className="relative h-full overflow-hidden border-b-4 border-emerald-800 bg-stone-200">
+                  <RepositionableOutreachImage id={0} src={photos[0]} alt="Banner" zoom={photoZooms[0]||1} offsetX={photoOffsetsX[0]||0} offsetY={photoOffsetsY[0]||0} updateZoom={updatePhotoZoom} updateOffsetX={updatePhotoOffsetX} updateOffsetY={updatePhotoOffsetY} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/60 to-transparent pointer-events-none" />
+                  <div className="absolute bottom-2 left-3 text-white">
+                    <p className="text-[8px] font-black uppercase tracking-widest opacity-80">{data.orgName}</p>
                   </div>
-                  <RepositionableOutreachImage
-                    id={0}
-                    src={photos[0]}
-                    alt="Banner lead"
-                    zoom={photoZooms[0] || 1}
-                    offsetX={photoOffsetsX[0] || 0}
-                    offsetY={photoOffsetsY[0] || 0}
-                    updateZoom={updatePhotoZoom}
-                    updateOffsetX={updatePhotoOffsetX}
-                    updateOffsetY={updatePhotoOffsetY}
-                  />
-                  {photos.length > 1 && (
-                    <div className="absolute top-1.5 right-1.5 flex gap-1 z-20">
-                      {photos.slice(1).map((src, i) => (
-                        <div key={i} className="w-8 h-8 rounded border border-white overflow-hidden shadow-sm">
-                          <img src={src} className="w-full h-full object-cover" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               ) : (
-                <div className="h-16 md:h-18 bg-emerald-950/90 text-emerald-100 flex flex-col items-center justify-center p-2 text-center border-b-2 border-emerald-700">
-                  <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse mb-0.5" />
-                  <span className="text-[9px] font-black tracking-widest uppercase">EMERALD OUTREACH JOURNAL</span>
+                <div className="h-full bg-emerald-950 flex flex-col items-center justify-center text-center px-6 border-b-4 border-emerald-700">
+                  <p className="text-[9px] font-black text-emerald-300 uppercase tracking-[0.25em] mb-1">{data.orgName || 'YOUR RESCUE NAME'}</p>
+                  <div className="w-12 h-px bg-emerald-600 mx-auto" />
                 </div>
               )}
             </div>
-          )}
-
-          <div className="text-center space-y-0.5 relative z-10">
-            <div className="inline-block px-2 py-0.5 bg-emerald-100 text-emerald-950 font-black text-[8px] uppercase tracking-wider rounded">
-              {data.orgName ? data.orgName : 'REQUIRED RESCUE NAME'}
+            {/* Square: editorial content bottom 58% */}
+            <div className="flex flex-col justify-between flex-1 pt-2.5 px-0.5 pb-0">
+              <div className="text-center space-y-1">
+                <h1 className="text-xl font-black text-emerald-950 leading-tight uppercase tracking-tight font-serif">
+                  {data.header || 'COMMUNITY NEED'}
+                </h1>
+                <p className="text-[10px] font-bold text-emerald-700 italic">{data.subtitle}</p>
+                <div className="w-16 h-0.5 bg-emerald-800 mx-auto mt-0.5" />
+              </div>
+              <div className="flex-1 flex flex-col justify-center py-2 space-y-1.5">
+                {renderBullets('text-emerald-700', 'bg-emerald-100')}
+              </div>
+              <div className="border-t border-emerald-200 pt-2 flex items-center justify-between gap-2">
+                <div className="text-left flex-1">
+                  {data.orgName && <p className="text-[8px] font-black text-emerald-900 uppercase tracking-wider">{data.orgName}</p>}
+                  {data.website && <p className="text-[8.5px] font-bold text-emerald-700">{data.website.replace('https://','').replace('www.','')}</p>}
+                  {data.email && <p className="text-[8.5px] font-bold text-emerald-800">{data.email}</p>}
+                </div>
+                {data.showQRCode && data.website && (
+                  <div className="bg-white p-1 rounded border border-emerald-200 shrink-0 flex flex-col items-center gap-0.5">
+                    <QRCodeImage url={data.website} className="w-12 h-12" />
+                    <span className="text-[6.5px] font-black text-emerald-700">SCAN</span>
+                  </div>
+                )}
+              </div>
             </div>
-            <h1 className="text-lg md:text-xl font-black text-emerald-950 leading-tight uppercase tracking-tight">
-              {data.header || 'COMMUNITY NEED'}
-            </h1>
-            <p className="text-[10px] font-bold text-emerald-800 leading-none tracking-wide italic">
-              {data.subtitle || 'Your support helps local animals'}
-            </p>
-            <div className="w-20 h-0.5 bg-emerald-800/30 mx-auto mt-1" />
           </div>
+        );
+      }
 
-          <div className="bg-emerald-50/50 p-2 py-1.5 rounded-lg border border-emerald-200/40">
-            <p className={`${noPhoto ? 'text-[11px] p-2 py-1' : 'text-[9.5px]'} italic leading-relaxed text-slate-755 text-center font-semibold`}>
-              " {data.intro || 'Fostering and volunteering details directly rescue regional animals and prevent shelter intakes. Get involved today!' } "
-            </p>
-          </div>
-
-          {/* Bullets layout inside editorial frame */}
-          <div className="p-0.5">
-            {renderBullets()}
-          </div>
-
-          <div className="text-center pt-0.5 border-t border-emerald-200/30">
-            <span className="text-[9px] font-bold text-emerald-900 bg-white px-2.5 py-0.5 rounded-full border border-emerald-100">
-              💝 {data.thankYouMessage || 'We appreciate it! You are help saving local pet lives.'}
-            </span>
-          </div>
-
-          {/* CTA Footer with Emerald style */}
-          <div className="border-t border-emerald-800/20 pt-1.5 flex items-center justify-between gap-3">
-            <div className="flex-1 space-y-1.5 text-left">
-              <div>
-                <span className="text-[8px] font-black uppercase text-emerald-800 block tracking-wider leading-none">
-                  {data.ctaLabel}
-                </span>
-                <p className="text-[9.5px] font-extrabold text-emerald-950 leading-tight">
-                  {data.ctaDetails}
+      return (
+        <div className="flex-grow flex flex-col h-full">
+          {/* Cover image banner across the top */}
+          <div className="-mx-3.5 -mt-3.5 md:-mx-4.5 md:-mt-4.5 shrink-0">
+            {hasPhoto ? (
+              <div className="relative h-24 md:h-32 overflow-hidden border-b-4 border-emerald-800 bg-stone-200">
+                <RepositionableOutreachImage id={0} src={photos[0]} alt="Banner lead" zoom={photoZooms[0]||1} offsetX={photoOffsetsX[0]||0} offsetY={photoOffsetsY[0]||0} updateZoom={updatePhotoZoom} updateOffsetX={updatePhotoOffsetX} updateOffsetY={updatePhotoOffsetY} />
+                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/40 to-transparent pointer-events-none" />
+                {photos.length > 1 && (
+                  <div className="absolute top-2 right-2 flex gap-1 z-20">
+                    {photos.slice(1).map((src, i) => (
+                      <div key={i} className="w-10 h-10 rounded border-2 border-white overflow-hidden shadow-md">
+                        <img src={src} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Typographic masthead when no photo */
+              <div className="bg-emerald-950 text-white px-5 py-5 border-b-4 border-emerald-600">
+                <p className="text-[7.5px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-1">
+                  {data.orgName || 'YOUR RESCUE ORGANIZATION'}
+                </p>
+                <div className="w-10 h-0.5 bg-emerald-600 mb-2" />
+                <p className="text-[8.5px] font-semibold text-emerald-200 italic leading-snug max-w-xs">
+                  {data.subtitle || 'Supporting local animals through community action'}
                 </p>
               </div>
+            )}
+          </div>
 
-              <div className="flex flex-wrap gap-1">
+          <div className="text-center space-y-0.5 relative z-10 shrink-0 pt-2">
+            <h1 className="text-xl md:text-2xl font-black text-emerald-950 leading-tight uppercase tracking-tight font-serif">
+              {data.header || 'COMMUNITY NEED'}
+            </h1>
+            {hasPhoto && (
+              <p className="text-[10px] font-bold text-emerald-700 leading-none tracking-wide italic">
+                {data.subtitle || 'Your support helps local animals'}
+              </p>
+            )}
+            <div className="w-20 h-0.5 bg-emerald-800 mx-auto mt-1" />
+          </div>
+
+          {/* Content group — vertically centered between heading and footer */}
+          <div className="flex-1 flex flex-col justify-center gap-2 min-h-0 py-1">
+            <div className="bg-emerald-50 p-2.5 py-2 rounded-lg border border-emerald-200">
+              <p className={`${noPhoto ? 'text-[11px] py-1' : 'text-[10px]'} italic leading-relaxed text-slate-700 text-center font-semibold font-serif`}>
+                " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
+              </p>
+            </div>
+
+            <div>{renderBullets('text-emerald-700', 'bg-emerald-100')}</div>
+          </div>
+
+          <div className="text-center pt-1 border-t border-emerald-200 shrink-0">
+            <p className="text-[9.5px] font-bold text-emerald-900 leading-snug">
+              {data.thankYouMessage || 'We appreciate your support — you are helping save local pet lives.'}
+            </p>
+          </div>
+
+          {/* CTA Footer */}
+          <div className="bg-emerald-950 rounded-xl p-2.5 px-3 flex items-center justify-between gap-3 shrink-0">
+            <div className="flex-1 space-y-1 text-left">
+              {data.ctaLabel && (
+                <p className="text-[7.5px] font-black uppercase text-emerald-400 tracking-wider leading-none">{data.ctaLabel}</p>
+              )}
+              {data.ctaDetails && (
+                <p className="text-[10px] font-extrabold text-white leading-tight">{data.ctaDetails}</p>
+              )}
+              <div className="flex flex-wrap gap-1 pt-0.5">
                 {data.orgName && (
-                  <span className="bg-emerald-900/10 px-1.5 py-0.5 rounded text-[7.5px] font-black text-emerald-900">
-                    {data.orgName}
-                  </span>
+                  <span className="bg-emerald-100 px-2 py-0.5 rounded text-[8px] font-black text-emerald-900">{data.orgName}</span>
                 )}
                 {data.website && (
-                  <span className="bg-emerald-900/10 px-1.5 py-0.5 rounded text-[7.5px] font-bold text-emerald-950">
-                    {data.website.replace('https://', '').replace('www.', '')}
-                  </span>
+                  <span className="bg-emerald-100 px-2 py-0.5 rounded text-[8px] font-bold text-emerald-800">{data.website.replace('https://','').replace('www.','')}</span>
+                )}
+                {data.email && (
+                  <span className="bg-emerald-100 px-2 py-0.5 rounded text-[8px] font-bold text-emerald-800">{data.email}</span>
+                )}
+                {data.phone && (
+                  <span className="bg-emerald-100 px-2 py-0.5 rounded text-[8px] font-bold text-emerald-800">{data.phone}</span>
                 )}
               </div>
             </div>
-
             {data.showQRCode && data.website && (
-              <div className="bg-white p-0.5 rounded border border-emerald-200 shrink-0 flex flex-col items-center gap-0.5 shadow-3xs">
-                <QRCodeImage url={data.website} className="w-7 h-7" />
-                <span className="text-[6px] font-bold text-emerald-850">SCAN LINK</span>
+              <div className="bg-white p-1.5 rounded-lg shrink-0 flex flex-col items-center gap-0.5">
+                <QRCodeImage url={data.website} className="w-12 h-12" />
+                <span className="text-[6.5px] font-black text-emerald-700">SCAN LINK</span>
               </div>
             )}
           </div>
@@ -873,85 +915,145 @@ export const RescueNeedsFlyers: React.FC = () => {
 
     // Theme 3: breezy - Serene Breezy Split Layout (Left Column text, Right Column visuals)
     if (activeTheme.id === 'breezy') {
+      const hasPhoto = !noPhoto && photos.length > 0;
+
+      if (isSquare) {
+        return (
+          <div className="flex-grow flex flex-col h-full space-y-2">
+            {/* Square: bold top header band */}
+            <div className="bg-indigo-600 -mx-3.5 -mt-3.5 px-5 py-3.5 shrink-0">
+              <p className="text-[8px] font-black uppercase tracking-[0.25em] text-indigo-200 mb-1">{data.orgName || 'YOUR RESCUE'}</p>
+              <h1 className="text-2xl font-black text-white leading-tight uppercase tracking-tight">
+                {data.header || 'COMMUNITY NEED'}
+              </h1>
+              {data.subtitle && (
+                <p className="text-[10px] font-bold text-indigo-200 mt-1 italic">{data.subtitle}</p>
+              )}
+            </div>
+            {/* Square: split row — quote left, photo right */}
+            {hasPhoto && (
+              <div className="grid grid-cols-2 gap-2 shrink-0" style={{ height: '140px' }}>
+                <div className="bg-sky-100 rounded-xl p-2.5 flex items-center">
+                  <p className="text-[9px] leading-relaxed text-slate-800 font-semibold italic">
+                    "{data.intro?.slice(0,120)}"
+                  </p>
+                </div>
+                <div className="rounded-xl overflow-hidden border-2 border-indigo-200 relative">
+                  <RepositionableOutreachImage id={0} src={photos[0]} alt="Breezy photo" zoom={photoZooms[0]||1} offsetX={photoOffsetsX[0]||0} offsetY={photoOffsetsY[0]||0} updateZoom={updatePhotoZoom} updateOffsetX={updatePhotoOffsetX} updateOffsetY={updatePhotoOffsetY} />
+                </div>
+              </div>
+            )}
+            {!hasPhoto && (
+              <div className="bg-sky-100 rounded-xl p-2.5 shrink-0">
+                <p className="text-[10px] leading-relaxed text-slate-800 font-semibold italic">"{data.intro}"</p>
+              </div>
+            )}
+            <div className="flex-1 min-h-0">
+              {renderBullets('text-indigo-600', 'bg-indigo-100')}
+            </div>
+            <div className="bg-indigo-600 -mx-3.5 -mb-3 px-4 py-2.5 shrink-0 flex items-center justify-between gap-3">
+              <div className="text-left flex-1">
+                {data.ctaLabel && <p className="text-[7.5px] font-black text-indigo-200 uppercase tracking-wider">{data.ctaLabel}</p>}
+                {data.ctaDetails && <p className="text-[9.5px] font-extrabold text-white leading-tight">{data.ctaDetails}</p>}
+                {!data.ctaLabel && !data.ctaDetails && (
+                  <div className="flex flex-wrap gap-1">
+                    {data.email && <span className="text-[8.5px] font-bold text-indigo-100">{data.email}</span>}
+                    {data.phone && <span className="text-[8.5px] font-bold text-white">{data.phone}</span>}
+                    {data.website && <span className="text-[8.5px] font-bold text-indigo-200">{data.website.replace('https://','').replace('www.','')}</span>}
+                  </div>
+                )}
+              </div>
+              {data.showQRCode && data.website && (
+                <div className="bg-white p-1 rounded shrink-0"><QRCodeImage url={data.website} className="w-10 h-10" /></div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
       return (
-        <div className="flex-grow flex flex-col justify-between h-full space-y-2">
-          <div className="text-center space-y-0.5">
-            <span className="text-[8px] tracking-widest font-extrabold uppercase bg-sky-200/50 text-indigo-950 px-2.5 py-0.5 rounded-full inline-block">
-              ✦ {data.orgName || 'ORGANIZATION'} TEAM
-            </span>
+        <div className="flex-grow flex flex-col h-full">
+          {/* Header — org name as byline, not eyebrow */}
+          <div className="text-center space-y-0.5 shrink-0 pb-2">
             <h1 className="text-xl md:text-2xl font-black text-sky-950 tracking-tighter leading-tight uppercase">
               {data.header || 'COMMUNITY NEED'}
             </h1>
             <p className="text-[10px] font-black text-indigo-600 tracking-wider uppercase italic">
               {data.subtitle || 'Every hand saves a paw'}
             </p>
+            {data.orgName && (
+              <p className="text-[8px] font-extrabold text-sky-700 uppercase tracking-widest">{data.orgName}</p>
+            )}
           </div>
 
-          {/* Side-by-Side Dual Column Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pb-0.5 flex-grow">
+          {/* Content group — vertically centered */}
+          <div className="flex-1 flex flex-col justify-center min-h-0">
+          {/* Side-by-Side Dual Column Grid — fixed columns, no responsive breakpoints */}
+          <div className={`grid gap-3 pb-0.5 ${noPhoto ? 'grid-cols-1' : 'grid-cols-12'}`}>
             {/* Left side text column */}
-            <div className={`${noPhoto ? 'sm:col-span-12' : 'sm:col-span-8'} flex flex-col justify-center space-y-2 text-left`}>
-              <div className="bg-sky-50/60 p-2 py-1.5 rounded-xl border border-sky-100 font-sans">
-                <p className={`${noPhoto ? 'text-xs' : 'text-[9px]'} leading-relaxed text-slate-800 font-medium italic`}>
-                  " {data.intro || 'Fostering and volunteering details directly rescue regional animals and prevent shelter intakes. Get involved today!' } "
+            <div className={`${noPhoto ? 'col-span-1' : 'col-span-8'} flex flex-col justify-start gap-2 text-left min-h-0`}>
+              <div className="bg-sky-100 p-2.5 rounded-xl border border-sky-200">
+                <p className={`${noPhoto ? 'text-[11px]' : 'text-[10px]'} leading-relaxed text-slate-800 font-medium italic`}>
+                  " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
                 </p>
               </div>
-              
-              {renderBullets()}
+              {renderBullets('text-indigo-600', 'bg-indigo-100')}
             </div>
 
-            {/* Right side visual gallery column */}
+            {/* Right side visual column */}
             {!noPhoto && (
-              <div className="sm:col-span-4 flex flex-col justify-center space-y-1.5">
+              <div className="col-span-4 flex flex-col justify-start gap-2">
                 {photos.length > 0 ? (
                   <div className="grid grid-cols-1 gap-1.5">
                     {photos.slice(0, 2).map((src, i) => (
-                      <div key={i} className="h-13 md:h-16 rounded-lg overflow-hidden border border-sky-200 relative shadow-sm">
-                        <RepositionableOutreachImage
-                          id={i}
-                          src={src}
-                          alt={`Breezy gallery item ${i}`}
-                          zoom={photoZooms[i] || 1}
-                          offsetX={photoOffsetsX[i] || 0}
-                          offsetY={photoOffsetsY[i] || 0}
-                          updateZoom={updatePhotoZoom}
-                          updateOffsetX={updatePhotoOffsetX}
-                          updateOffsetY={updatePhotoOffsetY}
-                        />
+                      <div key={i} className="h-16 rounded-xl overflow-hidden border-2 border-sky-200 relative shadow-sm">
+                        <RepositionableOutreachImage id={i} src={src} alt={`Gallery ${i}`} zoom={photoZooms[i]||1} offsetX={photoOffsetsX[i]||0} offsetY={photoOffsetsY[i]||0} updateZoom={updatePhotoZoom} updateOffsetX={updatePhotoOffsetX} updateOffsetY={updatePhotoOffsetY} />
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="h-full border border-dashed border-sky-200 bg-sky-100/20 rounded-xl flex flex-col items-center justify-center p-2 text-center mini-gallery">
-                    <Compass className="w-5 h-5 text-sky-400 mb-0.5" />
-                    <span className="text-[7.5px] font-bold text-sky-850">Visual Frame</span>
-                  </div>
-                )}
-
+                ) : null}
                 {data.showQRCode && data.website && (
-                  <div className="bg-white p-1.5 rounded-lg border border-sky-150 flex items-center justify-between gap-1 shadow-3xs">
-                    <span className="text-[6.5px] font-black text-slate-400 uppercase tracking-widest leading-none">Register here:</span>
-                    <QRCodeImage url={data.website} className="w-6.5 h-6.5" />
+                  <div className="bg-white p-1.5 rounded-xl border-2 border-indigo-200 flex flex-col items-center gap-0.5">
+                    <QRCodeImage url={data.website} className="w-12 h-12" />
+                    <span className="text-[6.5px] font-black text-indigo-600 uppercase tracking-wider">
+                      {data.useCase === 'event_volunteers' ? 'Register' : 'Learn More'}
+                    </span>
                   </div>
                 )}
               </div>
             )}
           </div>
+          </div>{/* end content group */}
 
-          <div className="text-center pt-0.5 border-t border-sky-100 font-extrabold text-[9px] text-indigo-700">
-            💝 {data.thankYouMessage || 'We appreciate it! You are help saving local pet lives.'}
+          <div className="text-center pt-1 border-t border-sky-200 shrink-0">
+            <p className="text-[9.5px] font-extrabold text-indigo-700 leading-snug">
+              {data.thankYouMessage || 'We appreciate your support — every hand makes a difference.'}
+            </p>
           </div>
 
-          {/* Minimal Breezy footer */}
-          <div className="border-t border-sky-200/50 pt-1.5 flex justify-between items-center bg-indigo-50/45 p-1.5 px-2.5 rounded-xl">
-            <div className="text-left">
-              <span className="text-[7.5px] font-black text-indigo-650 block uppercase">{data.ctaLabel}</span>
-              <p className="text-[9.5px] font-black text-slate-800 leading-none">{data.ctaDetails}</p>
+          {/* Footer band */}
+          <div className="bg-indigo-600 rounded-xl p-2.5 px-3 flex justify-between items-center gap-2 shrink-0">
+            <div className="text-left flex-1">
+              {data.ctaLabel && <p className="text-[7.5px] font-black text-indigo-200 uppercase tracking-wider block">{data.ctaLabel}</p>}
+              {data.ctaDetails && <p className="text-[10px] font-black text-white leading-tight">{data.ctaDetails}</p>}
+              {!data.ctaLabel && !data.ctaDetails && (
+                <div className="flex flex-wrap gap-1.5">
+                  {data.orgName && <span className="text-[9px] font-black text-white">{data.orgName}</span>}
+                  {data.email && <span className="text-[8.5px] font-bold text-indigo-200">{data.email}</span>}
+                  {data.phone && <span className="text-[8.5px] font-bold text-indigo-100">{data.phone}</span>}
+                  {data.website && <span className="text-[8.5px] font-bold text-indigo-200">{data.website.replace('https://','').replace('www.','')}</span>}
+                </div>
+              )}
+              {(data.ctaLabel || data.ctaDetails) && (
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {data.email && <span className="text-[8px] font-bold text-indigo-200">{data.email}</span>}
+                  {data.phone && <span className="text-[8px] font-bold text-white">{data.phone}</span>}
+                  {data.website && <span className="text-[8px] font-bold text-indigo-200">{data.website.replace('https://','').replace('www.','')}</span>}
+                </div>
+              )}
             </div>
-            {data.website && (
-              <span className="text-[7.5px] bg-white border border-sky-100 font-extrabold text-indigo-600 px-1.5 py-0.5 rounded shadow-3xs">
-                {data.website.replace('https://', '').replace('www.', '')}
-              </span>
+            {!data.showQRCode && data.orgName && (
+              <span className="text-[8px] font-black text-indigo-200 text-right leading-tight shrink-0 max-w-20">{data.orgName}</span>
             )}
           </div>
         </div>
@@ -960,79 +1062,148 @@ export const RescueNeedsFlyers: React.FC = () => {
 
     // Theme 4: amber - Bento Box Modular Grid Layout
     if (activeTheme.id === 'amber') {
-      return (
-        <div className="flex-grow flex flex-col justify-between h-full space-y-1.5">
-          {/* Top Plate Card */}
-          <div className="bg-amber-50 p-2 rounded-xl border-2 border-stone-900 shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] text-center space-y-0.5">
-            <div className="text-[7.5px] font-black tracking-widest text-amber-950 uppercase">
-              // {data.orgName ? data.orgName.toUpperCase() : 'REQUIRED ORG'}
+      const hasPhoto = !noPhoto && photos.length > 0;
+      const bentoShadow = 'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]';
+      const bentoBorder = 'border-2 border-stone-900';
+
+      const amberBullets = () => {
+        const displayedItems = data.items.slice(0, 10);
+        const labelMap: Record<string, string> = { donation: 'WHAT WE NEED', fosters: 'WHY FOSTER', ongoing_volunteers: 'OPEN ROLES', event_volunteers: 'SHIFTS' };
+        return (
+          <div className="space-y-1.5">
+            <span className="text-[9px] font-black uppercase tracking-wider text-amber-800 block">{labelMap[data.useCase] ?? 'HIGHLIGHTS'}</span>
+            <div className="space-y-1">
+              {displayedItems.map((bullet, i) => {
+                const ci = bullet.indexOf(':');
+                const hasC = ci > -1;
+                return (
+                  <div key={i} className="flex items-start gap-1.5 text-[10px]">
+                    <span className="font-black text-amber-600 shrink-0 mt-0.5">◆</span>
+                    <p className="leading-snug text-stone-800 font-semibold">
+                      {hasC ? <><strong className="font-black text-stone-900">{bullet.substring(0,ci)}:</strong>{bullet.substring(ci+1)}</> : bullet}
+                    </p>
+                  </div>
+                );
+              })}
+              {data.items.length === 0 && <p className="text-[10px] text-slate-400 italic">Add highlights in Step 2!</p>}
             </div>
-            <h1 className="text-lg md:text-xl font-black text-stone-950 leading-none tracking-tight">
+          </div>
+        );
+      };
+
+      if (isSquare) {
+        return (
+          <div className="flex-grow flex flex-col h-full gap-2">
+            {/* Square: header card */}
+            <div className={`bg-amber-400 p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} text-center shrink-0`}>
+              <p className="text-[8px] font-black tracking-[0.2em] text-amber-950 uppercase">{data.orgName || 'RESCUE ORG'}</p>
+              <h1 className="text-2xl font-black text-stone-950 leading-none tracking-tight">{data.header || 'COMMUNITY NEED'}</h1>
+              {data.subtitle && <p className="text-[9.5px] font-bold text-stone-800 uppercase mt-0.5">{data.subtitle}</p>}
+            </div>
+            {/* Square: 2x2 bento */}
+            <div className="grid grid-cols-2 gap-2 flex-1 min-h-0">
+              <div className={`bg-white p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} col-span-2 overflow-auto`}>
+                {amberBullets()}
+              </div>
+            </div>
+            {/* Square: narrative + CTA */}
+            <div className={`bg-stone-50 p-2 rounded-xl ${bentoBorder} ${bentoShadow} text-center shrink-0`}>
+              <p className="text-[9.5px] leading-snug text-stone-700 italic font-semibold">"{data.intro?.slice(0,100)}"</p>
+            </div>
+            <div className={`bg-amber-500 p-2 rounded-xl ${bentoBorder} ${bentoShadow} flex justify-between items-center shrink-0`}>
+              <div className="text-left">
+                {data.ctaLabel && <p className="text-[7.5px] font-black uppercase tracking-wider text-amber-950">{data.ctaLabel}</p>}
+                {data.ctaDetails && <p className="text-[10px] font-black text-stone-950 leading-tight">{data.ctaDetails}</p>}
+                {!data.ctaLabel && !data.ctaDetails && (
+                  <div className="space-y-0.5">
+                    {data.orgName && <p className="text-[9px] font-black text-stone-950">{data.orgName}</p>}
+                    {data.website && <p className="text-[8.5px] font-bold text-amber-950">{data.website.replace('https://','').replace('www.','')}</p>}
+                  </div>
+                )}
+              </div>
+              {data.showQRCode && data.website && (
+                <div className={`bg-white p-1 rounded ${bentoBorder} shrink-0`}><QRCodeImage url={data.website} className="w-10 h-10" /></div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="flex-grow flex flex-col justify-between h-full gap-2">
+          {/* Top header card */}
+          <div className={`bg-amber-50 p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} text-center space-y-0.5 shrink-0`}>
+            <p className="text-[8px] font-black tracking-[0.2em] text-amber-800 uppercase">
+              {data.orgName ? data.orgName.toUpperCase() : 'YOUR RESCUE ORG'}
+            </p>
+            <h1 className="text-xl md:text-2xl font-black text-stone-950 leading-none tracking-tight">
               {data.header || 'COMMUNITY NEED'}
             </h1>
-            <p className="text-[9.5px] font-bold text-amber-900 uppercase">
-              {data.subtitle || 'Act Local • Save Lives'}
+            <p className="text-[10px] font-bold text-amber-900 uppercase">
+              {data.subtitle || 'Act Local · Save Lives'}
             </p>
           </div>
 
-          {/* Bento row 1: Stacked visual box and the checklist box */}
-          <div className={`grid grid-cols-1 ${noPhoto ? 'grid-cols-1' : 'sm:grid-cols-2'} gap-2.5 py-0.5 flex-grow`}>
-            {/* Bento block: Checklist */}
-            <div className="bg-white p-2.5 rounded-xl border-2 border-stone-900 shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] flex flex-col justify-between col-span-full">
-              {renderBullets()}
+          {/* Bento grid: checklist + optional photo side by side */}
+          <div className={`grid gap-2 ${hasPhoto ? 'grid-cols-12 flex-grow min-h-0' : 'grid-cols-1'}`}>
+            {/* Checklist bento block */}
+            <div className={`${hasPhoto ? 'col-span-7' : 'col-span-1'} bg-white p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} flex flex-col justify-start`}>
+              {amberBullets()}
             </div>
 
-            {/* Bento block: Image gallery — only shown when photos are uploaded */}
-            {!noPhoto && photos.length > 0 && (
-              <div className="bg-white p-2 rounded-xl border-2 border-stone-900 shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] flex flex-col justify-center">
-                <div className="grid grid-cols-1 gap-1.5">
-                  <div className="h-16 rounded-lg overflow-hidden border border-stone-900 relative">
-                    <RepositionableOutreachImage
-                      id={0}
-                      src={photos[0]}
-                      alt="Bento box lead image"
-                      zoom={photoZooms[0] || 1}
-                      offsetX={photoOffsetsX[0] || 0}
-                      offsetY={photoOffsetsY[0] || 0}
-                      updateZoom={updatePhotoZoom}
-                      updateOffsetX={updatePhotoOffsetX}
-                      updateOffsetY={updatePhotoOffsetY}
-                    />
-                  </div>
-                  {photos.length > 1 && (
-                    <div className="grid grid-cols-2 gap-1 text-center text-[7.5px] font-black">
-                      <div className="bg-amber-100 p-0.5 rounded border border-stone-900">
-                        📁 {photos.length} Photos
-                      </div>
-                      <div className="bg-stone-100 p-0.5 rounded border border-stone-900">
-                        🐾 Active pet
-                      </div>
-                    </div>
-                  )}
+            {/* Photo bento block — shown when photos uploaded */}
+            {hasPhoto && (
+              <div className={`col-span-5 bg-white rounded-xl ${bentoBorder} ${bentoShadow} overflow-hidden flex flex-col gap-1.5 p-1.5`} style={{ minHeight: '120px' }}>
+                <div className="flex-1 rounded-lg overflow-hidden border border-stone-300 relative min-h-0" style={{ minHeight: '70px' }}>
+                  <RepositionableOutreachImage id={0} src={photos[0]} alt="Bento lead" zoom={photoZooms[0]||1} offsetX={photoOffsetsX[0]||0} offsetY={photoOffsetsY[0]||0} updateZoom={updatePhotoZoom} updateOffsetX={updatePhotoOffsetX} updateOffsetY={updatePhotoOffsetY} />
                 </div>
+                {photos.length > 1 && (
+                  <div className="grid grid-cols-2 gap-1 shrink-0">
+                    {photos.slice(1).map((src, i) => (
+                      <div key={i} className="h-10 rounded overflow-hidden border border-stone-300 relative">
+                        <RepositionableOutreachImage id={i+1} src={src} alt={`Photo ${i+2}`} zoom={photoZooms[i+1]||1} offsetX={photoOffsetsX[i+1]||0} offsetY={photoOffsetsY[i+1]||0} updateZoom={updatePhotoZoom} updateOffsetX={updatePhotoOffsetX} updateOffsetY={updatePhotoOffsetY} />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
 
-          {/* Bento Row 3: Narrative highlight & thank you message */}
-          <div className="bg-stone-50 p-2 rounded-lg border border-stone-350 text-center">
-            <p className="text-[9px] leading-tight text-slate-700 font-semibold italic">
-              " {data.intro || 'Fostering and volunteering details directly rescue regional animals and prevent shelter intakes. Get involved today!' } "
+          {/* Narrative bento block */}
+          <div className={`bg-stone-50 p-2 rounded-xl ${bentoBorder} ${bentoShadow} text-center shrink-0`}>
+            <p className="text-[10px] leading-snug text-slate-700 font-semibold italic">
+              " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
             </p>
-            <p className="text-[9px] font-black text-rose-700 mt-0.5">
-              💝 {data.thankYouMessage || 'We appreciate it! You are help saving local pet lives.'}
-            </p>
+            {data.thankYouMessage && (
+              <p className="text-[9.5px] font-black text-rose-700 mt-1">{data.thankYouMessage}</p>
+            )}
           </div>
 
-          {/* Bento CTA panel */}
-          <div className="bg-amber-500 p-2 py-1.5 rounded-lg border-2 border-stone-900 flex justify-between items-center text-stone-950">
-            <div className="text-left space-y-0.5">
-              <span className="text-[7.5px] font-black tracking-wider uppercase block">{data.ctaLabel}</span>
-              <p className="text-[9.5px] font-black leading-tight">{data.ctaDetails}</p>
+          {/* CTA amber panel */}
+          <div className={`bg-amber-500 p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} flex justify-between items-center gap-2 shrink-0`}>
+            <div className="text-left space-y-0.5 flex-1">
+              {data.ctaLabel && <p className="text-[7.5px] font-black tracking-wider uppercase text-amber-950">{data.ctaLabel}</p>}
+              {data.ctaDetails && <p className="text-[10px] font-black text-stone-950 leading-tight">{data.ctaDetails}</p>}
+              {!data.ctaLabel && !data.ctaDetails && (
+                <div className="flex flex-wrap gap-1.5 items-center">
+                  {data.orgName && <span className="text-[9.5px] font-black text-stone-950">{data.orgName}</span>}
+                  {data.website && <span className="text-[9px] font-bold text-amber-900">{data.website.replace('https://','').replace('www.','')}</span>}
+                  {data.email && <span className="text-[8.5px] font-bold text-amber-950">{data.email}</span>}
+                  {data.phone && <span className="text-[8.5px] font-bold text-amber-950">{data.phone}</span>}
+                </div>
+              )}
+              {(data.ctaLabel || data.ctaDetails) && (
+                <div className="flex flex-wrap gap-1 mt-0.5">
+                  {data.email && <span className="text-[8px] font-bold text-amber-950">{data.email}</span>}
+                  {data.phone && <span className="text-[8px] font-bold text-amber-950">{data.phone}</span>}
+                  {data.website && <span className="text-[8px] font-bold text-amber-900">{data.website.replace('https://','').replace('www.','')}</span>}
+                </div>
+              )}
             </div>
             {data.showQRCode && data.website && (
-              <div className="bg-white p-0.5 rounded border-2 border-stone-900 shrink-0 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
-                <QRCodeImage url={data.website} className="w-6.5 h-6.5" />
+              <div className={`bg-white p-1 rounded-lg ${bentoBorder} shrink-0 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]`}>
+                <QRCodeImage url={data.website} className="w-12 h-12" />
               </div>
             )}
           </div>
@@ -1042,167 +1213,314 @@ export const RescueNeedsFlyers: React.FC = () => {
 
     // Theme 5: playful - Playful Peach Whimsical Layout
     if (activeTheme.id === 'playful') {
-      return (
-        <div className="flex-grow flex flex-col justify-between h-full space-y-2">
-          {/* Whimsical Tilted Title Plate */}
-          <div className="text-center space-y-0.5 relative z-10">
-            <div className="inline-flex items-center gap-1 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full text-[8px] font-black text-rose-600 rotate-1 shadow-2xs">
-              <Sparkles className="w-3 h-3 text-rose-500 animate-spin" />
-              <span>{data.orgName ? data.orgName : 'Playful Friends'}</span>
+      const hasPhoto = !noPhoto && photos.length > 0;
+      // Rotating colors for bullet dots and chips
+      const dotColors = ['#f97316','#ec4899','#8b5cf6','#06b6d4','#22c55e','#f59e0b','#ef4444','#0ea5e9'];
+      const chipColors = [
+        { bg: '#fff7ed', border: '#fed7aa', text: '#c2410c' },
+        { bg: '#fdf2f8', border: '#fbcfe8', text: '#be185d' },
+        { bg: '#f5f3ff', border: '#ddd6fe', text: '#7c3aed' },
+        { bg: '#ecfeff', border: '#a5f3fc', text: '#0e7490' },
+        { bg: '#f0fdf4', border: '#bbf7d0', text: '#15803d' },
+        { bg: '#fefce8', border: '#fde68a', text: '#b45309' },
+      ];
+
+      const playfulBullets = () => {
+        const displayedItems = data.items.slice(0, 10);
+        const labelMap: Record<string, string> = { donation: 'WHAT WE NEED', fosters: 'WHY FOSTER', ongoing_volunteers: 'JOIN THE FUN', event_volunteers: 'VOLUNTEER SHIFTS' };
+        return (
+          <div className="space-y-1.5">
+            <span className="text-[9px] font-black uppercase tracking-wider block" style={{ color: '#ec4899' }}>{labelMap[data.useCase] ?? 'HOW TO HELP'}</span>
+            <div className="space-y-1.5">
+              {displayedItems.map((bullet, i) => {
+                const ci = bullet.indexOf(':');
+                const hasC = ci > -1;
+                const color = dotColors[i % dotColors.length];
+                return (
+                  <div key={i} className="flex items-start gap-2 text-[10px]">
+                    <span className="w-3 h-3 rounded-full shrink-0 mt-0.5 flex-none" style={{ backgroundColor: color }} />
+                    <p className="leading-snug font-semibold text-stone-800">
+                      {hasC ? <><strong className="font-black">{bullet.substring(0,ci)}:</strong>{bullet.substring(ci+1)}</> : bullet}
+                    </p>
+                  </div>
+                );
+              })}
+              {data.items.length === 0 && <p className="text-[10px] text-slate-400 italic">Add highlights in Step 2!</p>}
             </div>
-            <h1 className="text-xl md:text-2xl font-black text-rose-950 mt-0.5 leading-none font-playful relative tracking-tight">
-              {/* Highlight highlighter look in peach theme */}
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-40 h-2.5 bg-rose-200/50 -z-10 rounded-full" />
+          </div>
+        );
+      };
+
+      const playfulFooterChips = () => (
+        <div className="flex flex-wrap gap-1 mt-0.5">
+          {[data.orgName, data.email, data.phone, data.website?.replace('https://','').replace('www.','')].filter(Boolean).map((val, i) => {
+            const c = chipColors[i % chipColors.length];
+            return <span key={i} style={{ backgroundColor: c.bg, border: `1px solid ${c.border}`, color: c.text }} className="px-2 py-0.5 rounded-full text-[8px] font-bold">{val}</span>;
+          })}
+        </div>
+      );
+
+      if (isSquare) {
+        return (
+          <div className="flex-grow flex flex-col h-full">
+            {/* Square: vibrant gradient header band */}
+            <div className="-mx-3.5 -mt-3.5 px-4 py-3.5 shrink-0" style={{ background: 'linear-gradient(135deg, #f97316 0%, #ec4899 50%, #8b5cf6 100%)' }}>
+              <p className="text-[8px] font-black text-white/80 uppercase tracking-[0.25em] mb-0.5">{data.orgName || 'Animal Rescue'}</p>
+              <h1 className="text-2xl font-black text-white leading-tight font-playful tracking-tight">{data.header || 'COMMUNITY NEED'}</h1>
+              {data.subtitle && <p className="text-[10px] font-bold text-white/90 mt-0.5">{data.subtitle}</p>}
+            </div>
+            {/* Square: content centered */}
+            <div className="flex-1 flex flex-col justify-center gap-2 min-h-0 py-2">
+              <div className="p-2.5 rounded-2xl text-center" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #fdf2f8 100%)', border: '2px solid #fecdd3' }}>
+                <p className="text-[10px] leading-relaxed font-bold italic text-rose-950">"{data.intro}"</p>
+              </div>
+              <div>{playfulBullets()}</div>
+            </div>
+            {/* Square: footer */}
+            <div className="shrink-0 pt-2 border-t-2 border-dashed border-rose-200">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex-1 space-y-1">
+                  {data.ctaLabel && <p className="text-[8.5px] font-black uppercase tracking-wider" style={{ color: '#8b5cf6' }}>{data.ctaLabel}</p>}
+                  {data.ctaDetails && <p className="text-[10px] font-extrabold text-stone-900">{data.ctaDetails}</p>}
+                  {playfulFooterChips()}
+                </div>
+                {data.showQRCode && data.website && (
+                  <div className="bg-white p-1.5 rounded-xl shrink-0 rotate-2" style={{ border: '2px solid #ddd6fe' }}>
+                    <QRCodeImage url={data.website} className="w-12 h-12" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="flex-grow flex flex-col h-full">
+          {/* Vibrant gradient header band across the top */}
+          <div className="-mx-3.5 -mt-3.5 px-5 py-4 text-center shrink-0" style={{ background: 'linear-gradient(135deg, #f97316 0%, #ec4899 50%, #8b5cf6 100%)' }}>
+            <p className="text-[8px] font-black text-white/80 uppercase tracking-[0.25em] mb-1">{data.orgName || 'Animal Rescue'}</p>
+            <h1 className="text-xl font-black text-white leading-tight font-playful tracking-tight relative">
               {data.header || 'COMMUNITY NEED'}
             </h1>
-            <p className="text-xs font-black text-rose-600 tracking-wider">
-              📣 {data.subtitle || 'Helping friendly souls find homes'}
+            <p className="text-[10px] font-bold text-white/90 mt-0.5">
+              {data.subtitle || 'Helping friendly souls find forever homes'}
             </p>
           </div>
 
-          {/* Staggered overlapping visual grid box */}
-          {!noPhoto && renderPhotoGrid('h-36 md:h-44', 'h-24 md:h-28', 'h-16 md:h-20')}
+          {/* Content group — vertically centered between header and footer */}
+          <div className="flex-1 flex flex-col justify-center gap-2 min-h-0 py-1">
+            {/* Staggered photo grid */}
+            {hasPhoto && renderPhotoGrid('h-28 md:h-36', 'h-20 md:h-24', 'h-14 md:h-18')}
 
-          {/* Whimsical Speech bubble narrative card */}
-          <div className="bg-rose-50/80 p-3.5 rounded-3xl border-2 border-rose-100 relative shadow-sm text-center">
-            {/* Speach bubble visual notch */}
-            <div className="absolute -top-2 left-6 w-4 h-4 bg-rose-50 border-t border-l border-rose-100 rotate-45" />
-            <p className={`${noPhoto ? 'text-xs' : 'text-[10px]'} leading-relaxed text-rose-955 font-bold italic`}>
-              " {data.intro || 'Fostering and volunteering details directly rescue regional animals and prevent shelter intakes. Get involved today!' } "
-            </p>
-          </div>
-
-          <div className="p-1">
-            {renderBullets()}
-          </div>
-
-          {/* Whimsical closure & CTA details */}
-          <div className="border-t-2 border-dashed border-rose-300 pt-3 flex items-center justify-between gap-4">
-            <div className="flex-1 space-y-2 text-left">
-              <div>
-                <span className="text-[8.5px] font-black uppercase text-rose-600 block tracking-wider leading-none">
-                  🌻 {data.ctaLabel}
-                </span>
-                <p className={`${noPhoto ? 'text-[11px]' : 'text-[10px]'} font-extrabold text-rose-950 leading-snug mt-1`}>
-                  {data.ctaDetails}
-                </p>
-              </div>
-
-              {/* Contacts info labels */}
-              <div className="flex flex-wrap gap-1">
-                {data.email && (
-                  <span className="bg-rose-50 border border-rose-100 px-2 py-0.5 rounded text-[8px] font-black text-rose-700">
-                    {data.email}
-                  </span>
-                )}
-                {data.phone && (
-                  <span className="bg-rose-50 border border-slate-100 px-2 py-0.5 rounded text-[8px] font-extrabold text-slate-600">
-                    {data.phone}
-                  </span>
-                )}
-              </div>
+            {/* Quote card — warm multicolor gradient bg */}
+            <div className="p-3 rounded-2xl text-center" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #fdf2f8 60%, #f5f3ff 100%)', border: '2px solid #fecdd3' }}>
+              <p className={`${noPhoto ? 'text-[11px]' : 'text-[10px]'} leading-relaxed text-stone-800 font-bold italic`}>
+                " {data.intro || 'Fostering and volunteering directly rescues regional animals. Get involved today!'} "
+              </p>
             </div>
 
-            {data.showQRCode && data.website && (
-              <div className="bg-white p-1 rounded-xl border-2 border-rose-200 shrink-0 flex flex-col items-center gap-0.5 shadow-2xs rotate-2">
-                <QRCodeImage url={data.website} className="w-8 h-8" />
-                <span className="text-[6px] font-black text-rose-500">SCAN ME</span>
+            <div>{playfulBullets()}</div>
+          </div>
+
+          {/* Closing & CTA — vibrant gradient footer band */}
+          <div className="shrink-0 -mx-3.5 -mb-3 px-4 py-3 mt-1" style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 60%, #f97316 100%)' }}>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 space-y-1 text-left">
+                {data.ctaLabel && <p className="text-[7.5px] font-black text-white/80 uppercase tracking-widest">{data.ctaLabel}</p>}
+                {data.ctaDetails && <p className="text-[10px] font-extrabold text-white leading-tight">{data.ctaDetails}</p>}
+                <div className="flex flex-wrap gap-1 mt-0.5">
+                  {data.orgName && <span className="bg-white/20 px-2 py-0.5 rounded-full text-[8.5px] font-black text-white">{data.orgName}</span>}
+                  {data.email && <span className="bg-white/15 px-2 py-0.5 rounded-full text-[8px] font-bold text-white/90">{data.email}</span>}
+                  {data.phone && <span className="bg-white/15 px-2 py-0.5 rounded-full text-[8px] font-bold text-white/90">{data.phone}</span>}
+                  {data.website && <span className="bg-white/15 px-2 py-0.5 rounded-full text-[8px] font-bold text-white/90">{data.website.replace('https://','').replace('www.','')}</span>}
+                </div>
+                {data.thankYouMessage && <p className="text-[8.5px] font-bold text-white/80 italic mt-0.5">{data.thankYouMessage}</p>}
               </div>
-            )}
+              {data.showQRCode && data.website && (
+                <div className="bg-white p-1.5 rounded-xl shrink-0 flex flex-col items-center gap-0.5">
+                  <QRCodeImage url={data.website} className="w-12 h-12" />
+                  <span className="text-[7px] font-black" style={{ color: '#8b5cf6' }}>SCAN ME</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       );
     }
 
+
     // Theme 1: terracotta (default classic layout)
+    const tcBulletConfig = (() => {
+      if (data.useCase === 'donation') return { label: 'WHAT WE NEED', Icon: Gift, color: 'text-orange-600', bg: 'bg-orange-100' };
+      if (data.useCase === 'fosters') return { label: 'WHY FOSTER WITH US', Icon: Heart, color: 'text-rose-600', bg: 'bg-rose-100' };
+      return { label: data.useCase === 'event_volunteers' ? 'VOLUNTEER SHIFTS' : 'OPEN ROLES', Icon: Users, color: 'text-amber-700', bg: 'bg-amber-100' };
+    })();
+
+    const renderTerracottaBullets = () => {
+      const displayedItems = data.items.slice(0, 10);
+      const TcIcon = tcBulletConfig.Icon;
+      return (
+        <div className="space-y-1.5">
+          <span className={`text-[9px] font-black uppercase tracking-wider block ${tcBulletConfig.color}`}>
+            {tcBulletConfig.label}
+          </span>
+          <div className="space-y-1.5">
+            {displayedItems.map((bullet, index) => {
+              const ci = bullet.indexOf(':');
+              const hasColon = ci > -1;
+              return (
+                <div key={index} className="flex items-start gap-2 text-[10px] w-full">
+                  <div className={`p-[3px] mt-[1px] ${tcBulletConfig.bg} rounded-full shrink-0 ${tcBulletConfig.color}`}>
+                    <TcIcon className="w-3 h-3 shrink-0" />
+                  </div>
+                  <div className="leading-snug flex-1 text-left">
+                    {hasColon ? (
+                      <p className="font-semibold text-stone-800">
+                        <strong className="text-stone-900 font-extrabold">{bullet.substring(0, ci)}:</strong>{bullet.substring(ci + 1)}
+                      </p>
+                    ) : (
+                      <p className="font-bold text-stone-700">{bullet}</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            {displayedItems.length === 0 && (
+              <p className="text-[10px] text-slate-400 italic">No items yet — add highlights in Step 2!</p>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    const ctaBg = data.useCase === 'fosters' ? '#4c0519' : data.useCase === 'ongoing_volunteers' || data.useCase === 'event_volunteers' ? '#451a03' : '#1c0a00';
+
+    if (isSquare) {
+      return (
+        <div className="flex-grow flex flex-col h-full gap-2">
+          {/* Square: bold colored header bar */}
+          <div className="-mx-3.5 -mt-3.5 px-5 py-4 shrink-0" style={{ background: 'linear-gradient(135deg, #c2410c 0%, #92400e 100%)' }}>
+            {data.orgName && (
+              <p className="text-[8.5px] font-black uppercase tracking-[0.25em] text-orange-200 mb-1">{data.orgName}</p>
+            )}
+            <h1 className="text-2xl font-black text-white leading-tight uppercase tracking-tight font-outfit">
+              {data.header || 'COMMUNITY NEED'}
+            </h1>
+            {data.subtitle && (
+              <p className="text-[10px] font-extrabold text-orange-200 mt-1 uppercase tracking-wide">{data.subtitle}</p>
+            )}
+          </div>
+          {/* Square: quote block */}
+          <div className="bg-amber-50 border border-orange-200 rounded-xl p-2.5 shrink-0">
+            <p className="text-[10px] leading-relaxed text-stone-700 italic font-semibold text-center">
+              "{data.intro?.slice(0, 130)}"
+            </p>
+          </div>
+          {/* Square: bullets */}
+          <div className="flex-1 min-h-0 overflow-auto">{renderTerracottaBullets()}</div>
+          {/* Square: footer */}
+          <div className="shrink-0 rounded-xl p-2.5 px-3" style={{ background: ctaBg }}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex-1 space-y-1">
+                {data.ctaLabel && <p className="text-[7.5px] font-black text-orange-300 uppercase tracking-wider">{data.ctaLabel}</p>}
+                {data.ctaDetails && <p className="text-[10px] font-extrabold text-white leading-tight">{data.ctaDetails}</p>}
+                <div className="flex flex-wrap gap-1 mt-0.5">
+                  {data.orgName && <span className="text-[9px] font-black text-white">{data.orgName}</span>}
+                  {data.email && <span className="text-[8px] font-bold text-orange-200">{data.email}</span>}
+                  {data.phone && <span className="text-[8px] font-bold text-orange-100">{data.phone}</span>}
+                  {data.website && <span className="text-[8px] font-bold text-orange-200">{data.website.replace('https://','').replace('www.','')}</span>}
+                </div>
+              </div>
+              {data.showQRCode && data.website && (
+                <div className="bg-white p-1.5 rounded-lg shrink-0"><QRCodeImage url={data.website} className="w-12 h-12" /></div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <div className="flex-grow flex flex-col justify-between h-full space-y-2 mt-0 pt-0">
-        {/* HEADER BADGE & LABELS */}
-        <div className="text-center space-y-1 relative z-10 pt-0">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[8.5px] tracking-widest font-black uppercase shadow-2xs bg-white text-indigo-950 border border-slate-100 mx-auto">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-600 animate-pulse" />
-            <span>{data.orgName.toUpperCase()} OUTREACH</span>
-          </div>
-          
-          <h1 className={`text-xl md:text-2xl font-black tracking-tight leading-tight uppercase ${activeTheme.textHeader}`}>
-            {data.header || 'COMMUNITY NEED'}
-          </h1>
-          
-          <p className="text-[10px] font-black text-indigo-600 leading-none uppercase tracking-wider italic px-4">
-            {data.subtitle || 'Make high value difference'}
-          </p>
-          
-          <div className="w-14 h-0.5 bg-indigo-600/40 mx-auto rounded-full mt-1.5" />
-        </div>
-
-        {/* Dynamic photos gallery */}
-        {!noPhoto && renderPhotoGrid('h-28 md:h-34', 'h-20 md:h-24', 'h-14 md:h-18')}
-
-        {/* MAIN NARRATIVE HOOK TEXT */}
-        <div className="bg-white/90 backdrop-blur-xs p-2.5 py-2 px-3.5 rounded-xl border border-slate-150/70 shadow-2xs relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-1.5 h-full bg-indigo-600/45" />
-          <p className={`${noPhoto ? 'text-[11px] font-bold' : 'text-[9.5px] font-semibold'} leading-normal text-slate-700 italic text-center`}>
-            " {data.intro || 'Fostering and volunteering details directly rescue regional animals and prevent shelter intakes. Get involved today!' } "
-          </p>
-        </div>
-
-        {/* Highlights bullets checklist list */}
-        {renderBullets()}
-
-        {/* CLOSING / GRATITUDE STATEMENT */}
-        <div className="text-center border-t border-slate-100 pt-1.5 space-y-0.5">
-          <p className={`${noPhoto ? 'text-[11px]' : 'text-[9.5px]'} leading-relaxed font-black text-rose-600`}>
-            💝 {data.thankYouMessage || 'We appreciate it! You are help saving local pet lives.'}
-          </p>
-        </div>
-
-        {/* CALL TO ACTION & FOOTER */}
-        <div className="border-t-2 border-indigo-600/25 pt-2.5 md:pt-3 flex items-center justify-between gap-3">
-          <div className="flex-1 space-y-2 text-left">
-            <div className="space-y-1 md:space-y-1.5">
-              <span className="text-[9px] font-black uppercase text-indigo-600 block tracking-wider leading-none">
-                {data.ctaLabel}
-              </span>
-              <p className="text-[10.5px] md:text-[11.5px] font-black text-indigo-950 leading-snug">
-                {data.ctaDetails}
-              </p>
-            </div>
-
-            {/* CONTACT INFO PILLS CONTAINER */}
-            <div className="flex flex-wrap gap-1">
-              {data.orgName && (
-                <span className="inline-flex items-center gap-1 bg-stone-50 border border-stone-200/50 px-1.5 py-0.5 rounded text-[8px] font-black text-stone-600">
-                  {data.orgName}
-                </span>
-              )}
-              {data.website && (
-                <span className="inline-flex items-center gap-1 bg-stone-50 border border-stone-200/50 px-1.5 py-0.5 rounded text-[8px] font-extrabold text-indigo-600">
-                  <Globe className="w-2.5 h-2.5" />
-                  <span>{data.website.replace('https://', '').replace('www.', '')}</span>
-                </span>
-              )}
-              {data.email && (
-                <span className="inline-flex items-center gap-1 bg-stone-50 border border-stone-200/50 px-1.5 py-0.5 rounded text-[8px] font-extrabold text-stone-500">
-                  <Mail className="w-2.5 h-2.5" />
-                  <span>{data.email}</span>
-                </span>
-              )}
-              {data.phone && (
-                <span className="inline-flex items-center gap-1 bg-stone-50 border border-stone-200/50 px-1.5 py-0.5 rounded text-[8px] font-extrabold text-stone-500">
-                  <Phone className="w-2.5 h-2.5" />
-                  <span>{data.phone}</span>
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Website Link QR Code */}
-          {data.showQRCode && data.website && (
-            <div className="bg-white p-0.5 rounded-lg border border-slate-250 shadow-sm shrink-0 flex flex-col items-center gap-0.5">
-              <QRCodeImage url={data.website} className="w-7 h-7" />
-              <span className="text-[6px] font-black text-slate-400 uppercase tracking-widest leading-none">SCAN LINK</span>
+      <div className="flex-grow flex flex-col h-full">
+        {/* HEADER: org name prominent, solid headline (no gradient text) */}
+        <div className="text-center space-y-1 relative z-10 shrink-0 pb-2">
+          {data.orgName && (
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[8.5px] font-black uppercase bg-orange-100 border border-orange-200 text-orange-800">
+              <Sparkles className="w-3 h-3 text-orange-500" />
+              <span>{data.orgName}</span>
             </div>
           )}
+          <h1 className="text-xl md:text-2xl font-black tracking-tight leading-tight uppercase text-stone-900 font-outfit">
+            {data.header || 'COMMUNITY NEED'}
+          </h1>
+          <p className="text-[10px] font-extrabold text-orange-700 leading-none uppercase tracking-wider font-outfit">
+            {data.subtitle || 'Make a difference today'}
+          </p>
+          <div className="w-14 h-0.5 bg-orange-500 mx-auto rounded-full mt-1" />
+        </div>
+
+        {/* Content group — vertically centered between header and footer */}
+        <div className="flex-1 flex flex-col justify-center gap-2 min-h-0">
+          {/* Photos */}
+          {!noPhoto && renderPhotoGrid('h-28 md:h-36', 'h-20 md:h-24', 'h-14 md:h-18')}
+
+          {/* NARRATIVE — no side stripe (banned), clean card */}
+          <div className="bg-amber-50 border border-orange-200 p-2.5 px-3 rounded-xl">
+            <p className={`${noPhoto ? 'text-[11px] font-bold' : 'text-[10px] font-semibold'} leading-relaxed text-stone-700 italic text-center`}>
+              " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
+            </p>
+          </div>
+
+          {/* Bullets */}
+          <div>{renderTerracottaBullets()}</div>
+        </div>
+
+        {/* THANK YOU */}
+        <div className="bg-orange-50 border border-orange-200 p-2 rounded-xl text-center shrink-0">
+          <p className="text-[10px] font-black text-orange-900 leading-snug">
+            {data.thankYouMessage || 'We appreciate your support — you are helping save local pet lives.'}
+          </p>
+        </div>
+
+        {/* FOOTER CTA */}
+        <div className="border-t border-orange-200 pt-2.5 shrink-0">
+          <div className="flex gap-2.5 items-start">
+            {(data.ctaLabel || data.ctaDetails) && (
+              <div className="flex-1 rounded-xl p-2.5 px-3 text-white" style={{ background: ctaBg }}>
+                {data.ctaLabel && <p className="text-[7.5px] font-black uppercase text-orange-300 tracking-wider block mb-0.5">{data.ctaLabel}</p>}
+                {data.ctaDetails && <p className="text-[10px] font-extrabold text-white leading-tight">{data.ctaDetails}</p>}
+              </div>
+            )}
+            {data.showQRCode && data.website && (
+              <div className="bg-white p-1.5 rounded-xl border border-orange-200 shrink-0 flex flex-col items-center gap-0.5">
+                <QRCodeImage url={data.website} className="w-12 h-12" />
+                <span className="text-[6.5px] font-black text-stone-500 uppercase tracking-widest">SCAN LINK</span>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1 mt-1.5">
+            {data.orgName && (
+              <span className="inline-flex items-center gap-1 bg-white border border-stone-200 px-2 py-0.5 rounded-full text-[8.5px] font-black text-stone-700">
+                {data.orgName}
+              </span>
+            )}
+            {data.website && (
+              <span className="inline-flex items-center gap-1 bg-white border border-stone-200 px-2 py-0.5 rounded-full text-[8.5px] font-bold text-orange-700">
+                <Globe className="w-2.5 h-2.5 text-orange-500" />{data.website.replace('https://','').replace('www.','')}
+              </span>
+            )}
+            {data.email && (
+              <span className="inline-flex items-center gap-1 bg-white border border-stone-200 px-2 py-0.5 rounded-full text-[8.5px] font-bold text-stone-600">
+                <Mail className="w-2.5 h-2.5 text-stone-400" />{data.email}
+              </span>
+            )}
+            {data.phone && (
+              <span className="inline-flex items-center gap-1 bg-white border border-stone-200 px-2 py-0.5 rounded-full text-[8.5px] font-bold text-stone-600">
+                <Phone className="w-2.5 h-2.5 text-stone-400" />{data.phone}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -1225,10 +1543,10 @@ export const RescueNeedsFlyers: React.FC = () => {
         }}
       >
         {/* AMBIENT CORNER MOTIFS */}
-        <div className={`absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 rounded-tl-xl ${activeTheme.accentBorder} opacity-60`} />
-        <div className={`absolute top-0 right-0 w-16 h-16 border-t-4 border-r-4 rounded-tr-xl ${activeTheme.accentBorder} opacity-60`} />
-        <div className={`absolute bottom-0 left-0 w-16 h-16 border-b-4 border-l-4 rounded-bl-xl ${activeTheme.accentBorder} opacity-60`} />
-        <div className={`absolute bottom-0 right-0 w-16 h-16 border-b-4 border-r-4 rounded-br-xl ${activeTheme.accentBorder} opacity-60`} />
+        <div className={`absolute top-2.5 left-2.5 w-10 h-10 rounded-tl-lg opacity-70 ${activeTheme.accentBorder}`} style={{ borderTopWidth: '2px', borderLeftWidth: '2px', borderStyle: 'solid' }} />
+        <div className={`absolute top-2.5 right-2.5 w-10 h-10 rounded-tr-lg opacity-70 ${activeTheme.accentBorder}`} style={{ borderTopWidth: '2px', borderRightWidth: '2px', borderStyle: 'solid' }} />
+        <div className={`absolute bottom-2.5 left-2.5 w-10 h-10 rounded-bl-lg opacity-70 ${activeTheme.accentBorder}`} style={{ borderBottomWidth: '2px', borderLeftWidth: '2px', borderStyle: 'solid' }} />
+        <div className={`absolute bottom-2.5 right-2.5 w-10 h-10 rounded-br-lg opacity-70 ${activeTheme.accentBorder}`} style={{ borderBottomWidth: '2px', borderRightWidth: '2px', borderStyle: 'solid' }} />
 
         {/* OVERLAY BG GRADIENT */}
         <div className={`absolute inset-3 rounded-2xl bg-gradient-to-br ${activeTheme.bgGrad} opacity-35 -z-10`} />
@@ -1236,7 +1554,7 @@ export const RescueNeedsFlyers: React.FC = () => {
         {renderFlyerContent()}
 
         <div className="absolute bottom-1 right-3 text-[7px] text-slate-400 font-mono italic">
-          Powered by RescueKit • Share & Save Lives
+          Powered by Rescue-Kit • Share & Save Lives
         </div>
       </div>
     );
@@ -1248,7 +1566,7 @@ export const RescueNeedsFlyers: React.FC = () => {
       {/* HEADER BAR */}
       <div className="col-span-full bg-gradient-to-r from-sky-50 via-blue-50/50 to-sky-50/40 border border-sky-200/70 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="relative z-10">
-          <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight font-fraunces">
+          <h1 className="text-[22.8px] md:text-[34.2px] font-black text-slate-900 tracking-tight font-fraunces">
             Make Flyers for Every Rescue Need
           </h1>
           <p className="text-sm text-sky-800/80 font-semibold mt-1.5">
@@ -1259,7 +1577,7 @@ export const RescueNeedsFlyers: React.FC = () => {
           {(['donation', 'fosters', 'ongoing_volunteers', 'event_volunteers'] as FlyerUseCase[]).map(uc => (
             <button key={uc} onClick={() => handleUseCaseChange(uc)}
               className={`px-3 py-1.5 rounded-full text-[11px] font-black border transition-all cursor-pointer ${
-                data.useCase === uc ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
+                data.useCase === uc ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-950/70 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
               }`}
             >
               {uc === 'donation' ? '🎁 Donations' : uc === 'fosters' ? '🐾 Fosters' : uc === 'ongoing_volunteers' ? '🙌 Volunteers' : '📅 Events'}
@@ -1273,7 +1591,7 @@ export const RescueNeedsFlyers: React.FC = () => {
         {(['edit', 'preview'] as const).map(tab => (
           <button key={tab} onClick={() => setMobileTab(tab)}
             className={`flex-1 text-center py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all ${
-              mobileTab === tab ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600'
+              mobileTab === tab ? 'bg-indigo-600 text-white shadow-xs' : 'text-indigo-950/70 hover:text-indigo-900'
             }`}
           >
             {tab === 'edit' ? '📝 Customize' : '👁️ View Flyer'}
@@ -1285,290 +1603,305 @@ export const RescueNeedsFlyers: React.FC = () => {
       {successToast && (
         <div className="col-span-full bg-emerald-50 border border-emerald-200 text-emerald-950 p-4 rounded-2xl flex gap-2 animate-slide-up">
           <Check className="w-5 h-5 text-emerald-600 shrink-0" />
-          <span className="text-xs font-black text-slate-800">{successToast}</span>
+          <span className="text-xs font-black text-emerald-950">{successToast}</span>
         </div>
       )}
 
       {/* ── LEFT COLUMN ── */}
       <div className={`col-span-full lg:col-span-5 space-y-4 ${mobileTab === 'edit' ? 'block' : 'hidden lg:block'}`}>
 
-        {/* STEP 1: Flyer Type */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs">
-          <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">1</div>
+        {/* GROUP 1: DESIGN & STYLE */}
+        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-6">
+          <div className="border-b border-slate-100 pb-3 flex items-center gap-2">
+            <span className="text-base">🎨</span>
             <div>
-              <h3 className="text-sm font-black text-slate-800">What type of flyer?</h3>
-              <p className="text-[11px] text-slate-400 font-semibold">Pre-fills the form with content for your specific need</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-2.5">
-            {[
-              { id: 'donation' as FlyerUseCase, label: 'Donation Drive', icon: <Gift className="w-5 h-5" />, desc: 'Food, supplies & blankets', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600', activeBorder: 'border-emerald-500', activeBg: 'bg-emerald-50/40', activeRing: 'ring-emerald-500/20' },
-              { id: 'fosters' as FlyerUseCase, label: 'Foster Recruitment', icon: <Heart className="w-5 h-5" />, desc: 'Open your home, save a life', iconBg: 'bg-rose-50', iconColor: 'text-rose-500', activeBorder: 'border-rose-400', activeBg: 'bg-rose-50/40', activeRing: 'ring-rose-500/20' },
-              { id: 'ongoing_volunteers' as FlyerUseCase, label: 'Volunteer Signup', icon: <Users className="w-5 h-5" />, desc: 'Drivers, handlers & more', iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600', activeBorder: 'border-indigo-500', activeBg: 'bg-indigo-50/40', activeRing: 'ring-indigo-500/20' },
-              { id: 'event_volunteers' as FlyerUseCase, label: 'Event Help', icon: <Calendar className="w-5 h-5" />, desc: 'Adoption fairs & fundraisers', iconBg: 'bg-amber-50', iconColor: 'text-amber-600', activeBorder: 'border-amber-400', activeBg: 'bg-amber-50/40', activeRing: 'ring-amber-500/20' },
-            ].map(uc => (
-              <button key={uc.id} onClick={() => handleUseCaseChange(uc.id)}
-                className={`flex flex-row items-center gap-2.5 p-3.5 rounded-2xl border-2 text-left cursor-pointer transition-all ${
-                  data.useCase === uc.id
-                    ? `${uc.activeBorder} ${uc.activeBg} ring-2 ${uc.activeRing}`
-                    : 'border-slate-200 bg-white hover:bg-slate-50'
-                }`}
-              >
-                <div className={`w-9 h-9 rounded-xl ${uc.iconBg} ${uc.iconColor} flex items-center justify-center shrink-0`}>{uc.icon}</div>
-                <div>
-                  <div className="font-black text-[12px] text-slate-800 leading-tight">{uc.label}</div>
-                  <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{uc.desc}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* STEP 2: Photos — moved up for immediate visual impact */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-3.5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">2</div>
-            <div>
-              <h3 className="text-sm font-black text-slate-800">Add Photos <span className="font-semibold text-slate-400">(optional)</span></h3>
-              <p className="text-[11px] text-slate-400 font-semibold">Drag or scroll on the preview to crop & zoom</p>
+              <h2 className="text-xs font-black uppercase tracking-wider text-slate-900">1. Design & Style</h2>
+              <p className="text-[10px] text-slate-400 font-semibold">Select flyer type, upload photos, and pick a visual style</p>
             </div>
           </div>
 
-          <label className="flex items-center gap-2.5 cursor-pointer select-none bg-slate-50 p-3 rounded-2xl border border-slate-200">
-            <input type="checkbox" checked={noPhoto} onChange={e => setNoPhoto(e.target.checked)}
-              className="w-4 h-4 rounded cursor-pointer accent-indigo-600" />
-            <span className="text-xs font-bold text-slate-600">Text-only layout (no image area)</span>
-          </label>
-
-          <input type="file" multiple accept="image/*" ref={fileInputRef} onChange={handleImgUpload} className="hidden" />
-
-          {!noPhoto ? (
-            <>
-              {photos.length < 3 && (
-                <button type="button" onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-6 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center gap-1.5 text-slate-400 hover:text-indigo-600 hover:border-indigo-400 transition-all cursor-pointer bg-sky-50/20 hover:bg-indigo-50/30"
+          {/* Sub-Step A: What type of flyer? */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black bg-indigo-50 text-indigo-700 w-5 h-5 rounded-full flex items-center justify-center shrink-0">A</span>
+              <h3 className="text-[11.5px] font-black text-slate-800 uppercase tracking-wider">What type of flyer?</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5">
+              {[
+                { id: 'donation' as FlyerUseCase, label: 'Donation Drive', icon: <Gift className="w-5 h-5" />, desc: 'Food, supplies & blankets', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600', activeBorder: 'border-emerald-500', activeBg: 'bg-emerald-50/40', activeRing: 'ring-emerald-500/20' },
+                { id: 'fosters' as FlyerUseCase, label: 'Foster Recruitment', icon: <Heart className="w-5 h-5" />, desc: 'Open your home, save a life', iconBg: 'bg-rose-50', iconColor: 'text-rose-500', activeBorder: 'border-rose-400', activeBg: 'bg-rose-50/40', activeRing: 'ring-rose-500/20' },
+                { id: 'ongoing_volunteers' as FlyerUseCase, label: 'Volunteer Signup', icon: <Users className="w-5 h-5" />, desc: 'Drivers, handlers & more', iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600', activeBorder: 'border-indigo-500', activeBg: 'bg-indigo-50/40', activeRing: 'ring-indigo-500/20' },
+                { id: 'event_volunteers' as FlyerUseCase, label: 'Event Help', icon: <Calendar className="w-5 h-5" />, desc: 'Adoption fairs & fundraisers', iconBg: 'bg-amber-50', iconColor: 'text-amber-600', activeBorder: 'border-amber-400', activeBg: 'bg-amber-50/40', activeRing: 'ring-amber-500/20' },
+              ].map(uc => (
+                <button key={uc.id} onClick={() => handleUseCaseChange(uc.id)}
+                  className={`flex flex-row items-center gap-2.5 p-3.5 rounded-2xl border-2 text-left cursor-pointer transition-all ${
+                    data.useCase === uc.id
+                      ? `${uc.activeBorder} ${uc.activeBg} ring-2 ${uc.activeRing}`
+                      : 'border-slate-200 bg-white hover:bg-slate-50'
+                  }`}
                 >
-                  <ImageIcon className="w-7 h-7" />
-                  <span className="text-xs font-black">Upload Photos ({photos.length}/3)</span>
-                  <p className="text-[9.5px] font-medium">JPEG or PNG — stay local to your browser</p>
+                  <div className={`w-9 h-9 rounded-xl ${uc.iconBg} ${uc.iconColor} flex items-center justify-center shrink-0`}>{uc.icon}</div>
+                  <div>
+                    <div className="font-black text-[12px] text-slate-800 leading-tight">{uc.label}</div>
+                    <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{uc.desc}</p>
+                  </div>
                 </button>
-              )}
-              {photos.length > 0 && (
-                <div className="space-y-2">
-                  {photos.map((url, index) => (
-                    <div key={index} className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 relative shrink-0 bg-stone-100">
-                        <img src={url} alt="" className="absolute w-full h-full object-cover" referrerPolicy="no-referrer"
-                          style={{ transform: `scale(${photoZooms[index]||1}) translate(${photoOffsetsX[index]||0}px,${photoOffsetsY[index]||0}px)` }} />
-                      </div>
-                      <div className="flex-1 space-y-1.5 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black text-slate-700">Photo {index + 1}</span>
-                          <button type="button" onClick={() => handleRemovePhoto(index)} className="text-rose-400 hover:text-rose-600 cursor-pointer p-1">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-[10px] font-semibold text-slate-400 mb-0.5">
-                            <span>Zoom</span><span>{(photoZooms[index]||1).toFixed(1)}×</span>
-                          </div>
-                          <input type="range" min="0.5" max="3" step="0.05" value={photoZooms[index]||1}
-                            onChange={e => updatePhotoZoom(index, parseFloat(e.target.value))} className="w-full accent-indigo-600" />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="py-4 border border-dashed border-slate-200 rounded-2xl text-center">
-              <p className="text-xs font-bold text-slate-400">Photos disabled — flyer uses text-only layout</p>
-            </div>
-          )}
-        </div>
-
-        {/* STEP 3: Style */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs">
-          <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">3</div>
-            <div>
-              <h3 className="text-sm font-black text-slate-800">Choose a Style</h3>
-              <p className="text-[11px] text-slate-400 font-semibold">Each style uses a unique color palette and layout</p>
+              ))}
             </div>
           </div>
-          <div className="space-y-2">
-            {([
-              { t: FLYER_THEMES[0], swatches: ['#ea580c','#fb923c','#fef3c7'], desc: 'Warm & professional — works for any use case' },
-              { t: FLYER_THEMES[1], swatches: ['#065f46','#059669','#d1fae5'], desc: 'Editorial with a bold photo banner at the top' },
-              { t: FLYER_THEMES[2], swatches: ['#4f46e5','#7dd3fc','#e0f2fe'], desc: 'Clean two-column layout — great with photos' },
-              { t: FLYER_THEMES[3], swatches: ['#d97706','#fcd34d','#fef3c7'], desc: 'Bold graphic style with high-contrast sections' },
-              { t: FLYER_THEMES[4], swatches: ['#e11d48','#fda4af','#fff1f2'], desc: 'Vibrant and eye-catching — best with action photos' },
-            ]).map(({ t, swatches, desc }) => (
-              <button key={t.id} onClick={() => setActiveTheme(t)}
-                className={`w-full flex items-center gap-3 p-3 rounded-2xl border-2 text-left cursor-pointer transition-all ${
-                  activeTheme.id === t.id ? 'border-indigo-500 bg-indigo-50/40 ring-2 ring-indigo-500/15' : 'border-slate-200 bg-white hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex gap-0.5 shrink-0">
-                  {swatches.map((c, i) => (
-                    <div key={i} className={`w-4 h-10 ${i === 0 ? 'rounded-l-lg' : ''} ${i === swatches.length - 1 ? 'rounded-r-lg' : ''}`}
-                      style={{ backgroundColor: c }} />
-                  ))}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[12px] font-black text-slate-800">{t.name}</div>
-                  <div className="text-[10px] text-slate-400 font-semibold leading-tight mt-0.5">{desc}</div>
-                </div>
-                {activeTheme.id === t.id && (
-                  <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
-                    <Check className="w-3 h-3 text-white" />
+
+          {/* Sub-Step B: Add Photos */}
+          <div className="border-t border-slate-100/80 pt-5 space-y-3.5">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black bg-indigo-50 text-indigo-700 w-5 h-5 rounded-full flex items-center justify-center shrink-0">B</span>
+              <h3 className="text-[11.5px] font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                <span>Add Photos</span>
+                <span className="font-semibold text-slate-400 lowercase tracking-normal font-sans">(optional)</span>
+              </h3>
+            </div>
+            
+            <label className="flex items-center gap-2.5 cursor-pointer select-none bg-slate-50 p-3 rounded-2xl border border-slate-200">
+              <input type="checkbox" checked={noPhoto} onChange={e => setNoPhoto(e.target.checked)}
+                className="w-4 h-4 rounded cursor-pointer accent-indigo-600" />
+              <span className="text-xs font-bold text-slate-600">Text-only layout (no image area)</span>
+            </label>
+
+            <input type="file" multiple accept="image/*" ref={fileInputRef} onChange={handleImgUpload} className="hidden" />
+
+            {!noPhoto ? (
+              <>
+                {photos.length < 3 && (
+                  <button type="button" onClick={() => fileInputRef.current?.click()}
+                    className="w-full py-6 border-2 border-dashed border-sky-200 rounded-2xl flex flex-col items-center gap-1.5 text-sky-700 hover:text-indigo-600 hover:border-indigo-400 transition-all cursor-pointer bg-sky-50/20 hover:bg-indigo-50/30"
+                  >
+                    <ImageIcon className="w-7 h-7" />
+                    <span className="text-xs font-black">Upload Photos ({photos.length}/3)</span>
+                    <p className="text-[9.5px] font-medium">JPEG or PNG — stay local to your browser</p>
+                  </button>
+                )}
+                {photos.length > 0 && (
+                  <div className="space-y-2">
+                    {photos.map((url, index) => (
+                      <div key={index} className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <div className="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 relative shrink-0 bg-stone-100">
+                          <img src={url} alt="" className="absolute w-full h-full object-cover" referrerPolicy="no-referrer"
+                            style={{ transform: `scale(${photoZooms[index]||1}) translate(${photoOffsetsX[index]||0}px,${photoOffsetsY[index]||0}px)` }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-black text-slate-700">Photo {index + 1}</span>
+                            <button type="button" onClick={() => handleRemovePhoto(index)} className="text-rose-400 hover:text-rose-600 cursor-pointer p-1">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-slate-400 mt-1">Drag & pinch to reposition in the preview →</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
-              </button>
-            ))}
+              </>
+            ) : (
+              <div className="py-4 border border-dashed border-slate-200 rounded-2xl text-center">
+                <p className="text-xs font-bold text-slate-400">Photos disabled — flyer uses text-only layout</p>
+              </div>
+            )}
+          </div>
+
+          {/* Sub-Step C: Choose a Style */}
+          <div className="border-t border-slate-100/80 pt-5 space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black bg-indigo-50 text-indigo-700 w-5 h-5 rounded-full flex items-center justify-center shrink-0">C</span>
+              <h3 className="text-[11.5px] font-black text-slate-800 uppercase tracking-wider">Choose a Style</h3>
+            </div>
+            <div className="space-y-2">
+              {([
+                { t: FLYER_THEMES[0], swatches: ['#ea580c','#fb923c','#fef3c7'], desc: 'Warm & professional — works for any use case' },
+                { t: FLYER_THEMES[1], swatches: ['#065f46','#059669','#d1fae5'], desc: 'Editorial with a bold photo banner at the top' },
+                { t: FLYER_THEMES[2], swatches: ['#4f46e5','#7dd3fc','#e0f2fe'], desc: 'Clean two-column layout — great with photos' },
+                { t: FLYER_THEMES[3], swatches: ['#d97706','#fcd34d','#fef3c7'], desc: 'Bold graphic style with high-contrast sections' },
+                { t: FLYER_THEMES[4], swatches: ['#e11d48','#fda4af','#fff1f2'], desc: 'Vibrant and eye-catching — best with action photos' },
+              ]).map(({ t, swatches, desc }) => (
+                <button key={t.id} onClick={() => setActiveTheme(t)}
+                  className={`w-full flex items-center gap-3 p-3 rounded-2xl border-2 text-left cursor-pointer transition-all ${
+                    activeTheme.id === t.id ? 'border-indigo-500 bg-indigo-50/40 ring-2 ring-indigo-500/15' : 'border-slate-200 bg-white hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex gap-0.5 shrink-0">
+                    {swatches.map((c, i) => (
+                      <div key={i} className={`w-4 h-10 ${i === 0 ? 'rounded-l-lg' : ''} ${i === swatches.length - 1 ? 'rounded-r-lg' : ''}`}
+                        style={{ backgroundColor: c }} />
+                    ))}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[12px] font-black text-slate-800">{t.name}</div>
+                    <div className="text-[10px] text-slate-400 font-semibold leading-tight mt-0.5">{desc}</div>
+                  </div>
+                  {activeTheme.id === t.id && (
+                    <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-white" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* STEP 4: Message Content */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-3.5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">4</div>
+        {/* GROUP 2: CONTENT & DETAILS */}
+        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-6">
+          <div className="border-b border-slate-100 pb-3 flex items-center gap-2">
+            <span className="text-base">📝</span>
             <div>
-              <h3 className="text-sm font-black text-slate-800">Your Message</h3>
-              <p className="text-[11px] text-slate-400 font-semibold">Edit the headline, subtitle, and opening paragraph</p>
+              <h2 className="text-xs font-black uppercase tracking-wider text-slate-900">2. Content & Details</h2>
+              <p className="text-[10px] text-slate-400 font-semibold">Write your message headings and key bullet highlights</p>
             </div>
           </div>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Headline</label>
-              <input type="text" name="header" value={data.header} onChange={handleInputChange}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-bold" />
-            </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Subtitle</label>
-              <input type="text" name="subtitle" value={data.subtitle} onChange={handleInputChange}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-bold" />
-            </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Opening Paragraph (1–2 sentences)</label>
-              <textarea name="intro" value={data.intro} rows={3} onChange={handleInputChange}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-medium leading-relaxed" />
-            </div>
-          </div>
-        </div>
 
-        {/* STEP 5: Key Points */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-3.5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">5</div>
-            <div>
-              <h3 className="text-sm font-black text-slate-800">
+          {/* Sub-Step A: Your Message */}
+          <div className="space-y-3.5">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black bg-indigo-50 text-indigo-700 w-5 h-5 rounded-full flex items-center justify-center shrink-0">A</span>
+              <h3 className="text-[11.5px] font-black text-slate-800 uppercase tracking-wider">Your Message</h3>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Headline</label>
+                <input type="text" name="header" value={data.header} onChange={handleInputChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-bold" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Subtitle</label>
+                <input type="text" name="subtitle" value={data.subtitle} onChange={handleInputChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-bold" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Opening Paragraph (1–2 sentences)</label>
+                <textarea name="intro" value={data.intro} rows={3} onChange={handleInputChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-medium leading-relaxed" />
+              </div>
+            </div>
+          </div>
+
+          {/* Sub-Step B: Key Highlights / Points */}
+          <div className="border-t border-slate-100/80 pt-5 space-y-3.5">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black bg-indigo-50 text-indigo-700 w-5 h-5 rounded-full flex items-center justify-center shrink-0">B</span>
+              <h3 className="text-[11.5px] font-black text-slate-800 uppercase tracking-wider">
                 {data.useCase === 'donation' ? 'Requested Items' : data.useCase === 'fosters' ? 'Key Highlights' : 'Roles or Shifts'}
               </h3>
-              <p className="text-[11px] text-slate-400 font-semibold">Bullet points on the flyer — up to 5 shown</p>
             </div>
-          </div>
-          <form onSubmit={handleAddBulletItem} className="flex gap-2">
-            <input type="text"
-              placeholder={data.useCase === 'donation' ? 'e.g. Grain-free Puppy Dry Food' : 'e.g. Transport Driver (gear provided)'}
-              value={newItemInput} onChange={e => setNewItemInput(e.target.value)}
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-semibold" />
-            <button type="submit" className="p-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black flex items-center gap-1 shadow-sm cursor-pointer">
-              <Plus className="w-4 h-4" /><span>Add</span>
-            </button>
-          </form>
-          <div className="divide-y divide-slate-100 max-h-52 overflow-y-auto">
-            {data.items.length === 0 ? (
-              <p className="text-[11px] text-slate-400 font-semibold py-2">No items yet — add some above.</p>
-            ) : data.items.map((bullet, idx) => (
-              <div key={idx} className="flex items-center justify-between py-2 gap-3">
-                <span className="flex-1 text-xs font-semibold text-slate-700 leading-snug">{bullet}</span>
-                <button type="button" onClick={() => handleRemoveBulletItem(idx)} className="text-rose-400 hover:text-rose-600 cursor-pointer p-1 shrink-0">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+            {data.items.length >= 10 ? (
+              <div className="bg-amber-50 border border-amber-200 p-3 rounded-2xl flex items-start gap-2.5 text-amber-950">
+                <span className="text-sm shrink-0">⚠️</span>
+                <p className="text-[11px] leading-normal font-semibold">
+                  Maximum of 10 items reached. Please delete an item below to make room for a new one.
+                </p>
               </div>
-            ))}
+            ) : (
+              <form onSubmit={handleAddBulletItem} className="flex gap-2">
+                <input type="text"
+                  placeholder={data.useCase === 'donation' ? 'e.g. Grain-free Puppy Dry Food' : 'e.g. Transport Driver (gear provided)'}
+                  value={newItemInput} onChange={e => setNewItemInput(e.target.value)}
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-semibold" />
+                <button type="submit" className="p-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black flex items-center gap-1 shadow-sm cursor-pointer">
+                  <Plus className="w-4 h-4" /><span>Add</span>
+                </button>
+              </form>
+            )}
+            <div className="divide-y divide-slate-100 max-h-52 overflow-y-auto">
+              {data.items.length === 0 ? (
+                <p className="text-[11px] text-slate-400 font-semibold py-2">No items yet — add some above.</p>
+              ) : data.items.map((bullet, idx) => (
+                <div key={idx} className="flex items-center justify-between py-2 gap-3">
+                  <span className="flex-1 text-xs font-semibold text-slate-700 leading-snug">{bullet}</span>
+                  <button type="button" onClick={() => handleRemoveBulletItem(idx)} className="text-rose-400 hover:text-rose-600 cursor-pointer p-1 shrink-0">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* STEP 6: Contact & CTA */}
-        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-3.5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">6</div>
+        {/* GROUP 3: CONTACT & PUBLISH */}
+        <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-6">
+          <div className="border-b border-slate-100 pb-3 flex items-center gap-2">
+            <span className="text-base">📣</span>
             <div>
-              <h3 className="text-sm font-black text-slate-800">Contact & Call to Action</h3>
-              <p className="text-[11px] text-slate-400 font-semibold">Only include what you want printed on the flyer</p>
+              <h2 className="text-xs font-black uppercase tracking-wider text-slate-900">3. Contact & Publish</h2>
+              <p className="text-[10px] text-slate-400 font-semibold">Enter organization metadata, QR code link, and footer note</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="sm:col-span-2">
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">
-                Rescue Organization <span className="text-rose-500">*</span>
-              </label>
-              <input type="text" name="orgName" required value={data.orgName} onChange={handleInputChange}
-                placeholder="Your rescue's name"
-                className={`w-full border rounded-xl px-3 py-2 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 transition-colors ${
-                  !data.orgName.trim() ? 'border-amber-400 bg-amber-50/30' : 'border-slate-200 bg-slate-50'
-                }`} />
-              {!data.orgName.trim() && <span className="text-[9px] font-bold text-amber-600 mt-0.5 block">Required to download</span>}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="sm:col-span-2">
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">
+                  Rescue Organization <span className="text-rose-500 font-black">* (Required)</span>
+                </label>
+                <input type="text" name="orgName" required value={data.orgName} onChange={handleInputChange}
+                  placeholder="Your rescue's name"
+                  className={`w-full border rounded-xl px-3 py-2 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 transition-colors ${
+                    !data.orgName.trim() ? 'border-amber-400 bg-amber-50/30' : 'border-slate-200 bg-slate-50'
+                  }`} />
+                {!data.orgName.trim() && <span className="text-[9px] font-bold text-amber-600 mt-0.5 block">Required to download or copy</span>}
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Website</label>
+                <input type="text" name="website" value={data.website} onChange={handleInputChange}
+                  placeholder="e.g. www.yourrescue.org"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 placeholder:text-slate-300" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Email</label>
+                <input type="text" name="email" value={data.email} onChange={handleInputChange}
+                  placeholder="e.g. hello@yourrescue.org"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 placeholder:text-slate-300" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Phone</label>
+                <input type="text" name="phone" value={data.phone} onChange={handleInputChange}
+                  placeholder="e.g. (555) 123-4567"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 placeholder:text-slate-300" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Call to Action Heading</label>
+                <input type="text" name="ctaLabel" value={data.ctaLabel} onChange={handleInputChange}
+                  placeholder={
+                    data.useCase === 'donation' ? 'e.g. Where to Drop Off or Donate:' :
+                    data.useCase === 'fosters' ? 'e.g. Apply to Foster Today:' :
+                    data.useCase === 'ongoing_volunteers' ? 'e.g. How to Join Our Team:' :
+                    'e.g. Event Details & How to Register:'
+                  }
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-bold placeholder:font-normal placeholder:text-slate-300" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Call to Action Details</label>
+                <input type="text" name="ctaDetails" value={data.ctaDetails} onChange={handleInputChange}
+                  placeholder={
+                    data.useCase === 'donation' ? 'e.g. Drop off at our vet clinic or donate on our website' :
+                    data.useCase === 'fosters' ? 'e.g. Fill out the short questionnaire at our website' :
+                    data.useCase === 'ongoing_volunteers' ? 'e.g. Visit our website under /volunteer to apply' :
+                    'e.g. Aug 15, 10 AM–3 PM at Town Square Park'
+                  }
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-semibold placeholder:font-normal placeholder:text-slate-300" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Thank You / Closing Statement</label>
+                <textarea name="thankYouMessage" value={data.thankYouMessage} rows={2} onChange={handleInputChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-medium leading-relaxed" />
+              </div>
             </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Website</label>
-              <input type="text" name="website" value={data.website} onChange={handleInputChange}
-                placeholder="e.g. www.yourrescue.org"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 placeholder:text-slate-300" />
-            </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Email</label>
-              <input type="text" name="email" value={data.email} onChange={handleInputChange}
-                placeholder="e.g. hello@yourrescue.org"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 placeholder:text-slate-300" />
-            </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Phone</label>
-              <input type="text" name="phone" value={data.phone} onChange={handleInputChange}
-                placeholder="e.g. (555) 123-4567"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 placeholder:text-slate-300" />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Call to Action Heading</label>
-              <input type="text" name="ctaLabel" value={data.ctaLabel} onChange={handleInputChange}
-                placeholder={
-                  data.useCase === 'donation' ? 'e.g. Where to Drop Off or Donate:' :
-                  data.useCase === 'fosters' ? 'e.g. Apply to Foster Today:' :
-                  data.useCase === 'ongoing_volunteers' ? 'e.g. How to Join Our Team:' :
-                  'e.g. Event Details & How to Register:'
-                }
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-bold placeholder:font-normal placeholder:text-slate-300" />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Call to Action Details</label>
-              <input type="text" name="ctaDetails" value={data.ctaDetails} onChange={handleInputChange}
-                placeholder={
-                  data.useCase === 'donation' ? 'e.g. Drop off at our vet clinic or donate on our website' :
-                  data.useCase === 'fosters' ? 'e.g. Fill out the short questionnaire at our website' :
-                  data.useCase === 'ongoing_volunteers' ? 'e.g. Visit our website under /volunteer to apply' :
-                  'e.g. Aug 15, 10 AM–3 PM at Town Square Park'
-                }
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-semibold placeholder:font-normal placeholder:text-slate-300" />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">Thank You / Closing Statement</label>
-              <textarea name="thankYouMessage" value={data.thankYouMessage} rows={2} onChange={handleInputChange}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600 font-medium leading-relaxed" />
-            </div>
-          </div>
 
-          <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-600 font-bold">
-            <span className="flex items-center gap-1.5">
-              <Globe className="w-4 h-4 text-indigo-400" />
-              Show QR code linking to website
-            </span>
-            <input type="checkbox" checked={data.showQRCode} onChange={e => setData(prev => ({ ...prev, showQRCode: e.target.checked }))}
-              className="w-4 h-4 rounded text-indigo-600 cursor-pointer accent-indigo-600" />
+            <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-600 font-bold">
+              <span className="flex items-center gap-1.5">
+                <Globe className="w-4 h-4 text-indigo-400" />
+                Show QR code linking to website
+              </span>
+              <input type="checkbox" checked={data.showQRCode} onChange={e => setData(prev => ({ ...prev, showQRCode: e.target.checked }))}
+                className="w-4 h-4 rounded text-indigo-600 cursor-pointer accent-indigo-600" />
+            </div>
           </div>
         </div>
 
@@ -1590,7 +1923,7 @@ export const RescueNeedsFlyers: React.FC = () => {
             ] as const).map(opt => (
               <button key={opt.val} onClick={() => setAspectRatio(opt.val)}
                 className={`px-4 py-2 rounded-full font-bold text-xs transition-all cursor-pointer ${
-                  aspectRatio === opt.val ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
+                  aspectRatio === opt.val ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-50 text-indigo-950/70 border border-slate-200 hover:bg-slate-100'
                 }`}
               >{opt.label}</button>
             ))}
@@ -1693,7 +2026,7 @@ export const RescueNeedsFlyers: React.FC = () => {
                   triggerDownload('square');
                 }}
                 disabled={isDownloading}
-                className="cursor-pointer bg-indigo-600 hover:bg-indigo-750 text-white font-extrabold text-[11px] px-3.5 py-1.5 rounded-full shadow-lg transition-all flex items-center gap-1"
+                className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-[11px] px-3.5 py-1.5 rounded-full shadow-lg transition-all flex items-center gap-1"
               >
                 <Smartphone className="w-3.5 h-3.5" />
                 <span>Save PNG</span>

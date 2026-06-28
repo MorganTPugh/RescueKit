@@ -27,7 +27,9 @@ import {
   Info,
   ChevronRight,
   Eye,
-  Sliders
+  Sliders,
+  Maximize2,
+  X
 } from 'lucide-react';
 
 // Define structures for our templates
@@ -283,9 +285,8 @@ const FORM_TEMPLATES: FormTemplate[] = [
     ],
     generalReqs: [
       'Must meet the organization\'s minimum age requirement and possess a valid form of identification.',
-      'If renting or living in a managed community, you must have verified approval from your landlord or property owner to bring foster animals onto the premises.',
       'Resident Pet Health Requirement: To protect your own animals and the rescue\'s population, all resident pets in your home must be fully up to date on core vaccinations (specifically including Rabies).',
-      'Must be willing and able to safely transport your foster animal to routine or emergency veterinary appointments and scheduled adoption events.'
+      'Must be willing and able to safely transport your foster animal to routine or emergency veterinary appointments and scheduled adoption events (if applicable).'
     ],
     sections: [
       {
@@ -311,7 +312,6 @@ const FORM_TEMPLATES: FormTemplate[] = [
         fields: [
           { label: 'Which best describes your housing?', type: 'radio', options: ['House', 'Apartment', 'Condo', 'Townhome'], width: 'half' },
           { label: 'Do you own or rent this residence?', type: 'radio', options: ['Own My Home', 'Rent'], width: 'half' },
-          { label: 'If renting or under an HOA, do you have official approval to bring a foster pet into your home?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'full' },
           { label: 'Does your residence or community have any strict animal restrictions (breed, weight, or count limits)?', type: 'radio', options: ['No', 'Yes (If yes, please list below)'], width: 'full' },
           { label: 'List community animal restrictions if applicable', type: 'text', width: 'full' },
           { label: 'Describe exactly where you plan to keep your foster animals, including how you will separate them completely from resident pets when necessary (quarantine, feeding, illness)', type: 'textarea', width: 'full' },
@@ -411,7 +411,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
   },
   {
     id: 'foster-agreement',
-    title: 'Foster Caregiver Agreement',
+    title: 'Foster Agreement',
     description: 'A contract defining the legal terms, care requirements, and liability boundaries between the foster caregiver and the rescue.',
     notice: [
       'This agreement is a legally binding contract between the Rescue Organization and the Volunteer Foster Caregiver.',
@@ -472,69 +472,141 @@ const FORM_TEMPLATES: FormTemplate[] = [
   },
   {
     id: 'foster-checklist',
-    title: 'Foster Home Safety Checklist',
-    description: 'A pre-placement inspection checklist to ensure a foster home is properly prepared, secured, and safe for a rescue animal.',
+    title: 'Home Visit Checklist',
+    description: 'A comprehensive home check questionnaire used by rescue representatives to evaluate yard security, hazards, existing pets, and overall home suitability.',
     notice: [
-      'This checklist is designed to help foster volunteers inspect and secure their home before welcoming a foster pet.',
-      'Fosters should review each section, check off items that are completed, and resolve any safety concerns prior to the arrival of the animal.'
+      'Thank you for volunteering to do a home visit for us. We’re not checking to see if the dishes are done or if the beds are made – we’re looking for what type of environment the foster/adoptive family will provide for a pet.',
+      'It’s very informal, and we always try to keep the home check specifically about the placement and the pet. The purpose of the visit is to ensure that the pet is going into a safe, secure, and loving home environment.'
     ],
     sections: [
       {
-        title: '1. Food, Bowls & Gear Preparation',
+        title: 'Part 1: Visit Details & Metadata',
         type: 'fields',
         fields: [
-          { label: 'Clean food and water bowls placed in a low-traffic area', type: 'checkbox', options: ['Ready'], width: 'full' },
-          { label: 'Species and age-appropriate food purchased and stored in airtight containers', type: 'checkbox', options: ['Ready'], width: 'full' },
-          { label: 'Appropriately-sized crate or gated playpen set up and ready', type: 'checkbox', options: ['Ready'], width: 'full' },
-          { label: 'Comfortable bedding (washable towels or dog bed) placed in crate/playpen', type: 'checkbox', options: ['Ready'], width: 'full' },
-          { label: 'Secure collar, martingale collar, or harness ready for use', type: 'checkbox', options: ['Ready'], width: 'full' },
-          { label: 'Standard 4-to-6 foot leash (non-retractable) ready for walks', type: 'checkbox', options: ['Ready'], width: 'full' }
+          { label: 'Visit is for', type: 'radio', options: ['Foster Placement', 'Adoption Placement'], width: 'half' },
+          { label: 'Name of Pet', type: 'text', width: 'half' },
+          { label: 'Name of Potential Foster/Adopter', type: 'text', width: 'full' },
+          { label: 'Address of Visited Home', type: 'text', width: 'full' },
+          { label: 'Homechecker Volunteer/Agent Name', type: 'text', width: 'half' },
+          { label: 'Agent Phone Number', type: 'phone', width: 'half' }
         ]
       },
       {
-        title: '2. Indoor Safety & Pet-Proofing',
+        title: 'Part 2: Existing Pets & Family Interaction',
         type: 'fields',
         fields: [
-          { label: 'Household cleaning chemicals, detergents, and bleach locked in high cabinets', type: 'checkbox', options: ['Secured'], width: 'full' },
-          { label: 'Human medications, vitamins, and first aid supplies stored safely out of reach', type: 'checkbox', options: ['Secured'], width: 'full' },
-          { label: 'Electrical cords tucked behind furniture or covered with cord protectors', type: 'checkbox', options: ['Secured'], width: 'full' },
-          { label: 'Trash bins equipped with secure, locking lids or stored inside cabinets', type: 'checkbox', options: ['Secured'], width: 'full' },
-          { label: 'Small items (hair ties, rubber bands, kids toys, coins) picked up off the floors', type: 'checkbox', options: ['Secured'], width: 'full' },
-          { label: 'Window screens inspected and confirmed to be tight-fitting and tear-free', type: 'checkbox', options: ['Secured'], width: 'full' }
+          { label: 'What is the general mood of the existing pets (if any)?', type: 'textarea', width: 'full' },
+          { label: 'Do they seem happy, sad or scared?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'Explain existing pet behavior/mood details if applicable', type: 'text', width: 'half' },
+          { label: 'How do the people interact with their pets while you\'re there?', type: 'textarea', width: 'full' },
+          { label: 'Are the current pets well socialized and reasonably clean?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'half' },
+          { label: 'Are they hand-shy in any way?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'half' },
+          { label: 'Are they friendly and do they approach you in a friendly manner?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'half' },
+          { label: 'Can you touch their ears and tails?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'half' },
+          { label: 'After you have spent some time with them, do they relax and accept your presence?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'half' },
+          { label: 'How do they react towards their owners, and do they respond to commands?', type: 'textarea', width: 'full' },
+          { label: 'If they disobey, how does the owner handle it? (Accepting, force the issue, etc.)', type: 'textarea', width: 'full' }
         ]
       },
       {
-        title: '3. Toxic Foods & Plants Check',
+        title: 'Part 3: Yard, Fence & Property Security',
         type: 'fields',
         fields: [
-          { label: 'No toxic indoor plants (e.g. Lilies, Sago Palms, Pothos, Aloe Vera) accessible to pets', type: 'checkbox', options: ['Verified'], width: 'full' },
-          { label: 'Toxic foods (e.g. Chocolate, Grapes, Onions, Garlic, Xylitol/artificial sweetener) stored in high pantries', type: 'checkbox', options: ['Verified'], width: 'full' },
-          { label: 'Lawn care chemicals, pesticides, and automotive antifreeze stored in a sealed garage or shed', type: 'checkbox', options: ['Verified'], width: 'full' }
+          { label: 'What type of yard do they have? (Size, terrain)', type: 'text', width: 'full' },
+          { label: 'Is the back yard fenced in?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'third' },
+          { label: 'Is the front yard fenced?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'third' },
+          { label: 'Are there locks on the gates?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'third' },
+          { label: 'Describe the fencing materials and height', type: 'text', width: 'full' },
+          { label: 'Important: Are there any holes in the fence, loose gates, stacked items near the fence, or gaps where a dog could escape?', type: 'radio', options: ['No', 'Yes (explain below)'], width: 'full' },
+          { label: 'Explain fence escape hazards/concerns if applicable', type: 'textarea', width: 'full' },
+          { label: 'Do they have a dog run and/or dog door?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'Would a cat be able to escape to the outdoors?', type: 'radio', options: ['No', 'Yes (explain below)'], width: 'half' },
+          { label: 'Explain cat escape routes if applicable', type: 'text', width: 'full' },
+          { label: 'Are there water dishes available to the animals in the yard?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'Is the outdoor area properly shaded?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'half' },
+          { label: 'Does it look like their dog is ever tied up?', type: 'radio', options: ['No', 'Yes (explain below)'], width: 'half' },
+          { label: 'Explain dog tie-up concerns if applicable', type: 'text', width: 'half' },
+          { label: 'Will digging create major problems with landscaping?', type: 'radio', options: ['No', 'Yes'], width: 'half' },
+          { label: 'Are there places where the pet can leap off decks, balconies, etc. and get hurt?', type: 'radio', options: ['No', 'Yes'], width: 'half' }
         ]
       },
       {
-        title: '4. Yard & Outdoor Safety (If Applicable)',
+        title: 'Part 4: House, Living Arrangements & Neighborhood',
         type: 'fields',
         fields: [
-          { label: 'Fence boards inspected for rot, damage, or loose panels', type: 'checkbox', options: ['Checked'], width: 'full' },
-          { label: 'Checked perimeter along the bottom of the fence line for holes, gaps, or digging spots', type: 'checkbox', options: ['Checked'], width: 'full' },
-          { label: 'Gates equipped with secure self-latching locks or paddocks', type: 'checkbox', options: ['Checked'], width: 'full' },
-          { label: 'Removed any hazardous debris, scrap metal, tools, or sharp objects from the yard area', type: 'checkbox', options: ['Checked'], width: 'full' }
+          { label: 'Do the storm doors and screen windows close properly, and do the latches work?', type: 'radio', options: ['Yes', 'No'], width: 'full' },
+          { label: 'Does it appear that animals are allowed in the house regularly? (evidence of hair, food, beds, toys)', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'Do you see damage to the house by animals?', type: 'radio', options: ['No', 'Yes'], width: 'half' },
+          { label: 'Are there houseplants present? (point out many are poisonous)', type: 'radio', options: ['No', 'Yes'], width: 'half' },
+          { label: 'Is there a designated place for a litter box?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'half' },
+          { label: 'Where will the pet food be stored, and is it secure?', type: 'text', width: 'full' },
+          { label: 'Where will the animal sleep at night?', type: 'text', width: 'half' },
+          { label: 'Where will the animal stay during the day?', type: 'text', width: 'half' },
+          { label: 'Where will the animal be when company comes?', type: 'radio', options: ['Free roam inside', 'Crated in basement/separate room', 'Outside', 'Other'], width: 'full' },
+          { label: 'How is waste removed, and does the area look recently cleaned?', type: 'text', width: 'full' },
+          { label: 'Do they have stairs leading to their home?', type: 'radio', options: ['No', 'Yes (If yes, how many below)'], width: 'half' },
+          { label: 'Number of stairs (For Special Needs dogs only)', type: 'text', width: 'half' },
+          { label: 'Do they have a garage?', type: 'radio', options: ['No', 'Yes'], width: 'half' },
+          { label: 'If yes, does it look like the pet would spend much time in there? (e.g. via a pet door leading into garage)', type: 'radio', options: ['No', 'Yes (explain below)'], width: 'half' },
+          { label: 'Explain garage pet access details if applicable', type: 'text', width: 'full' },
+          { label: 'Do they live near a busy street with high traffic?', type: 'radio', options: ['No', 'Yes (explain below)'], width: 'half' },
+          { label: 'Explain street traffic hazards if applicable', type: 'text', width: 'half' },
+          { label: 'Describe the surrounding area / community type', type: 'radio', options: ['Rural', 'Suburban', 'Urban'], width: 'half' },
+          { label: 'Are there loose dogs/cats in the neighborhood?', type: 'radio', options: ['No', 'Yes'], width: 'half' },
+          { label: 'Are there children, dogs, cats, or livestock on neighboring property that can access this yard?', type: 'textarea', width: 'full' }
         ]
       },
       {
-        title: '5. Resident Pets & Isolation Planning',
+        title: 'Part 5: Pet Hazards (Inside & Outside)',
         type: 'fields',
         fields: [
-          { label: 'Separate quarantine room (e.g. spare bathroom, laundry room) prepared for the first 7-14 days', type: 'checkbox', options: ['Plan Set'], width: 'full' },
-          { label: 'All resident household pets are fully up to date on Rabies and core vaccinations', type: 'checkbox', options: ['Plan Set'], width: 'full' },
-          { label: 'Litter box for foster cat/kittens placed completely out of reach of resident dogs', type: 'checkbox', options: ['Plan Set'], width: 'full' }
+          { label: 'Is there evidence of small children? (remind adopter that toys/food scraps will be destroyed/ingested)', type: 'radio', options: ['No', 'Yes'], width: 'half' },
+          { label: 'Are there sewing kits, bobby pins, sponges, or small trash cans at pet level or counter level?', type: 'radio', options: ['No', 'Yes (point them out)'], width: 'half' },
+          { label: 'Are chemicals/poisons (detergents, gasoline, antifreeze) stored securely in garage, basement, or storage?', type: 'radio', options: ['Yes', 'No (point them out)'], width: 'full' },
+          { label: 'Do the furnishings of the house appear to be pet-proof? (glass objects or dried flowers at low levels, expensive rugs)', type: 'radio', options: ['Yes', 'No (point them out)'], width: 'full' },
+          { label: 'Will scratching or house damage be a concern? (Ask how they will correct behavior)', type: 'text', width: 'full' },
+          { label: 'How does the family respond when you point out indoor/outdoor hazards?', type: 'text', width: 'full' },
+          { label: 'Do you think they will fix the problems?', type: 'radio', options: ['Yes', 'No', 'N/A'], width: 'half' },
+          { label: 'Do you think a pet would have escaped or been injured if you had not pointed out the problems?', type: 'radio', options: ['No', 'Yes'], width: 'half' },
+          { label: 'Approximately how long does it take to get to the nearest emergency vet?', type: 'text', width: 'full' }
+        ]
+      },
+      {
+        title: 'Part 6: Home Visit Conclusions',
+        type: 'fields',
+        fields: [
+          { label: 'Do you feel the adopter/foster will love and care for the dog/cat properly?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'Do you feel this home will provide a permanent/stable home for the animal?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'If this were your pet, would you do this adoption/placement?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'Would you feel comfortable leaving your pet with this family?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'Since we have yet to regret turning down an adopter, does this placement feel right?', type: 'radio', options: ['Yes', 'No'], width: 'full' },
+          { label: 'Is this a home I would want one of my pets living in?', type: 'radio', options: ['Yes', 'No'], width: 'full' },
+          { label: 'Look to see if there are pet toys and pet beds in the home', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'Are their pets allowed on the furniture?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
+          { label: 'Additional Comments & Assessment Details', type: 'textarea', width: 'full' }
+        ]
+      },
+      {
+        title: 'Frequently Asked Questions (FAQ)',
+        type: 'text',
+        paragraphs: [
+          '• Who do I contact if I have questions?\nPlease contact your Foster Coordinator, ____________________________________, or ARR’s help line at 970-389-8324 with any questions or concerns.',
+          '• How long will I have my foster dog/cat?\nThe length of time a pet is in foster care can vary greatly depending upon several factors (age, health, breed, temperament, etc.). The average time a pet is in foster care is between 1-2 months.',
+          '• What do I do in case of an emergency?\nAlways contact your Foster Coordinator if there is an emergency. If you are unable to reach your Foster Coordinator, call the main ARR phone number at 970-389-8324.',
+          '• When my dog/cat is sick or injured what do I do?\nIf your foster pet is sick or injured, please contact your Foster Coordinator to arrange a veterinary appointment.',
+          '• I don’t have a crate, food, or other supplies. Do I need to buy these items?\nAs a non-profit organization, ARR depends upon the generosity of our volunteers, fosters, and donors to save shelter pets. Luckily, we receive some donations of food, crates, and other supplies. These items are available to our fosters if we have them. Should we not have food available, we do have to rely on fosters to provide food for their foster pet.',
+          '• I am experiencing some behavioral issues with my foster pet. Who do I contact?\nPlease contact your Foster Coordinator. ARR is fortunate to have a few trainers willing to work with our fosters and their foster pet. Your Foster Coordinator can put you in touch with a trainer.',
+          '• I received paperwork when I picked up my foster pet. What do I do with the paperwork now?\nThis paperwork is VERY important. It becomes part of your foster pet’s permanent record and allows us to get your foster pet listed on the website, scheduled for vetting, and entered in our system. Please scan in any paperwork and email to arrdocs@gmail.com or fax it to 303-648-4678.',
+          '• When will my foster pet see the vet and how do I get an appointment scheduled?\nARR uses an intake process that ensures all of our pets are scheduled for a vet appointment as soon as possible. Most pets will be scheduled within a week or two of arriving in your home. Our vetting schedulers will contact you to get this appointment scheduled.',
+          '• My foster animal is meeting a potential adopter. If they want to adopt, can I let them take the pet home?\nAll adopters are required to complete paperwork, have a home visit, and pay an adoption fee before taking their new family member home. We also need to ensure that all vetting has been completed and that we have a microchip number for the pet in our records. Our adoption coordinator will advise you when your foster pet can go home with an adopter.'
         ]
       }
     ],
     legalClauses: [
-      'Foster Volunteer Signature: _____________________________________',
-      'Date: ________________________'
+      'I have visited this home and approve it as a foster/adoptive home: (circle one)    APPROVE    /    DENY',
+      'ARR VOLUNTEER SIGNATURE: _____________________________________      DATE: ________________________',
+      'I agree to comply with all requirements for fostering/adopting an A.R.R. pet: (circle one)    AGREE    /    DISAGREE',
+      'SIGNATURE OF FOSTER OR ADOPTER: ______________________________      DATE: ________________________'
     ]
   },
   {
@@ -1423,6 +1495,9 @@ export function RescueForms() {
 
   // Mobile layout state: 'edit' or 'preview'
   const [mobileMode, setMobileMode] = useState<'edit' | 'preview'>('edit');
+  const [customNote, setCustomNote] = useState<string>('');
+  const [showFullscreenPreview, setShowFullscreenPreview] = useState(false);
+  const [showPrintTips, setShowPrintTips] = useState<boolean>(true);
 
   const activeTemplate = FORM_TEMPLATES.find(t => t.id === activeTab) || FORM_TEMPLATES[0];
   const activeTheme = THEME_PALETTES[selectedColor] || THEME_PALETTES.indigo;
@@ -1442,7 +1517,7 @@ export function RescueForms() {
   // Generate and Download DOCX programmatically
   const handleDownloadDocx = async () => {
     const doc = new Document({
-      creator: 'RescueKit Starter Forms',
+      creator: 'Rescue-Kit Starter Forms',
       title: `${displayRescueName} - ${activeTemplate.title}`,
       description: `Starter ${activeTemplate.title} customized for ${displayRescueName}`,
       sections: [{
@@ -1527,8 +1602,33 @@ export function RescueForms() {
             })
           )),
 
-          // Spacer
-          new Paragraph({ spacing: { after: 200 } }),
+          // Custom note / disclaimer (user-authored)
+          ...(customNote.trim() ? [
+            new Paragraph({
+              spacing: { before: 150, after: 50 },
+              children: [
+                new TextRun({
+                  text: '📌 Organization Note:',
+                  bold: true,
+                  size: 19,
+                  color: '555555',
+                  font: 'Helvetica',
+                }),
+              ],
+            }),
+            new Paragraph({
+              spacing: { after: 200 },
+              children: [
+                new TextRun({
+                  text: customNote.trim(),
+                  size: 19,
+                  italics: true,
+                  color: '444444',
+                  font: 'Helvetica',
+                }),
+              ],
+            }),
+          ] : [new Paragraph({ spacing: { after: 200 } })]),
 
           // General Requirements (if any)
           ...(activeTemplate.generalReqs ? [
@@ -1583,16 +1683,30 @@ export function RescueForms() {
 
             if (section.type === 'text' && section.paragraphs) {
               section.paragraphs.forEach(pText => {
+                const paragraphRuns = [];
+                if (activeTemplate.id === 'foster-agreement') {
+                  paragraphRuns.push(
+                    new TextRun({
+                      text: '______ [Initials]   ',
+                      bold: true,
+                      size: 18,
+                      color: '888888',
+                      font: 'Helvetica',
+                    })
+                  );
+                }
+                paragraphRuns.push(
+                  new TextRun({
+                    text: pText,
+                    size: 20,
+                    font: 'Helvetica',
+                  })
+                );
+
                 sectionParagraphs.push(
                   new Paragraph({
                     spacing: { after: 120 },
-                    children: [
-                      new TextRun({
-                        text: pText,
-                        size: 20,
-                        font: 'Helvetica',
-                      }),
-                    ],
+                    children: paragraphRuns,
                   })
                 );
               });
@@ -1947,19 +2061,25 @@ export function RescueForms() {
             </div>
 
           </div>
+
+          {/* CUSTOM NOTE / DISCLAIMER */}
+          <div className="pt-4 border-t border-slate-100 space-y-2">
+            <label className="block text-[11px] font-black text-slate-700 uppercase tracking-wider">
+              Custom Header Note / Disclaimer
+            </label>
+            <textarea
+              value={customNote}
+              onChange={(e) => setCustomNote(e.target.value)}
+              rows={3}
+              placeholder="e.g. All adopters must be 21+. This form is valid for 30 days from submission. Contact us at adoptions@rescuename.org with questions."
+              className="w-full text-xs font-semibold px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-sky-500 focus:bg-white transition-all text-slate-800 resize-none placeholder:font-normal placeholder:text-slate-300"
+            />
+            <p className="text-[10px] text-slate-400 font-medium">Appears on every form, right below the notice box.</p>
+          </div>
+
         </div>
 
-        {/* TIPS CARD */}
-        <div className="bg-gradient-to-r from-sky-50 to-blue-50/60 border border-sky-200/50 p-6 rounded-3xl space-y-3">
-          <div className="flex items-center gap-2">
-            <Info className="w-4 h-4 text-sky-700 shrink-0" />
-            <h4 className="text-xs font-black text-sky-800 uppercase tracking-wider">How editing works</h4>
-          </div>
-          <p className="text-[11.5px] leading-relaxed text-sky-900/80 font-semibold">
-            Rescues typically need to add customized clauses or terms of service. 
-            We recommend **downloading as a DOCX (Word Document)** first so you can open it in Word or Google Docs and tailor any specific legal text.
-          </p>
-        </div>
+
       </div>
 
       {/* RIGHT PREVIEW & TEMPLATE TABS */}
@@ -1987,10 +2107,10 @@ export function RescueForms() {
               <span className="text-[10px] opacity-60">▼</span>
             </button>
             <div className={`absolute left-0 mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-md py-1.5 z-50 transition-all ${adoptionDropdownOpen ? 'block' : 'hidden group-hover:block'}`}>
-              <button type="button" onClick={() => { setActiveTab('adoption-app'); setAdoptionDropdownOpen(false); }} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${activeTab === 'adoption-app' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'}`}>
+              <button type="button" onClick={() => { setActiveTab('adoption-app'); setAdoptionDropdownOpen(false); }} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${activeTab === 'adoption-app' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'}`}>
                 Adoption Application
               </button>
-              <button type="button" onClick={() => { setActiveTab('adoption-contract'); setAdoptionDropdownOpen(false); }} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${activeTab === 'adoption-contract' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'}`}>
+              <button type="button" onClick={() => { setActiveTab('adoption-contract'); setAdoptionDropdownOpen(false); }} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${activeTab === 'adoption-contract' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'}`}>
                 Adoption Contract
               </button>
             </div>
@@ -2023,7 +2143,7 @@ export function RescueForms() {
                 type="button"
                 onClick={() => { setActiveTab('foster-app'); setFosterDropdownOpen(false); }}
                 className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${
-                  activeTab === 'foster-app' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'
+                  activeTab === 'foster-app' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'
                 }`}
               >
                 Foster App
@@ -2032,7 +2152,7 @@ export function RescueForms() {
                 type="button"
                 onClick={() => { setActiveTab('foster-agreement'); setFosterDropdownOpen(false); }}
                 className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${
-                  activeTab === 'foster-agreement' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'
+                  activeTab === 'foster-agreement' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'
                 }`}
               >
                 Foster Agreement
@@ -2041,7 +2161,7 @@ export function RescueForms() {
                 type="button"
                 onClick={() => { setActiveTab('foster-checklist'); setFosterDropdownOpen(false); }}
                 className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${
-                  activeTab === 'foster-checklist' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'
+                  activeTab === 'foster-checklist' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'
                 }`}
               >
                 Foster Home Checklist
@@ -2068,10 +2188,10 @@ export function RescueForms() {
               <span className="text-[10px] opacity-60">▼</span>
             </button>
             <div className={`absolute left-0 mt-1 w-52 bg-white border border-slate-200 rounded-xl shadow-md py-1.5 z-50 transition-all ${medicalDropdownOpen ? 'block' : 'hidden group-hover:block'}`}>
-              <button type="button" onClick={() => { setActiveTab('medical-log'); setMedicalDropdownOpen(false); }} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${activeTab === 'medical-log' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'}`}>
+              <button type="button" onClick={() => { setActiveTab('medical-log'); setMedicalDropdownOpen(false); }} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${activeTab === 'medical-log' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'}`}>
                 Foster Medical Log
               </button>
-              <button type="button" onClick={() => { setActiveTab('vet-authorization'); setMedicalDropdownOpen(false); }} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${activeTab === 'vet-authorization' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'}`}>
+              <button type="button" onClick={() => { setActiveTab('vet-authorization'); setMedicalDropdownOpen(false); }} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${activeTab === 'vet-authorization' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'}`}>
                 Emergency Vet Authorization
               </button>
             </div>
@@ -2117,7 +2237,7 @@ export function RescueForms() {
                 type="button"
                 onClick={() => { setActiveTab('cat-surrender'); setSurrenderDropdownOpen(false); }}
                 className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${
-                  activeTab === 'cat-surrender' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'
+                  activeTab === 'cat-surrender' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'
                 }`}
               >
                 Cat Surrender Form
@@ -2126,7 +2246,7 @@ export function RescueForms() {
                 type="button"
                 onClick={() => { setActiveTab('dog-surrender'); setSurrenderDropdownOpen(false); }}
                 className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${
-                  activeTab === 'dog-surrender' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'
+                  activeTab === 'dog-surrender' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'
                 }`}
               >
                 Dog Surrender Form
@@ -2134,7 +2254,7 @@ export function RescueForms() {
             </div>
           </div>
 
-          {/* Intake Exam Forms Dropdown */}
+          {/* Intake Forms Dropdown */}
           <div 
             className="relative group shrink-0"
             onMouseEnter={() => setIntakeDropdownOpen(true)}
@@ -2149,7 +2269,7 @@ export function RescueForms() {
                   : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'
               }`}
             >
-              <span>Intake Exam Forms</span>
+              <span>Intake Forms</span>
               <span className="text-[10px] opacity-60">▼</span>
             </button>
             <div 
@@ -2161,7 +2281,7 @@ export function RescueForms() {
                 type="button"
                 onClick={() => { setActiveTab('cat-intake'); setIntakeDropdownOpen(false); }}
                 className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${
-                  activeTab === 'cat-intake' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'
+                  activeTab === 'cat-intake' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'
                 }`}
               >
                 Cat Intake Exam Form
@@ -2170,7 +2290,7 @@ export function RescueForms() {
                 type="button"
                 onClick={() => { setActiveTab('dog-intake'); setIntakeDropdownOpen(false); }}
                 className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-all ${
-                  activeTab === 'dog-intake' ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-600'
+                  activeTab === 'dog-intake' ? 'text-indigo-700 bg-indigo-50' : 'text-indigo-950/70 hover:text-indigo-900'
                 }`}
               >
                 Dog Intake Exam Form
@@ -2179,22 +2299,29 @@ export function RescueForms() {
           </div>
         </div>
 
-        {/* ACTIONS PANEL */}
-        <div className="no-print bg-white border border-slate-200/60 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-3xs">
-          <div className="flex items-center gap-2.5">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTheme.bgLight} ${activeTheme.textLight} border ${activeTheme.border}`}>
-              <FileText className="w-5 h-5" />
+        {/* FORM INFO + ACTIONS — unified single bar */}
+        <div className="no-print flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${activeTheme.bgLight} ${activeTheme.border} border`}>
+              <FileText className={`w-4 h-4 ${activeTheme.textLight}`} />
             </div>
-            <div>
-              <h4 className="text-xs font-black text-slate-800">{activeTemplate.title}</h4>
-              <p className="text-[10px] text-slate-400 font-semibold">{activeTemplate.description}</p>
+            <div className="space-y-0.5">
+              <h4 className="text-[11px] font-black text-slate-800 uppercase tracking-wider">{activeTemplate.title}</h4>
+              <p className="text-[11.5px] text-slate-500 font-medium leading-snug">{activeTemplate.description}</p>
             </div>
           </div>
           
           <div className="flex gap-2 flex-wrap">
             <button
+              onClick={() => setShowFullscreenPreview(true)}
+              className="lg:hidden cursor-pointer bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 font-sans transition-all active:scale-95 border border-sky-200/60"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+              <span>Expand Preview</span>
+            </button>
+            <button
               onClick={handlePrint}
-              className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 font-sans transition-all active:scale-95 border border-slate-200/40"
+              className="cursor-pointer bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 font-sans transition-all active:scale-95 border border-sky-200"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print / Save PDF</span>
@@ -2208,6 +2335,40 @@ export function RescueForms() {
             </button>
           </div>
         </div>
+
+        {/* COLLAPSIBLE PRINT & EDIT TIPS */}
+        {showPrintTips ? (
+          <div className="no-print bg-sky-50 border border-sky-200/60 p-5 rounded-2xl flex items-start gap-4 transition-all relative">
+            <div className="bg-sky-100 p-2 rounded-xl text-sky-700 shrink-0">
+              <Info className="w-5 h-5" />
+            </div>
+            <div className="space-y-1 pr-8">
+              <h4 className="text-xs font-black text-sky-900 uppercase tracking-wider">How editing & printing works</h4>
+              <p className="text-[11.5px] leading-relaxed text-sky-950/80 font-medium">
+                Rescues typically need to add customized clauses or terms. 
+                We recommend **downloading as a DOCX (Word Document)** first so you can open it in Word or Google Docs and tailor any specific legal text. 
+                For instant physical copies, click **Print / Save PDF** and choose "Save to PDF" or send to your printer.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowPrintTips(false)}
+              className="absolute top-4 right-4 text-sky-700/60 hover:text-sky-900 hover:bg-sky-100 p-1.5 rounded-lg transition-all"
+              title="Hide tips"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <div className="no-print flex justify-end">
+            <button
+              onClick={() => setShowPrintTips(true)}
+              className="cursor-pointer text-[10px] font-black text-sky-700 hover:text-sky-900 uppercase tracking-wider flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 border border-sky-200/60 px-3.5 py-2 rounded-xl transition-all"
+            >
+              <Info className="w-3.5 h-3.5" />
+              <span>Show Print & Edit Tips</span>
+            </button>
+          </div>
+        )}
 
         {/* PAPER LIVE PREVIEW CANVAS */}
         <div className="bg-white border border-slate-200 shadow-lg rounded-3xl p-6 sm:p-12 md:p-16 relative overflow-hidden font-sans forms-print-container">
@@ -2268,6 +2429,17 @@ export function RescueForms() {
               </ul>
             </div>
 
+            {/* CUSTOM HEADER NOTE */}
+            {customNote.trim() && (
+              <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex gap-2.5">
+                <span className="text-sm shrink-0">📌</span>
+                <div className="space-y-0.5">
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Organization Note</p>
+                  <p className="text-[11.5px] text-slate-600 font-medium leading-relaxed italic">{customNote}</p>
+                </div>
+              </div>
+            )}
+
             {/* GENERAL REQUIREMENTS */}
             {activeTemplate.generalReqs && (
               <div className="space-y-3">
@@ -2295,7 +2467,15 @@ export function RescueForms() {
                 {section.type === 'text' && section.paragraphs && (
                   <div className="space-y-3 text-slate-600">
                     {section.paragraphs.map((para, pIdx) => (
-                      <p key={pIdx}>{para}</p>
+                      <div key={pIdx} className="flex items-start gap-3">
+                        {activeTemplate.id === 'foster-agreement' && (
+                          <div className="shrink-0 flex flex-col items-center justify-center pt-0.5 min-w-[70px]">
+                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-none mb-0.5">Initials</span>
+                            <span className="w-14 border-b border-slate-300 h-4 block"></span>
+                          </div>
+                        )}
+                        <p className="flex-1 whitespace-pre-line text-[11px] leading-relaxed">{para}</p>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -2429,13 +2609,128 @@ export function RescueForms() {
 
           {/* PAGE WATERMARK / FOOTER */}
           <div className="mt-16 pt-4 border-t border-slate-100 flex justify-between items-center text-[9px] font-bold text-slate-400 uppercase tracking-wider">
-            <span>Powered by RescueKit.org Starter Forms</span>
+            <span>Powered by Rescue-Kit.org Starter Forms</span>
             <span>Document Reference: {activeTemplate.id.toUpperCase()}-STARTER-2026</span>
           </div>
 
         </div>
 
       </div>
+
+      {/* FULLSCREEN PREVIEW MODAL (mobile) */}
+      {showFullscreenPreview && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto lg:hidden">
+          {/* Sticky close bar */}
+          <div className="sticky top-0 z-10 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className={`text-xs font-black uppercase tracking-wider ${activeTheme.textLight}`}>{activeTemplate.title}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowFullscreenPreview(false)}
+              className="flex items-center gap-1.5 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-all"
+            >
+              <X className="w-3.5 h-3.5" />
+              Close
+            </button>
+          </div>
+
+          {/* Form preview content (same as the main canvas) */}
+          <div className="bg-white p-6 font-sans">
+            {/* Letterhead */}
+            <div className="flex flex-col items-center gap-3 pb-6 border-b border-slate-200 text-center">
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center text-3xl shrink-0 ${activeTheme.bgLight} border-2 ${activeTheme.border}`}>
+                {selectedEmoji}
+              </div>
+              <div className="space-y-1">
+                <h2 className="text-base font-black text-slate-900 tracking-tight uppercase leading-none">{displayRescueName}</h2>
+                <div className="flex flex-wrap justify-center gap-2 mt-1">
+                  <span className="text-[10px] font-bold text-slate-500">{displayLocation}</span>
+                  <span className="text-[10px] font-bold text-slate-400">·</span>
+                  <span className="text-[10px] font-bold text-slate-500">{displayPhone}</span>
+                  <span className="text-[10px] font-bold text-slate-400">·</span>
+                  <span className="text-[10px] font-bold text-slate-500">{displayEmail}</span>
+                </div>
+                <p className="text-[10px] font-bold text-slate-400">{displayWebsite}</p>
+              </div>
+            </div>
+
+            {/* Title */}
+            <div className="mt-6 text-center space-y-2">
+              <h1 className="text-xl font-black text-slate-900 tracking-tight">{activeTemplate.title}</h1>
+              <div className="w-12 h-1 bg-slate-900 mx-auto rounded-full" />
+            </div>
+
+            {/* Notice */}
+            <div className={`mt-6 p-4 rounded-2xl border ${activeTheme.border} ${activeTheme.bgLight} space-y-2`}>
+              <h4 className={`text-[11px] font-black uppercase tracking-wider ${activeTheme.text}`}>Important Notice</h4>
+              <ul className="list-disc pl-4 space-y-1 text-slate-600 text-[11.5px] font-medium">
+                {activeTemplate.notice.map((note, idx) => <li key={idx}>{note}</li>)}
+              </ul>
+            </div>
+
+            {/* Custom note */}
+            {customNote.trim() && (
+              <div className="mt-4 p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex gap-2.5">
+                <span className="text-sm shrink-0">📌</span>
+                <div>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-0.5">Organization Note</p>
+                  <p className="text-[11.5px] text-slate-600 font-medium leading-relaxed italic">{customNote}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Scrollable form body — abbreviated notice to save space */}
+            <div className="mt-6 space-y-6 text-slate-700 text-[12px] leading-relaxed">
+              {activeTemplate.generalReqs && (
+                <div className="space-y-2">
+                  <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 ${activeTheme.text} ${activeTheme.border}`}>General Requirements</h3>
+                  <ul className="list-disc pl-5 space-y-1 text-slate-600 text-xs">
+                    {activeTemplate.generalReqs.map((req, idx) => <li key={idx}>{req}</li>)}
+                  </ul>
+                </div>
+              )}
+              {activeTemplate.sections.map((section, sIdx) => (
+                <div key={sIdx} className="space-y-3">
+                  <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 ${activeTheme.text} ${activeTheme.border}`}>{section.title}</h3>
+                  {section.type === 'text' && section.paragraphs?.map((para, pIdx) => (
+                    <p key={pIdx} className="text-xs text-slate-600 leading-relaxed">{para}</p>
+                  ))}
+                  {section.type === 'fields' && section.fields && (
+                    <div className="grid grid-cols-1 gap-4">
+                      {section.fields.map((field, fIdx) => (
+                        <div key={fIdx}>
+                          <label className="block text-[10px] font-black text-slate-800 uppercase tracking-wider mb-1.5">{field.label}</label>
+                          {(field.type === 'checkbox' || field.type === 'radio') ? (
+                            <div className="flex flex-wrap gap-3">
+                              {field.options?.map((opt, oIdx) => (
+                                <div key={oIdx} className="flex items-center gap-1.5">
+                                  <div className={`w-4 h-4 border border-slate-300 flex-shrink-0 ${field.type === 'radio' ? 'rounded-full' : 'rounded'}`} />
+                                  <span className="text-xs text-slate-600">{opt}</span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : field.type === 'textarea' ? (
+                            <div className="w-full h-14 border border-slate-200 bg-slate-50/50 rounded-lg" />
+                          ) : (
+                            <div className="w-full h-8 border-b border-slate-300" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Footer */}
+            <div className="mt-12 pt-4 border-t border-slate-100 flex justify-between text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+              <span>Powered by Rescue-Kit.org</span>
+              <span>{activeTemplate.id.toUpperCase()}-STARTER-2026</span>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

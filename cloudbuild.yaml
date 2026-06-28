@@ -1,0 +1,31 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - us-central1-docker.pkg.dev/$PROJECT_ID/rescuekit/rescuekit
+      - .
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - us-central1-docker.pkg.dev/$PROJECT_ID/rescuekit/rescuekit
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - rescuekit
+      - --image=us-central1-docker.pkg.dev/$PROJECT_ID/rescuekit/rescuekit
+      - --platform=managed
+      - --region=us-central1
+      - --allow-unauthenticated
+      - --port=8080
+      - --memory=512Mi
+      - --cpu=1
+      - --min-instances=0
+      - --max-instances=10
+
+images:
+  - us-central1-docker.pkg.dev/$PROJECT_ID/rescuekit/rescuekit
