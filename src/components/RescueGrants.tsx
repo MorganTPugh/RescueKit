@@ -664,7 +664,7 @@ export function RescueGrants() {
       const children = lines.map(line =>
         new Paragraph({ children: [new TextRun({ text: line, size: 22, font: 'Calibri' })] })
       );
-      const doc = new Document({ creator: 'RescueKit', sections: [{ children }] });
+      const doc = new Document({ creator: 'Rescue-Kit', sections: [{ children }] });
       const blob = await Packer.toBlob(doc);
       const el = document.createElement('a');
       el.href = URL.createObjectURL(blob);
@@ -743,7 +743,7 @@ export function RescueGrants() {
       {/* HEADER BANNER */}
       <div className="bg-gradient-to-r from-sky-50 via-blue-50/50 to-sky-50/40 p-6 rounded-2xl md:rounded-3xl border border-sky-200/70 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight font-fraunces">Win Funding for Your Rescue</h1>
+          <h1 className="text-[22.8px] md:text-[34.2px] font-black text-slate-900 tracking-tight font-fraunces">Win Funding for Your Rescue</h1>
           <p className="text-sm text-sky-800/80 font-bold mt-1.5">Find grants, write stronger proposals, and track your applications</p>
         </div>
       </div>

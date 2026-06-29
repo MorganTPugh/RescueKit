@@ -1,28 +1,23 @@
+// server.ts
 import express from "express";
 import path from "path";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
-
 dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Parse JSON request bodies
+var app = express();
+var PORT = 3e3;
 app.use(express.json({ limit: "15mb" }));
-
-// Initialize the Gemini API client safely
-let ai: GoogleGenAI | null = null;
+var ai = null;
 try {
   const apiKey = process.env.GEMINI_API_KEY;
   if (apiKey) {
     ai = new GoogleGenAI({
-      apiKey: apiKey,
+      apiKey,
       httpOptions: {
         headers: {
-          'User-Agent': 'aistudio-build',
+          "User-Agent": "aistudio-build"
         }
       }
     });
@@ -32,34 +27,28 @@ try {
 } catch (error) {
   console.error("Failed to initialize GoogleGenAI client:", error);
 }
-
-// API Routes FIRST
 app.post("/api/generate-bio", async (req, res) => {
   if (!ai) {
-    return res.status(503).json({ 
-      error: "AI Bio Generation is temporarily configured without an API Key. Please add your GEMINI_API_KEY in the Secrets panel." 
+    return res.status(503).json({
+      error: "AI Bio Generation is temporarily configured without an API Key. Please add your GEMINI_API_KEY in the Secrets panel."
     });
   }
-
   const { pet, style, templateId } = req.body;
   if (!pet || !pet.name) {
     return res.status(400).json({ error: "Pet data, including pet name, is required." });
   }
-
   try {
     const selectedStyle = style || "playful";
     const isBioOnly = templateId === "bio-only";
-    
-    // Construct instructions based on selection
     let styleDescription = "";
     if (isBioOnly) {
       styleDescription = `
         - Tone: Adorable, comprehensive, highly informative and natural.
         - REQUIRED Layout Constraint: Since this is a "Biography Only" text view (for copy-pasting directly onto Petfinder, social media, or flyers), the story description MUST naturally weave in ALL core pet details and contact details so the narrative is completely self-contained without any separate sidebars, visual cards, or footer blocks.
-        - You MUST integrate: Age (${pet.age}), Breed/Mix (${pet.breed}), Gender (${pet.gender === 'girl' ? 'female' : pet.gender === 'boy' ? 'male' : 'companion'}), Weight or Size (${pet.weight}), and Location (${pet.location}).
+        - You MUST integrate: Age (${pet.age}), Breed/Mix (${pet.breed}), Gender (${pet.gender === "girl" ? "female" : pet.gender === "boy" ? "male" : "companion"}), Weight or Size (${pet.weight}), and Location (${pet.location}).
         - You MUST also naturally weave in their compatibility facts: House trained status (${pet.houseTrained}), and friendly compatibility with Dogs (${pet.goodWithDogs}), Cats (${pet.goodWithCats}), and Kids (${pet.goodWithKids}).
         - You MUST naturally conclude the narrative with contact/rescue information integrated directly into the final sentences of the text. Include:
-          * Rescue organization name: ${pet.rescueOrg || 'Independent Rescuer'}
+          * Rescue organization name: ${pet.rescueOrg || "Independent Rescuer"}
           * ${pet.fosterEmail ? `Contact Email: ${pet.fosterEmail}` : ""}
           * ${pet.fosterPhone ? `Contact Phone: ${pet.fosterPhone}` : ""}
           * ${pet.rescueWebsite ? `More information website: ${pet.rescueWebsite}` : ""}
@@ -78,14 +67,12 @@ app.post("/api/generate-bio", async (req, res) => {
         - Standard paragraph narrative, warm and emotional but not overly tragic.
       `;
     } else {
-      // scroll-stopper social
       styleDescription = `
         - Tone: Punchy, high-energy, scrolls-stopping social media caption!
         - Use excellent spacing, lots of cute pet-centric emojis, short paragraphs, and catchphrases.
         - End with highly visible, playful hashtags (e.g. #FosterHero, #[breed], #AdoptDontShop).
       `;
     }
-
     const prompt = `
       Create a highly attractive, cute, and engaging foster pet adoption bio for a public poster.
       Here are the survey details provided by their foster parent:
@@ -116,33 +103,26 @@ app.post("/api/generate-bio", async (req, res) => {
 
       IMPORTANT RULES:
       1. Write from the prospective pet's point of view OR as an affectionate foster parent. Keep it in first-person (e.g. "I'm ${pet.name}!") or direct, warm storytelling.
-      2. STRICT LENGTH LIMIT — count your words carefully before responding:
-         - Standard poster templates: MAXIMUM 90 words. Do not exceed this. Short, punchy, impactful.
-         - 'Biography Only' mode: MAXIMUM 180 words. You may use slightly more detail since the whole poster is text.
+      2. Max length: Around 180-220 words for standard poster templates to ensure perfect graphic fit, or 250-320 words for the 'Biography Only' mode to allow detailed descriptions!
       3. Focus entirely on highlighting their unique quirks as endearing benefits.
       4. DO NOT use placeholder text or metadata tags. Keep the tone completely natural, adorable, and ready to print.
-      5. If you are unsure whether you are under the word limit, cut more — shorter is always better on a printed poster.
     `;
-
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
-      contents: prompt,
+      contents: prompt
     });
-
     const bioText = response.text || "";
     res.json({ bio: bioText.trim() });
-  } catch (err: any) {
+  } catch (err) {
     console.error("Gemini API biological storytelling generation error:", err);
     res.status(500).json({ error: "Failed to generate bio with Gemini API: " + err.message });
   }
 });
-
 app.post("/api/feedback", async (req, res) => {
   const { name, email, subject, message } = req.body;
   if (!message || !message.trim()) {
     return res.status(400).json({ error: "Message content is required." });
   }
-
   try {
     const feedbackPath = path.join(process.cwd(), "feedback_submissions.json");
     let currentFeedback = [];
@@ -157,41 +137,34 @@ app.post("/api/feedback", async (req, res) => {
         currentFeedback = [];
       }
     }
-
     const payload = {
       id: "feed_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
       name: name || "Anonymous User",
       email: email || "No reply-to provided",
       subject: subject || "RescueKit Feedback",
-      message: message,
+      message,
       sentTo: "RescueKit2@proton.me",
-      timestamp: new Date().toISOString()
+      timestamp: (/* @__PURE__ */ new Date()).toISOString()
     };
-
     currentFeedback.push(payload);
     fs.writeFileSync(feedbackPath, JSON.stringify(currentFeedback, null, 2), "utf-8");
-
-    // Print clear notification logs
     console.log("========================================");
-    console.log("📬 NEW FEEDBACK RECEIVED - TO BE SENT TO: RescueKit2@proton.me");
+    console.log("\u{1F4EC} NEW FEEDBACK RECEIVED - TO BE SENT TO: RescueKit2@proton.me");
     console.log(`From: ${payload.name} <${payload.email}>`);
     console.log(`Subject: ${payload.subject}`);
     console.log(`Message: ${payload.message}`);
     console.log("========================================");
-
     res.json({ success: true });
-  } catch (err: any) {
+  } catch (err) {
     console.error("Failed to store copy of feedback submission:", err);
     res.status(500).json({ error: "Failed to process feedback submission: " + err.message });
   }
 });
-
-// Configure Vite middleware in development or express static files in production
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "spa",
+      appType: "spa"
     });
     app.use(vite.middlewares);
   } else {
@@ -201,10 +174,8 @@ async function startServer() {
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
-
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || "development"} mode`);
   });
 }
-
 startServer();

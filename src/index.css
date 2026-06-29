@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Fredoka:wght@400;500;600;700&family=Gaegu:wght@400;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;700;900&display=swap');
 @import "tailwindcss";
 
+::selection {
+  background-color: #bae6fd;
+  color: #082f49;
+}
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
@@ -72,10 +77,27 @@
     display: none !important;
   }
 
-  /* Set the guide print section and its descendants as visible */
+  /* Set the guide and forms print sections and their descendants as visible */
   .guide-print-container,
-  .guide-print-container * {
+  .guide-print-container *,
+  .forms-print-container,
+  .forms-print-container * {
     visibility: visible !important;
+  }
+
+  .forms-print-container {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0.65in !important;  /* compensates for @page margin: 0 */
+    margin: 0 !important;
+    overflow: visible !important;  /* allow content to flow across print pages */
   }
   
   /* Reset body size to exactly fill paper context */

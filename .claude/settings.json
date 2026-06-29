@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "defaultMode": "auto",
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+      "mcp__Claude_Preview__*"
+    ]
+  }
+}

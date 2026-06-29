@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-26T02:16:30Z",
+  "title": "Design System: RescueKit",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Electric Indigo",
+        "canonical": "oklch(60% 0.22 270)",
+        "tonalRamp": ["#1e1b4b", "#312e81", "#3730a3", "#4338ca", "#4f46e5", "#6366f1", "#818cf8", "#a5b4fc"]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Light Slate BG",
+        "canonical": "oklch(97% 0.01 240)",
+        "tonalRamp": ["#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#f1f5f9"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display Space",
+        "purpose": "App headings and brand marks."
+      },
+      "body": {
+        "displayName": "Inter Body",
+        "purpose": "Form fields, labels, text inputs."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sky-ambient",
+        "value": "0 20px 25px -5px rgba(224, 242, 254, 0.6)",
+        "purpose": "Soft, cheerful ambient drop shadow for editor cards."
+      }
+    ],
+    "motion": [
+      {
+        "name": "fade-in",
+        "value": "fade-in 0.3s ease-out",
+        "purpose": "Default page/step transition easing."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Standard action or transition trigger.",
+      "html": "<button class=\"ds-btn-primary\">CONTINUE</button>",
+      "css": ".ds-btn-primary { background: #4f46e5; color: #ffffff; padding: 8px 16px; border-radius: 12px; font-weight: 700; font-size: 12px; border: none; cursor: pointer; transition: background-color 0.2s; } .ds-btn-primary:hover { background: #3730a3; }"
+    },
+    {
+      "name": "Standard Input Field",
+      "kind": "input",
+      "refersTo": "form-input",
+      "description": "Text or species input field.",
+      "html": "<input class=\"ds-form-input\" type=\"text\" placeholder=\"e.g. Luna\" />",
+      "css": ".ds-form-input { width: 100%; font-size: 12px; font-weight: 600; background: #fafaf9; border: 2px solid #e7e5e4; border-radius: 12px; padding: 10px; outline: none; color: #0f172a; transition: border-color 0.2s; } .ds-form-input:focus { border-color: #38bdf8; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Caring Canvas",
+    "overview": "A highly approachable, Canva-like, and flexible workspace that focuses on creative freedom without technical overhead. It provides a hopeful, structured canvas for fosters.",
+    "keyCharacteristics": [
+      "Low-contrast, ambient sky-blue backgrounds for focus",
+      "Generous, organic corner rounding (24px on containers)",
+      "Accent colors reserved for primary action items and state indications",
+      "Dynamic multi-stepper navigation that keeps forms clear and step-based"
+    ],
+    "rules": [
+      {
+        "name": "The Accent Isolation Rule",
+        "body": "The primary Indigo accent is used on <=10% of any screen. Its purpose is to guide focus, not decorate.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single UI Font Rule",
+        "body": "All editor controls, step navigation, and system status text use the Inter sans-serif font stack. Special fonts are restricted to poster canvases.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do use OKLCH color space for styling updates inside the stylesheet.",
+      "Do confirm with a confirmation modal guard before executing 'Start Fresh' actions."
+    ],
+    "donts": [
+      "Don't use cartoon fonts, bubble shapes, or primary-color overload on the UI chrome.",
+      "Don't use dark mode with heavy purple gradients, neon accents, or glassmorphism.",
+      "Don't use border-left or border-right greater than 1px as a colored accent strip on cards."
+    ]
+  }
+}

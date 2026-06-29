@@ -297,7 +297,7 @@ const getDynamicBioStyle = (text: string, templateId: string, isSquare: boolean)
     } else if (templateId === 'minimalist') {
       W = 373; H = 110; k = 0.459; maxPx = 22.0; // full-width photo: wide, short box
     } else if (templateId === 'polaroid') {
-      W = 169; H = 257; k = 0.415; maxPx = 22.0;
+      W = 140; H = 257; k = 0.415; maxPx = 22.0;
     } else if (templateId === 'bio-only') {
       W = 520; H = 460; k = 0.430; maxPx = 28.0; minPx = 13.5;
     } else if (templateId === 'two-photos' || templateId === 'extreme-duo') {
@@ -321,7 +321,7 @@ const getDynamicBioStyle = (text: string, templateId: string, isSquare: boolean)
     } else if (templateId === 'minimalist') {
       W = 183; H = 158; k = 0.475; maxPx = 16.0; // full-width photo: wide but short
     } else if (templateId === 'polaroid') {
-      W = 176; H = 274; k = 0.443; maxPx = 20.0;
+      W = 125; H = 274; k = 0.443; maxPx = 20.0;
     } else if (templateId === 'bio-only') {
       W = 680; H = 640; k = 0.430; maxPx = 25.0; minPx = 12.5;
     } else if (templateId === 'two-photos' || templateId === 'extreme-duo') {
@@ -1099,7 +1099,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         <div className="grid grid-cols-12 gap-2.5 h-full z-10">
           
           {/* LEFT SIDE: DETAILS, BULLETS, STORIES */}
-          <div className="col-span-6 flex flex-col justify-between h-full py-0.5 pr-0.5">            {/* COMPACT HEADLINES */}
+          <div className={`${settings.templateId === 'polaroid' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 pr-0.5`}>            {/* COMPACT HEADLINES */}
             <div>
               {settings.templateId === 'whimsical' ? (
                 <div className="flex items-center justify-between gap-1 w-full mt-1.5 border-b border-[#2d5a27]/15 pb-1.5 shrink-0 select-none">
@@ -1258,11 +1258,11 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           </div>
 
           {/* RIGHT SIDE: PHOTO SLOT, DETAILED STAT VALUES & INSTANT SCAN QR */}
-          <div className="col-span-6 flex flex-col justify-between h-full py-0.5 relative border-l border-slate-100 pl-2">
+          <div className={`${settings.templateId === 'polaroid' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 relative border-l border-slate-100 pl-2`}>
             <div className="flex-1 w-full min-h-0 relative mb-1">
               {settings.templateId === 'polaroid' ? (
-                <div className="bg-white p-1.5 pb-2.5 border border-stone-200 shadow-sm rotate-[-0.5deg] h-full w-full flex flex-col justify-between">
-                  <div className="flex-1 h-0 w-full bg-stone-100 relative rounded-sm overflow-hidden border">
+                <div className="bg-white p-2 pb-4.5 border border-stone-250 shadow-md rotate-[-0.5deg] w-full max-w-[260px] aspect-[1/1.12] flex flex-col group mx-auto">
+                  <div className="w-full aspect-square bg-stone-100 relative rounded-sm overflow-hidden border border-stone-200/50">
                     {primaryPhoto ? (
                       <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
                     ) : (
@@ -1271,8 +1271,8 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                       </div>
                     )}
                   </div>
-                  <div className="text-center pt-0.5">
-                    <span className="font-serif italic text-rose-800 font-bold text-[8px] leading-none">Ready for cuddles!</span>
+                  <div className="text-center pt-1.5 flex-1 flex items-center justify-center leading-none shrink-0">
+                    <span className="font-serif italic text-rose-850 font-bold text-[8.5px] leading-none">Ready for cuddles! 📷</span>
                   </div>
                 </div>
               ) : settings.templateId === 'comic' ? (
@@ -2336,7 +2336,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
       >
         
         {/* LEFT COLUMN: TRAITS, DETAILED STORY BIO */}
-        <div className={`${settings.templateId === 'editorial' ? '' : settings.templateId === 'polaroid' ? 'col-span-7' : settings.templateId === 'comic' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-stretch h-full select-text mt-0.5 space-y-2 px-0.5 font-sans min-h-0 overflow-hidden`}>
+        <div className={`${settings.templateId === 'editorial' ? '' : settings.templateId === 'polaroid' ? 'col-span-5' : settings.templateId === 'comic' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-stretch h-full select-text mt-0.5 space-y-2 px-0.5 font-sans min-h-0 overflow-hidden`}>
           
           {settings.templateId === 'comic' ? (
             /* SWEET ROMANCE STYLED TRAITS/STORY WITH CUSTOM HIGH-FIDELITY ICONS */
@@ -2453,13 +2453,13 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         </div>
 
         {/* RIGHT COLUMN: HERO PHOTO, THUMBNAILS, PRINCESS-STYLE STAT SHEET */}
-        <div className={`${settings.templateId === 'editorial' ? '' : settings.templateId === 'polaroid' ? 'col-span-5' : settings.templateId === 'comic' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-between h-full space-y-1 pb-0.5 mt-0.5 ${settings.templateId === 'whimsical' ? '' : settings.templateId === 'editorial' ? 'border-l border-stone-350 pl-2' : settings.templateId === 'polaroid' ? 'border-l border-stone-200/50 pl-1.5' : settings.templateId === 'comic' ? 'pl-1' : 'border-l border-slate-100 pl-2.5'} min-h-0 overflow-hidden`}>
+        <div className={`${settings.templateId === 'editorial' ? '' : settings.templateId === 'polaroid' ? 'col-span-7' : settings.templateId === 'comic' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-between h-full space-y-1 pb-0.5 mt-0.5 ${settings.templateId === 'whimsical' ? '' : settings.templateId === 'editorial' ? 'border-l border-stone-350 pl-2' : settings.templateId === 'polaroid' ? 'border-l border-stone-200/50 pl-1.5' : settings.templateId === 'comic' ? 'pl-1' : 'border-l border-slate-100 pl-2.5'} min-h-0 overflow-hidden`}>
           
           {/* STYLED PHOTO BOX - SCALED OUT TO FILL FULL WIDEST SPAN */}
-          <div className={`w-full relative flex-1 ${settings.templateId === 'whimsical' ? 'max-h-[72%]' : settings.templateId === 'polaroid' ? 'max-h-[70%]' : settings.templateId === 'comic' ? 'max-h-[74%]' : settings.templateId === 'editorial' ? 'max-h-[72%]' : 'max-h-[70%]'} min-h-[115px] flex flex-col justify-center items-center ${settings.templateId === 'comic' ? 'p-1' : ''}`}>
+          <div className={`w-full relative flex-1 ${settings.templateId === 'whimsical' ? 'max-h-[72%]' : settings.templateId === 'polaroid' ? 'max-h-[82%]' : settings.templateId === 'comic' ? 'max-h-[74%]' : settings.templateId === 'editorial' ? 'max-h-[72%]' : 'max-h-[70%]'} min-h-[115px] flex flex-col justify-center items-center ${settings.templateId === 'comic' ? 'p-1' : ''}`}>
             {settings.templateId === 'polaroid' ? (
-              <div className="bg-white p-1.5 pb-3 border border-stone-200 shadow-md rotate-[1deg] w-full aspect-[4/3] flex flex-col group mx-auto">
-                <div className="flex-1 h-0 w-full bg-stone-100 relative rounded-sm overflow-hidden">
+              <div className="bg-white p-2 pb-5 border border-stone-250 shadow-md rotate-[1deg] w-full max-w-[280px] aspect-[1/1.12] flex flex-col group mx-auto">
+                <div className="w-full aspect-square bg-stone-100 relative rounded-sm overflow-hidden border border-stone-200/50">
                   {primaryPhoto ? (
                     <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
                   ) : (
@@ -2468,8 +2468,8 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                     </div>
                   )}
                 </div>
-                <div className="text-center pt-1 leading-none shrink-0">
-                  <span className="font-serif italic text-stone-500 font-bold text-[8px] leading-none">{pet.name || 'Sweet foster'} 📷</span>
+                <div className="text-center pt-1.5 flex-1 flex items-center justify-center leading-none shrink-0">
+                  <span className="font-serif italic text-stone-650 font-bold text-[9.5px] leading-none">{pet.name || 'Sweet foster'} 📷</span>
                 </div>
               </div>
             ) : settings.templateId === 'comic' ? (
