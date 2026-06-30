@@ -450,7 +450,7 @@ export default function App() {
                   : 'text-sky-900/80 hover:text-sky-950'
               }`}
             >
-              <Eye className="w-3.5 h-3.5" /> View Flyer
+              <Eye className="w-3.5 h-3.5" /> View & Save Flyer
             </button>
           </div>
 
@@ -502,7 +502,7 @@ export default function App() {
             {/* FORMAT RATIO SELECTOR CONTROL BOX */}
             <div className="no-print w-full bg-white border border-sky-100 rounded-2xl p-4 shadow-sm shadow-sky-50 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-left">
-                <p className="text-xs font-bold text-slate-700">Choose your output format</p>
+                <p className="text-xs font-bold text-slate-700">Choose Format</p>
                 <p className="text-[10px] text-sky-700/60 font-semibold mt-0.5">Save as a printable flyer, social post, or both!</p>
               </div>
               <div className="flex flex-wrap gap-2">

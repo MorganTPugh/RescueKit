@@ -31,7 +31,9 @@ import {
   Maximize2,
   X,
   Copy,
-  Share2
+  Share2,
+  PenLine,
+  Eye
 } from 'lucide-react';
 
 // Use Cases Definitions
@@ -1599,7 +1601,10 @@ export const RescueNeedsFlyers: React.FC = () => {
               mobileTab === tab ? 'bg-indigo-600 text-white shadow-xs' : 'text-indigo-950/70 hover:text-indigo-900'
             }`}
           >
-            {tab === 'edit' ? 'Customize' : 'View Flyer'}
+            <span className="flex items-center justify-center gap-1.5">
+              {tab === 'edit' ? <PenLine className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              {tab === 'edit' ? 'Customize' : 'View & Save Flyer'}
+            </span>
           </button>
         ))}
       </div>
@@ -1925,8 +1930,8 @@ export const RescueNeedsFlyers: React.FC = () => {
         {/* Format + fullscreen bar */}
         <div className="bg-white border border-sky-100 rounded-3xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
           <div className="flex flex-col gap-0.5 hidden sm:flex">
-            <span className="text-[10px] uppercase tracking-widest text-indigo-500 font-extrabold">Format</span>
-            <span className="text-[10px] text-slate-400 font-semibold">Choose your format — or save both!</span>
+            <p className="text-xs font-bold text-slate-700">Choose Format</p>
+            <p className="text-[10px] text-sky-700/60 font-semibold mt-0.5">Save as a printable flyer, social post, or both!</p>
           </div>
           <div className="flex gap-2">
             {([
@@ -1949,10 +1954,10 @@ export const RescueNeedsFlyers: React.FC = () => {
         </div>
 
         {/* LIVE PREVIEW */}
-        <div className="w-full bg-gradient-to-br from-slate-100 via-slate-100 to-indigo-100/40 border border-slate-200 rounded-3xl p-5 flex items-start justify-center relative shadow-inner">
-          <div className="absolute top-3.5 left-4 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full border border-slate-200 shadow-sm pointer-events-none">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-black text-slate-600">Live Preview</span>
+        <div className="w-full bg-gradient-to-br from-slate-700 via-slate-800 to-slate-700 border border-slate-600/50 rounded-3xl p-5 flex items-start justify-center relative shadow-lg shadow-slate-900/20 overflow-y-auto max-h-[70vh]">
+          <div className="absolute top-3.5 left-4 flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 shadow-sm pointer-events-none">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[10px] font-black text-white/80">Live Preview</span>
           </div>
           <div className={`w-full mt-2 mx-auto ${aspectRatio === 'square' ? 'max-w-sm' : 'max-w-[440px]'}`}>
             {renderFlyerMainContainerHTML(false)}
