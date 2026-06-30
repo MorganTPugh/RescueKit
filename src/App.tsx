@@ -327,15 +327,13 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
 
           <div className="flex items-center gap-3">
-            <svg className="w-8 h-8 md:w-10 md:h-10 shrink-0" viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <ellipse cx="13" cy="8" rx="3.5" ry="4.5" fill="#0284c7"/>
-              <ellipse cx="23" cy="7" rx="3.5" ry="4.5" fill="#0284c7"/>
-              <ellipse cx="7" cy="17" rx="3" ry="4" fill="#0284c7" opacity="0.7"/>
-              <ellipse cx="29.5" cy="16" rx="3" ry="4" fill="#0284c7" opacity="0.7"/>
-              <ellipse cx="18" cy="23" rx="9" ry="9" fill="#0284c7"/>
-              <path d="M31 4 L32 7 L35 8 L32 9 L31 12 L30 9 L27 8 L30 7 Z" fill="#38bdf8"/>
-              <path d="M35 14 L35.8 16.2 L38 17 L35.8 17.8 L35 20 L34.2 17.8 L32 17 L34.2 16.2 Z" fill="#7dd3fc" opacity="0.8"/>
-            </svg>
+            <div className="relative w-16 h-16 md:w-[4.5rem] md:h-[4.5rem] shrink-0">
+              <img src="/logo-paw.png" className="w-full h-full" alt="Rescue-Kit paw logo" />
+              {/* White heart overlay, centered on the navy main pad (50% across, 74% down) */}
+              <svg className="absolute pointer-events-none" style={{left:'50%', top:'74%', width:'36%', height:'auto', transform:'translate(-50%,-50%)'}} viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 82 C50 82 8 54 8 28 C8 14 18 5 32 9 C39 11 45 18 50 25 C55 18 61 11 68 9 C82 5 92 14 92 28 C92 54 50 82 50 82 Z" fill="white"/>
+              </svg>
+            </div>
             <div>
               <span className="text-3xl md:text-4xl font-black tracking-tight font-display" style={{background:'linear-gradient(90deg,#082f49 0%,#082f49 40%,#0284c7 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Rescue-Kit</span>
               <p className="hidden sm:block text-[11px] font-semibold text-sky-700 leading-none mt-0.5">Free tools for animal rescues, fosters, and volunteers</p>

@@ -218,20 +218,23 @@ const FLYER_THEMES: ThemeStyle[] = [
   },
   {
     id: 'playful',
-    name: 'Playful Peach',
+    name: 'Vivid Prism',
     layoutName: 'Overlapping Offset',
-    bgGrad: 'from-rose-50 to-rose-100/45',
+    bgGrad: 'from-orange-50 to-violet-100/45',
     cardBg: 'bg-white',
-    textHeader: 'text-rose-950 font-playful',
+    textHeader: 'text-violet-950 font-playful',
     textBody: 'text-slate-700 font-sans',
-    badgeBg: 'bg-rose-500/10',
-    badgeText: 'text-rose-700',
-    accentBorder: 'border-rose-200',
-    accentBtn: 'bg-rose-500 hover:bg-rose-600 text-white',
-    bulletIconColor: 'text-rose-500',
+    badgeBg: 'bg-violet-500/10',
+    badgeText: 'text-violet-700',
+    accentBorder: 'border-violet-200',
+    accentBtn: 'bg-violet-500 hover:bg-violet-600 text-white',
+    bulletIconColor: 'text-orange-500',
     fontFamily: 'font-playful'
   },
 ];
+
+// These themes are photo-less by design — photo upload is hidden for them
+const PHOTO_LESS_THEME_IDS = ['emerald', 'breezy', 'playful'];
 
 interface RepositionableOutreachImageProps {
   id: number;
@@ -765,7 +768,7 @@ export const RescueNeedsFlyers: React.FC = () => {
     
     // Theme 2: emerald - Editorial / Magazine Banner Layout
     if (activeTheme.id === 'emerald') {
-      const hasPhoto = !noPhoto && photos.length > 0;
+      const hasPhoto = false; // photo-less layout
 
       if (isSquare) {
         return (
@@ -872,15 +875,14 @@ export const RescueNeedsFlyers: React.FC = () => {
             <div>{renderBullets('text-emerald-700', 'bg-emerald-100')}</div>
           </div>
 
-          <div className="text-center pt-1 border-t border-emerald-200 shrink-0">
-            <p className="text-[9.5px] font-bold text-emerald-900 leading-snug">
-              {data.thankYouMessage || 'We appreciate your support — you are helping save local pet lives.'}
-            </p>
-          </div>
-
-          {/* CTA Footer */}
+          {/* CTA Footer — thank you message lives here so it's never overlapped */}
           <div className="bg-emerald-950 rounded-xl p-2.5 px-3 flex items-center justify-between gap-3 shrink-0">
             <div className="flex-1 space-y-1 text-left">
+              {data.thankYouMessage && (
+                <p className="text-[8.5px] font-semibold text-emerald-300 italic leading-snug mb-1 border-b border-emerald-800 pb-1">
+                  {data.thankYouMessage}
+                </p>
+              )}
               {data.ctaLabel && (
                 <p className="text-[7.5px] font-black uppercase text-emerald-400 tracking-wider leading-none">{data.ctaLabel}</p>
               )}
@@ -915,7 +917,7 @@ export const RescueNeedsFlyers: React.FC = () => {
 
     // Theme 3: breezy - Serene Breezy Split Layout (Left Column text, Right Column visuals)
     if (activeTheme.id === 'breezy') {
-      const hasPhoto = !noPhoto && photos.length > 0;
+      const hasPhoto = false; // photo-less layout
 
       if (isSquare) {
         return (
@@ -986,8 +988,8 @@ export const RescueNeedsFlyers: React.FC = () => {
             )}
           </div>
 
-          {/* Content group — vertically centered */}
-          <div className="flex-1 flex flex-col justify-center min-h-0">
+          {/* Content group — pushed up to sit right below header */}
+          <div className="flex-1 flex flex-col justify-start min-h-0 pt-1">
           {/* Side-by-Side Dual Column Grid — fixed columns, no responsive breakpoints */}
           <div className={`grid gap-3 pb-0.5 ${noPhoto ? 'grid-cols-1' : 'grid-cols-12'}`}>
             {/* Left side text column */}
@@ -1144,8 +1146,15 @@ export const RescueNeedsFlyers: React.FC = () => {
             </p>
           </div>
 
+          {/* Narrative bento block — opening paragraph near the top */}
+          <div className={`bg-stone-50 p-2 rounded-xl ${bentoBorder} ${bentoShadow} text-center shrink-0`}>
+            <p className="text-[10px] leading-snug text-slate-700 font-semibold italic">
+              " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
+            </p>
+          </div>
+
           {/* Bento grid: checklist + optional photo side by side */}
-          <div className={`grid gap-2 ${hasPhoto ? 'grid-cols-12 flex-grow min-h-0' : 'grid-cols-1'}`}>
+          <div className={`grid gap-2 ${hasPhoto ? 'grid-cols-12 flex-grow min-h-0' : 'grid-cols-1 flex-grow min-h-0'}`}>
             {/* Checklist bento block */}
             <div className={`${hasPhoto ? 'col-span-7' : 'col-span-1'} bg-white p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} flex flex-col justify-start`}>
               {amberBullets()}
@@ -1170,15 +1179,11 @@ export const RescueNeedsFlyers: React.FC = () => {
             )}
           </div>
 
-          {/* Narrative bento block */}
-          <div className={`bg-stone-50 p-2 rounded-xl ${bentoBorder} ${bentoShadow} text-center shrink-0`}>
-            <p className="text-[10px] leading-snug text-slate-700 font-semibold italic">
-              " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
-            </p>
-            {data.thankYouMessage && (
-              <p className="text-[9.5px] font-black text-rose-700 mt-1">{data.thankYouMessage}</p>
-            )}
-          </div>
+          {data.thankYouMessage && (
+            <div className={`bg-amber-50 p-2 rounded-xl ${bentoBorder} ${bentoShadow} text-center shrink-0`}>
+              <p className="text-[9.5px] font-black text-amber-900">{data.thankYouMessage}</p>
+            </div>
+          )}
 
           {/* CTA amber panel */}
           <div className={`bg-amber-500 p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} flex justify-between items-center gap-2 shrink-0`}>
@@ -1211,9 +1216,9 @@ export const RescueNeedsFlyers: React.FC = () => {
       );
     }
 
-    // Theme 5: playful - Playful Peach Whimsical Layout
+    // Theme 5: Vivid Prism Whimsical Layout
     if (activeTheme.id === 'playful') {
-      const hasPhoto = !noPhoto && photos.length > 0;
+      const hasPhoto = false; // photo-less layout
       // Rotating colors for bullet dots and chips
       const dotColors = ['#f97316','#ec4899','#8b5cf6','#06b6d4','#22c55e','#f59e0b','#ef4444','#0ea5e9'];
       const chipColors = [
@@ -1554,7 +1559,7 @@ export const RescueNeedsFlyers: React.FC = () => {
         {renderFlyerContent()}
 
         <div className="absolute bottom-1 right-3 text-[7px] text-slate-400 font-mono italic">
-          Powered by Rescue-Kit • Share & Save Lives
+          Powered by Rescue-kit.org
         </div>
       </div>
     );
@@ -1580,7 +1585,7 @@ export const RescueNeedsFlyers: React.FC = () => {
                 data.useCase === uc ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-950/70 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
               }`}
             >
-              {uc === 'donation' ? '🎁 Donations' : uc === 'fosters' ? '🐾 Fosters' : uc === 'ongoing_volunteers' ? '🙌 Volunteers' : '📅 Events'}
+              {uc === 'donation' ? 'Donations' : uc === 'fosters' ? 'Fosters' : uc === 'ongoing_volunteers' ? 'Volunteers' : 'Events'}
             </button>
           ))}
         </div>
@@ -1594,7 +1599,7 @@ export const RescueNeedsFlyers: React.FC = () => {
               mobileTab === tab ? 'bg-indigo-600 text-white shadow-xs' : 'text-indigo-950/70 hover:text-indigo-900'
             }`}
           >
-            {tab === 'edit' ? '📝 Customize' : '👁️ View Flyer'}
+            {tab === 'edit' ? 'Customize' : 'View Flyer'}
           </button>
         ))}
       </div>
@@ -1613,7 +1618,7 @@ export const RescueNeedsFlyers: React.FC = () => {
         {/* GROUP 1: DESIGN & STYLE */}
         <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-6">
           <div className="border-b border-slate-100 pb-3 flex items-center gap-2">
-            <span className="text-base">🎨</span>
+            <Layout className="w-4 h-4 text-indigo-400 shrink-0" />
             <div>
               <h2 className="text-xs font-black uppercase tracking-wider text-slate-900">1. Design & Style</h2>
               <p className="text-[10px] text-slate-400 font-semibold">Select flyer type, upload photos, and pick a visual style</p>
@@ -1650,7 +1655,7 @@ export const RescueNeedsFlyers: React.FC = () => {
             </div>
           </div>
 
-          {/* Sub-Step B: Add Photos */}
+          {/* Sub-Step B: Add Photos — hidden for photo-less themes */}
           <div className="border-t border-slate-100/80 pt-5 space-y-3.5">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-black bg-indigo-50 text-indigo-700 w-5 h-5 rounded-full flex items-center justify-center shrink-0">B</span>
@@ -1659,7 +1664,13 @@ export const RescueNeedsFlyers: React.FC = () => {
                 <span className="font-semibold text-slate-400 lowercase tracking-normal font-sans">(optional)</span>
               </h3>
             </div>
+            {PHOTO_LESS_THEME_IDS.includes(activeTheme.id) && (
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-center">
+                <p className="text-[11px] font-bold text-slate-500">This style is a photo-less layout — photos are not used in this design.</p>
+              </div>
+            )}
             
+            {!PHOTO_LESS_THEME_IDS.includes(activeTheme.id) && (<>
             <label className="flex items-center gap-2.5 cursor-pointer select-none bg-slate-50 p-3 rounded-2xl border border-slate-200">
               <input type="checkbox" checked={noPhoto} onChange={e => setNoPhoto(e.target.checked)}
                 className="w-4 h-4 rounded cursor-pointer accent-indigo-600" />
@@ -1706,6 +1717,7 @@ export const RescueNeedsFlyers: React.FC = () => {
                 <p className="text-xs font-bold text-slate-400">Photos disabled — flyer uses text-only layout</p>
               </div>
             )}
+            </>)}
           </div>
 
           {/* Sub-Step C: Choose a Style */}
@@ -1716,11 +1728,11 @@ export const RescueNeedsFlyers: React.FC = () => {
             </div>
             <div className="space-y-2">
               {([
-                { t: FLYER_THEMES[0], swatches: ['#ea580c','#fb923c','#fef3c7'], desc: 'Warm & professional — works for any use case' },
-                { t: FLYER_THEMES[1], swatches: ['#065f46','#059669','#d1fae5'], desc: 'Editorial with a bold photo banner at the top' },
-                { t: FLYER_THEMES[2], swatches: ['#4f46e5','#7dd3fc','#e0f2fe'], desc: 'Clean two-column layout — great with photos' },
-                { t: FLYER_THEMES[3], swatches: ['#d97706','#fcd34d','#fef3c7'], desc: 'Bold graphic style with high-contrast sections' },
-                { t: FLYER_THEMES[4], swatches: ['#e11d48','#fda4af','#fff1f2'], desc: 'Vibrant and eye-catching — best with action photos' },
+                { t: FLYER_THEMES[0], swatches: ['#ea580c','#fb923c','#fef3c7'], desc: 'Warm & professional — works for any use case. Best for horizontal photo.' },
+                { t: FLYER_THEMES[1], swatches: ['#065f46','#059669','#d1fae5'], desc: 'Editorial cover banner layout — photo-less option' },
+                { t: FLYER_THEMES[2], swatches: ['#4f46e5','#7dd3fc','#e0f2fe'], desc: 'Clean two-column split layout — photo-less option' },
+                { t: FLYER_THEMES[3], swatches: ['#d97706','#fcd34d','#fef3c7'], desc: 'Bold bento grid style — works for any use case. Best for vertical photo.' },
+                { t: FLYER_THEMES[4], swatches: ['#f97316','#ec4899','#8b5cf6'], desc: 'Vibrant multicolor gradient — photo-less option' },
               ]).map(({ t, swatches, desc }) => (
                 <button key={t.id} onClick={() => setActiveTheme(t)}
                   className={`w-full flex items-center gap-3 p-3 rounded-2xl border-2 text-left cursor-pointer transition-all ${
@@ -1751,7 +1763,7 @@ export const RescueNeedsFlyers: React.FC = () => {
         {/* GROUP 2: CONTENT & DETAILS */}
         <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-6">
           <div className="border-b border-slate-100 pb-3 flex items-center gap-2">
-            <span className="text-base">📝</span>
+            <Sparkles className="w-4 h-4 text-indigo-400 shrink-0" />
             <div>
               <h2 className="text-xs font-black uppercase tracking-wider text-slate-900">2. Content & Details</h2>
               <p className="text-[10px] text-slate-400 font-semibold">Write your message headings and key bullet highlights</p>
@@ -1793,7 +1805,7 @@ export const RescueNeedsFlyers: React.FC = () => {
             </div>
             {data.items.length >= 10 ? (
               <div className="bg-amber-50 border border-amber-200 p-3 rounded-2xl flex items-start gap-2.5 text-amber-950">
-                <span className="text-sm shrink-0">⚠️</span>
+                <Info className="w-4 h-4 shrink-0 text-amber-600" />
                 <p className="text-[11px] leading-normal font-semibold">
                   Maximum of 10 items reached. Please delete an item below to make room for a new one.
                 </p>
@@ -1827,7 +1839,7 @@ export const RescueNeedsFlyers: React.FC = () => {
         {/* GROUP 3: CONTACT & PUBLISH */}
         <div className="bg-white rounded-3xl border border-sky-100 p-5 shadow-xs space-y-6">
           <div className="border-b border-slate-100 pb-3 flex items-center gap-2">
-            <span className="text-base">📣</span>
+            <Share2 className="w-4 h-4 text-indigo-400 shrink-0" />
             <div>
               <h2 className="text-xs font-black uppercase tracking-wider text-slate-900">3. Contact & Publish</h2>
               <p className="text-[10px] text-slate-400 font-semibold">Enter organization metadata, QR code link, and footer note</p>
@@ -1918,8 +1930,8 @@ export const RescueNeedsFlyers: React.FC = () => {
           </div>
           <div className="flex gap-2">
             {([
-              { val: 'flyer', label: '📄 Flyer (Print & Share)' },
-              { val: 'square', label: '📸 Social Square (1:1)' },
+              { val: 'flyer', label: 'Flyer (Print & Share)' },
+              { val: 'square', label: 'Social Square (1:1)' },
             ] as const).map(opt => (
               <button key={opt.val} onClick={() => setAspectRatio(opt.val)}
                 className={`px-4 py-2 rounded-full font-bold text-xs transition-all cursor-pointer ${

@@ -13,24 +13,39 @@ import {
   BorderStyle,
   HeightRule
 } from 'docx';
-import { 
-  FileText, 
-  Download, 
-  Printer, 
-  Check, 
-  Heart, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Globe, 
-  Sparkles, 
+import {
+  FileText,
+  Download,
+  Printer,
+  Check,
+  Heart,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Sparkles,
   Info,
   ChevronRight,
   Eye,
   Sliders,
   Maximize2,
-  X
+  X,
+  PawPrint,
+  Dog,
+  Home,
+  Stethoscope,
+  Shield,
+  Star
 } from 'lucide-react';
+
+const BADGE_OPTIONS = [
+  { id: 'paw',          Icon: PawPrint,    docxChar: '🐾' },
+  { id: 'heart',        Icon: Heart,       docxChar: '♥'  },
+  { id: 'dog',          Icon: Dog,         docxChar: '🐶' },
+  { id: 'home',         Icon: Home,        docxChar: '🏠' },
+  { id: 'stethoscope',  Icon: Stethoscope, docxChar: '＋' },
+  { id: 'shield',       Icon: Shield,      docxChar: '🛡' },
+];
 
 // Define structures for our templates
 interface FormField {
@@ -1490,7 +1505,7 @@ export function RescueForms() {
   const [rescueLocation, setRescueLocation] = useState<string>('');
   
   // Customization styling state
-  const [selectedEmoji, setSelectedEmoji] = useState<string>('🐾');
+  const [selectedEmoji, setSelectedEmoji] = useState<string>('paw');
   const [selectedColor, setSelectedColor] = useState<string>('indigo');
 
   // Mobile layout state: 'edit' or 'preview'
@@ -1529,7 +1544,7 @@ export function RescueForms() {
             spacing: { before: 100, after: 100 },
             children: [
               new TextRun({
-                text: `${selectedEmoji}  `,
+                text: `${BADGE_OPTIONS.find(b => b.id === selectedEmoji)?.docxChar ?? '🐾'}  `,
                 size: 32,
               }),
               new TextRun({
@@ -2012,22 +2027,22 @@ export function RescueForms() {
               />
             </div>
 
-            {/* EMOJI SELECTOR */}
+            {/* BADGE ICON SELECTOR */}
             <div>
               <label className="block text-[11px] font-black text-slate-700 uppercase tracking-wider mb-1.5">Badge Icon / Logo</label>
               <div className="flex gap-2">
-                {['🐾', '🐶', '🐱', '🏠', '❤️', '🩺'].map((emoji) => (
+                {BADGE_OPTIONS.map(({ id, Icon }) => (
                   <button
-                    key={emoji}
+                    key={id}
                     type="button"
-                    onClick={() => setSelectedEmoji(emoji)}
-                    className={`text-lg p-2.5 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
-                      selectedEmoji === emoji 
-                        ? `bg-sky-50 border-sky-300 font-bold scale-110 shadow-3xs` 
-                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                    onClick={() => setSelectedEmoji(id)}
+                    className={`p-2.5 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
+                      selectedEmoji === id
+                        ? 'bg-sky-50 border-sky-400 text-sky-600 scale-110 shadow-sm'
+                        : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-slate-700'
                     }`}
                   >
-                    {emoji}
+                    <Icon className="w-5 h-5" strokeWidth={1.75} />
                   </button>
                 ))}
               </div>
@@ -2345,9 +2360,7 @@ export function RescueForms() {
             <div className="space-y-1 pr-8">
               <h4 className="text-xs font-black text-sky-900 uppercase tracking-wider">How editing & printing works</h4>
               <p className="text-[11.5px] leading-relaxed text-sky-950/80 font-medium">
-                Rescues typically need to add customized clauses or terms. 
-                We recommend **downloading as a DOCX (Word Document)** first so you can open it in Word or Google Docs and tailor any specific legal text. 
-                For instant physical copies, click **Print / Save PDF** and choose "Save to PDF" or send to your printer.
+                Rescues typically need to add customized clauses or terms. We recommend downloading as a DOCX (Word Document) first so you can open it in Word or Google Docs and tailor any specific legal text. For instant physical copies, click Print / Save PDF and choose "Save to PDF" or send to your printer.
               </p>
             </div>
             <button
@@ -2376,8 +2389,8 @@ export function RescueForms() {
           {/* HEADER LETTERHEAD */}
           <div className="flex flex-col sm:flex-row items-center gap-4 pb-6 border-b border-slate-200">
             {/* Logo Badge */}
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center text-3xl font-normal shrink-0 ${activeTheme.bgLight} border-2 ${activeTheme.border}`}>
-              {selectedEmoji}
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 ${activeTheme.bgLight} border-2 ${activeTheme.border}`}>
+              {(() => { const b = BADGE_OPTIONS.find(b => b.id === selectedEmoji); return b ? <b.Icon className="w-7 h-7" strokeWidth={1.5} style={{color: `#${activeTheme.primaryHex}`}} /> : null; })()}
             </div>
             
             {/* Rescue Details */}
@@ -2639,8 +2652,8 @@ export function RescueForms() {
           <div className="bg-white p-6 font-sans">
             {/* Letterhead */}
             <div className="flex flex-col items-center gap-3 pb-6 border-b border-slate-200 text-center">
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center text-3xl shrink-0 ${activeTheme.bgLight} border-2 ${activeTheme.border}`}>
-                {selectedEmoji}
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 ${activeTheme.bgLight} border-2 ${activeTheme.border}`}>
+                {(() => { const b = BADGE_OPTIONS.find(b => b.id === selectedEmoji); return b ? <b.Icon className="w-7 h-7" strokeWidth={1.5} style={{color: `#${activeTheme.primaryHex}`}} /> : null; })()}
               </div>
               <div className="space-y-1">
                 <h2 className="text-base font-black text-slate-900 tracking-tight uppercase leading-none">{displayRescueName}</h2>

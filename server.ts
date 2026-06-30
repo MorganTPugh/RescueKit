@@ -3,12 +3,13 @@ import path from "path";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
+import { Resend } from "resend";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || "3000", 10);
 
 // Parse JSON request bodies
 app.use(express.json({ limit: "15mb" }));
@@ -137,6 +138,13 @@ app.post("/api/generate-bio", async (req, res) => {
   }
 });
 
+// Build Resend client if API key is configured
+function createResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  return new Resend(apiKey);
+}
+
 app.post("/api/feedback", async (req, res) => {
   const { name, email, subject, message } = req.body;
   if (!message || !message.trim()) {
@@ -171,17 +179,32 @@ app.post("/api/feedback", async (req, res) => {
     currentFeedback.push(payload);
     fs.writeFileSync(feedbackPath, JSON.stringify(currentFeedback, null, 2), "utf-8");
 
-    // Print clear notification logs
     console.log("========================================");
-    console.log("📬 NEW FEEDBACK RECEIVED - TO BE SENT TO: RescueKit2@proton.me");
+    console.log("📬 NEW FEEDBACK RECEIVED");
     console.log(`From: ${payload.name} <${payload.email}>`);
     console.log(`Subject: ${payload.subject}`);
     console.log(`Message: ${payload.message}`);
     console.log("========================================");
 
+    // Attempt to send email via Resend if API key is configured
+    const resend = createResendClient();
+    if (resend) {
+      await resend.emails.send({
+        from: "RescueKit Feedback <onboarding@resend.dev>",
+        to: "morgantpugh3@gmail.com",
+        reply_to: email ? `${name || "Anonymous"} <${email}>` : undefined,
+        subject: `[RescueKit Feedback] ${payload.subject}`,
+        text: `Name: ${payload.name}\nEmail: ${payload.email}\n\n${payload.message}`,
+        html: `<p><strong>From:</strong> ${payload.name} (${payload.email})</p><p><strong>Subject:</strong> ${payload.subject}</p><hr/><p>${payload.message.replace(/\n/g, "<br/>")}</p>`,
+      });
+      console.log("✅ Feedback email sent to RescueKit2@proton.me via Resend");
+    } else {
+      console.warn("⚠️  Resend not configured — feedback saved to file but not emailed. Add RESEND_API_KEY to .env to enable email delivery.");
+    }
+
     res.json({ success: true });
   } catch (err: any) {
-    console.error("Failed to store copy of feedback submission:", err);
+    console.error("Failed to process feedback submission:", err);
     res.status(500).json({ error: "Failed to process feedback submission: " + err.message });
   }
 });
