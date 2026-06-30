@@ -80,7 +80,7 @@ function ZeroHurdlesCard() {
       <div>
         <h3 className="text-xs font-bold text-emerald-950">Zero hurdles, totally free & private</h3>
         <p className="text-[11px] text-emerald-800 font-medium leading-relaxed mt-0.5 font-sans">
-          Create adoption flyers and social media posts for your fosters — ready to print, post on Instagram, or share in a Facebook group. Free forever, and your photos never leave your device.
+          Built for every volunteer — no design skills needed. No sign-up, no software, no learning curve. Just fill in your pet's details and get printable and digital flyers in minutes — whether you've been rescuing for 20 years or just fostered your first pet this week.
         </p>
       </div>
     </div>
@@ -125,6 +125,7 @@ export default function App() {
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState<'posters' | 'guide' | 'rescue-flyers' | 'grants' | 'forms'>('posters');
   const [posterMobileTab, setPosterMobileTab] = useState<'edit' | 'preview'>('edit');
+  const [scrolled, setScrolled] = useState(false);
 
   // Autosave pet + settings to localStorage (debounced 500ms)
   useEffect(() => {
@@ -147,6 +148,13 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [activeSection]);
+
+  // Track scroll for header shrink
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Escape key closes any open modal
   useEffect(() => {
@@ -323,11 +331,11 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-br from-sky-50/60 via-stone-50 to-teal-50/30 text-slate-800 flex flex-col justify-between">
 
       {/* 1. APP HEADER - HIDDEN IN PRINTING OUTPUT (.no-print) */}
-      <header className="no-print bg-sky-50/90 backdrop-blur-sm px-4 py-3 md:px-8 md:py-4 sticky top-0 z-20 shadow-sm border-b-2 border-sky-200">
+      <header className={`no-print bg-sky-50/90 backdrop-blur-sm px-4 sticky top-0 z-20 border-b-2 border-sky-200 transition-all duration-300 ${scrolled ? 'py-1.5 md:px-8 shadow-md' : 'py-3 md:px-8 md:py-4 shadow-sm'}`}>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
 
           <div className="flex items-center gap-3">
-            <div className="relative w-16 h-16 md:w-[4.5rem] md:h-[4.5rem] shrink-0">
+            <div className={`relative shrink-0 transition-all duration-300 ${scrolled ? 'w-10 h-10 md:w-11 md:h-11' : 'w-16 h-16 md:w-[4.5rem] md:h-[4.5rem]'}`}>
               <img src="/logo-paw.png" className="w-full h-full" alt="Rescue-Kit paw logo" />
               {/* White heart overlay, centered on the navy main pad (50% across, 74% down) */}
               <svg className="absolute pointer-events-none" style={{left:'50%', top:'74%', width:'36%', height:'auto', transform:'translate(-50%,-50%)'}} viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -335,8 +343,8 @@ export default function App() {
               </svg>
             </div>
             <div>
-              <span className="text-3xl md:text-4xl font-black tracking-tight font-display" style={{background:'linear-gradient(90deg,#082f49 0%,#082f49 40%,#0284c7 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Rescue-Kit</span>
-              <p className="hidden sm:block text-[11px] font-semibold text-sky-700 leading-none mt-0.5">Free tools for animal rescues, fosters, and volunteers</p>
+              <span className={`font-black tracking-tight font-display transition-all duration-300 ${scrolled ? 'text-2xl md:text-3xl' : 'text-3xl md:text-4xl'}`} style={{background:'linear-gradient(90deg,#082f49 0%,#082f49 40%,#0284c7 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Rescue-Kit</span>
+              <p className={`hidden sm:block text-[11px] font-semibold text-sky-700 leading-none mt-0.5 transition-all duration-300 ${scrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>Free tools for animal rescues, fosters, and volunteers</p>
             </div>
           </div>
 
@@ -404,7 +412,7 @@ export default function App() {
 
       {/* 2. DYNAMIC WORKSPACE BODY CONTAINER */}
       {activeSection === 'posters' ? (
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <main key="posters" className="section-enter flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
           {/* SECTION HEADER BANNER */}
           <div className="no-print col-span-full bg-gradient-to-r from-sky-50 via-blue-50/50 to-sky-50/40 border border-sky-200/70 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -427,7 +435,7 @@ export default function App() {
               onClick={() => setPosterMobileTab('edit')}
               className={`flex-1 text-center py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all duration-200 flex items-center justify-center gap-1.5 ${
                 posterMobileTab === 'edit'
-                  ? 'bg-sky-600 text-white shadow-sm'
+                  ? 'bg-sky-600 text-white shadow-sm cta-breathe'
                   : 'text-sky-900/80 hover:text-sky-950'
               }`}
             >
@@ -618,19 +626,19 @@ export default function App() {
 
         </main>
       ) : activeSection === 'guide' ? (
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+        <main key="guide" className="section-enter flex-1 max-w-7xl mx-auto w-full px-4 py-8">
           <FosterGuide />
         </main>
       ) : activeSection === 'rescue-flyers' ? (
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8">
+        <main key="rescue-flyers" className="section-enter flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8">
           <RescueNeedsFlyers />
         </main>
       ) : activeSection === 'grants' ? (
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+        <main key="grants" className="section-enter flex-1 max-w-7xl mx-auto w-full px-4 py-8">
           <RescueGrants />
         </main>
       ) : (
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8">
+        <main key="forms" className="section-enter flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:py-8">
           <RescueForms />
         </main>
       )}

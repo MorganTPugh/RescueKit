@@ -207,6 +207,14 @@ export const PosterForm: React.FC<PosterFormProps> = ({
         </div>
       </div>
 
+      {/* STEP PROGRESS BAR */}
+      <div className="h-1 bg-sky-100 rounded-full mb-4 overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-sky-400 to-sky-600 rounded-full transition-all duration-500 ease-out"
+          style={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
+        />
+      </div>
+
       {/* STEPPERS NAVIGATION BAR */}
       <div className="flex border-b border-sky-50 pb-3.5 mb-5 items-center gap-3 md:gap-4.5 justify-start overflow-x-auto scroll-hide">
         {steps.map((s, idx) => (
@@ -669,9 +677,9 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                       id={`template-btn-${t.id}`}
                       onClick={() => setSettings(prev => ({ ...prev, templateId: t.id as PosterTemplateId }))}
                       className={`p-2 hover:scale-[1.01] text-left border rounded-xl flex flex-col justify-between h-20 transition-all cursor-pointer ${
-                        settings.templateId === t.id 
-                          ? 'border-sky-400 bg-sky-50/45 shadow-xs font-semibold' 
-                          : 'border-stone-200 bg-white hover:border-sky-300 hover:bg-stone-50/20'
+                        settings.templateId === t.id
+                          ? 'border-sky-400 bg-sky-50/45 shadow-md font-semibold -translate-y-0.5'
+                          : 'border-stone-200 bg-white hover:border-sky-300 hover:bg-sky-50/30 hover:-translate-y-1 hover:shadow-md'
                       }`}
                     >
                       <span className="text-[10px] font-extrabold text-slate-900 block leading-tight">{t.name}</span>
@@ -696,9 +704,9 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                       id={`template-btn-${t.id}`}
                       onClick={() => setSettings(prev => ({ ...prev, templateId: t.id as PosterTemplateId }))}
                       className={`p-2 hover:scale-[1.01] text-left border rounded-xl flex flex-col justify-between h-20 transition-all cursor-pointer ${
-                        settings.templateId === t.id 
-                          ? 'border-sky-400 bg-sky-50/45 shadow-xs font-semibold' 
-                          : 'border-stone-200 bg-white hover:border-sky-300 hover:bg-stone-50/20'
+                        settings.templateId === t.id
+                          ? 'border-sky-400 bg-sky-50/45 shadow-md font-semibold -translate-y-0.5'
+                          : 'border-stone-200 bg-white hover:border-sky-300 hover:bg-sky-50/30 hover:-translate-y-1 hover:shadow-md'
                       }`}
                     >
                       <span className="text-[10px] font-extrabold text-slate-900 block leading-tight">{t.name}</span>
