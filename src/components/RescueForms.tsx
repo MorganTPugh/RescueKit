@@ -1521,10 +1521,10 @@ export function RescueForms() {
 
   // Custom metadata formatting
   const displayRescueName = rescueName.trim() || 'Independent Rescue Partners';
-  const displayWebsite = rescueWebsite.trim() || 'www.independentrescue.org';
-  const displayPhone = rescuePhone.trim() || '(555) 123-4567';
-  const displayEmail = rescueEmail.trim() || 'info@independentrescue.org';
-  const displayLocation = rescueLocation.trim() || 'Rescue City, USA';
+  const displayWebsite = rescueWebsite.trim();
+  const displayPhone = rescuePhone.trim();
+  const displayEmail = rescueEmail.trim();
+  const displayLocation = rescueLocation.trim();
 
   // Handle native browser print
   const handlePrint = () => {
@@ -1565,7 +1565,7 @@ export function RescueForms() {
             spacing: { after: 200 },
             children: [
               new TextRun({
-                text: `${displayLocation}  |  ${displayPhone}  |  ${displayEmail}  |  ${displayWebsite}`,
+                text: [displayLocation, displayPhone, displayEmail, displayWebsite].filter(Boolean).join('  |  '),
                 size: 18,
                 italics: true,
                 color: '555555',
@@ -2401,24 +2401,12 @@ export function RescueForms() {
                 {displayRescueName}
               </h2>
               
-              {/* Badges/Metadata */}
+              {/* Badges/Metadata — only shown when user has filled the field */}
               <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-1.5">
-                <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500">
-                  <MapPin className="w-3 h-3 text-slate-400" />
-                  <span>{displayLocation}</span>
-                </span>
-                <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500">
-                  <Phone className="w-3 h-3 text-slate-400" />
-                  <span>{displayPhone}</span>
-                </span>
-                <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500">
-                  <Mail className="w-3 h-3 text-slate-400" />
-                  <span>{displayEmail}</span>
-                </span>
-                <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500">
-                  <Globe className="w-3 h-3 text-slate-400" />
-                  <span>{displayWebsite}</span>
-                </span>
+                {displayLocation && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><MapPin className="w-3 h-3 text-slate-400" /><span>{displayLocation}</span></span>}
+                {displayPhone && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><Phone className="w-3 h-3 text-slate-400" /><span>{displayPhone}</span></span>}
+                {displayEmail && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><Mail className="w-3 h-3 text-slate-400" /><span>{displayEmail}</span></span>}
+                {displayWebsite && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><Globe className="w-3 h-3 text-slate-400" /><span>{displayWebsite}</span></span>}
               </div>
             </div>
           </div>
@@ -2660,13 +2648,13 @@ export function RescueForms() {
               <div className="space-y-1">
                 <h2 className="text-base font-black text-slate-900 tracking-tight uppercase leading-none">{displayRescueName}</h2>
                 <div className="flex flex-wrap justify-center gap-2 mt-1">
-                  <span className="text-[10px] font-bold text-slate-500">{displayLocation}</span>
-                  <span className="text-[10px] font-bold text-slate-400">·</span>
-                  <span className="text-[10px] font-bold text-slate-500">{displayPhone}</span>
-                  <span className="text-[10px] font-bold text-slate-400">·</span>
-                  <span className="text-[10px] font-bold text-slate-500">{displayEmail}</span>
+                  {displayLocation && <span className="text-[10px] font-bold text-slate-500">{displayLocation}</span>}
+                  {displayLocation && displayPhone && <span className="text-[10px] font-bold text-slate-400">·</span>}
+                  {displayPhone && <span className="text-[10px] font-bold text-slate-500">{displayPhone}</span>}
+                  {(displayLocation || displayPhone) && displayEmail && <span className="text-[10px] font-bold text-slate-400">·</span>}
+                  {displayEmail && <span className="text-[10px] font-bold text-slate-500">{displayEmail}</span>}
                 </div>
-                <p className="text-[10px] font-bold text-slate-400">{displayWebsite}</p>
+                {displayWebsite && <p className="text-[10px] font-bold text-slate-400">{displayWebsite}</p>}
               </div>
             </div>
 
