@@ -2172,7 +2172,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               Meet {pet.name || 'Lovely Foster'}!
             </h1>
             <p className="text-[9px] md:text-[9.5px] uppercase tracking-[0.14em] text-stone-605 font-sans font-semibold mt-1.5 leading-none">
-              A gentle {pet.breed} seeking a tranquil sanctuary
+              A {pet.traits?.[0] ? `${pet.traits[0].toLowerCase()} ` : ''}{pet.breed} seeking a tranquil sanctuary
             </p>
           </div>
 
