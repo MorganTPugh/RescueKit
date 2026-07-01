@@ -321,7 +321,7 @@ const getDynamicBioStyle = (text: string, templateId: string, isSquare: boolean)
     } else if (templateId === 'minimalist') {
       W = 183; H = 158; k = 0.475; maxPx = 16.0; // full-width photo: wide but short
     } else if (templateId === 'polaroid') {
-      W = 125; H = 274; k = 0.443; maxPx = 20.0;
+      W = 119; H = 255; k = 0.443; maxPx = 16.0; // measured para dims; H scaled to compensate for word-wrap efficiency
     } else if (templateId === 'bio-only') {
       W = 680; H = 640; k = 0.430; maxPx = 25.0; minPx = 12.5;
     } else if (templateId === 'two-photos' || templateId === 'extreme-duo') {
