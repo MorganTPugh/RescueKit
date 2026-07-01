@@ -72,7 +72,7 @@
   }
   
   /* Reset transitions, filters, transforms, and animations on major ancestors to prevent viewport offset bugs in position: fixed */
-  html, body, #root, #full-scale-preview-modal, #modal-poster-card-wrapper {
+  html, body, #root, main, #full-scale-preview-modal, #modal-poster-card-wrapper {
     transform: none !important;
     filter: none !important;
     backdrop-filter: none !important;
