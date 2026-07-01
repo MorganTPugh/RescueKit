@@ -96,19 +96,37 @@
     display: none !important;
   }
 
-  /* Set the guide and forms print sections and their descendants as visible */
+  /* Set the guide print section and its descendants as visible */
   .guide-print-container,
-  .guide-print-container *,
+  .guide-print-container * {
+    visibility: visible !important;
+  }
+
+  /* Forms: unblock the ancestor chain (display:none from responsive classes blocks even fixed children) */
+  .forms-outer-grid,
+  .forms-preview-col,
   .forms-print-container,
   .forms-print-container * {
     visibility: visible !important;
   }
 
+  .forms-outer-grid {
+    display: block !important;
+  }
+
+  .forms-preview-col {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* Hide the no-print UI chrome inside the forms column so it doesn't take up space */
+  .forms-preview-col .no-print {
+    display: none !important;
+  }
+
   .forms-print-container {
-    position: fixed !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 100vw !important;
+    position: static !important;  /* flow naturally for multi-page pagination */
+    width: 100% !important;
     height: auto !important;
     background-color: #ffffff !important;
     color: #000000 !important;
@@ -118,7 +136,6 @@
     padding: 0.65in !important;  /* compensates for @page margin: 0 */
     margin: 0 !important;
     overflow: visible !important;
-    z-index: 99999 !important;
   }
   
   /* Reset body size to exactly fill paper context */

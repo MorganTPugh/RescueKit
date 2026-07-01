@@ -1916,7 +1916,7 @@ export function RescueForms() {
   };
 
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
+    <div className="forms-outer-grid w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
       
       {/* HEADER BANNER */}
       <div className="no-print col-span-full bg-gradient-to-r from-sky-50 via-blue-50/50 to-sky-50/40 border border-sky-200/70 p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -2100,7 +2100,7 @@ export function RescueForms() {
       </div>
 
       {/* RIGHT PREVIEW & TEMPLATE TABS */}
-      <div className={`col-span-full lg:col-span-8 space-y-6 ${mobileMode === 'preview' ? 'block' : 'hidden lg:block'}`}>
+      <div className={`forms-preview-col col-span-full lg:col-span-8 space-y-6 ${mobileMode === 'preview' ? 'block' : 'hidden lg:block'}`}>
         
         {/* TEMPLATE TAB SELECTOR */}
         <div className="no-print flex flex-wrap gap-1.5 bg-slate-100 p-1 rounded-2xl border border-slate-200/60 relative">
