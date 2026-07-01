@@ -718,9 +718,21 @@ export const RescueNeedsFlyers: React.FC = () => {
     );
   };
 
+  // Dynamic font size for bullet lists: larger when content is sparse, smaller when dense
+  const getListFontSize = (items: string[]): string => {
+    const totalChars = items.reduce((sum, s) => sum + s.length, 0);
+    const score = totalChars + items.length * 15; // weight each line as ~15 chars of space
+    if (score < 80)  return '13px';
+    if (score < 150) return '12px';
+    if (score < 250) return '11px';
+    if (score < 380) return '10px';
+    return '9px';
+  };
+
   // Renders the materials/shifts bullets — used by emerald, breezy, playful themes
   const renderBullets = (accentColor: string = 'text-indigo-600', bgColor: string = 'bg-indigo-50') => {
     const displayedItems = data.items.slice(0, 10);
+    const listFontSize = getListFontSize(displayedItems);
     const labelMap: Record<string, string> = {
       donation: 'WHAT WE NEED',
       fosters: 'WHY FOSTER WITH US',
@@ -740,7 +752,7 @@ export const RescueNeedsFlyers: React.FC = () => {
             const headline = hasColon ? bullet.substring(0, colonIndex) : bullet;
             const detail = hasColon ? bullet.substring(colonIndex + 1) : '';
             return (
-              <div key={index} className="flex items-start gap-2 text-stone-800 text-[10px] w-full">
+              <div key={index} className="flex items-start gap-2 text-stone-800 w-full" style={{ fontSize: listFontSize }}>
                 <div className={`p-[3px] mt-[1px] ${bgColor} rounded-full shrink-0 ${accentColor}`}>
                   <BulletIcon className="w-3 h-3 shrink-0" />
                 </div>
@@ -775,9 +787,9 @@ export const RescueNeedsFlyers: React.FC = () => {
       if (isSquare) {
         return (
           <div className="flex-grow flex flex-col h-full">
-            {/* Square: photo fills top 42%, editorial content below */}
-            <div className="-mx-3.5 -mt-3.5 shrink-0" style={{ height: '42%' }}>
-              {hasPhoto ? (
+            {/* Square: photo banner — only shown when photo exists */}
+            {hasPhoto && (
+              <div className="-mx-3.5 -mt-3.5 shrink-0" style={{ height: '38%' }}>
                 <div className="relative h-full overflow-hidden border-b-4 border-emerald-800 bg-stone-200">
                   <RepositionableOutreachImage id={0} src={photos[0]} alt="Banner" zoom={photoZooms[0]||1} offsetX={photoOffsetsX[0]||0} offsetY={photoOffsetsY[0]||0} updateZoom={updatePhotoZoom} updateOffsetX={updatePhotoOffsetX} updateOffsetY={updatePhotoOffsetY} />
                   <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/60 to-transparent pointer-events-none" />
@@ -785,26 +797,24 @@ export const RescueNeedsFlyers: React.FC = () => {
                     <p className="text-[8px] font-black uppercase tracking-widest opacity-80">{data.orgName}</p>
                   </div>
                 </div>
-              ) : (
-                <div className="h-full bg-emerald-950 flex flex-col items-center justify-center text-center px-6 border-b-4 border-emerald-700">
-                  <p className="text-[9px] font-black text-emerald-300 uppercase tracking-[0.25em] mb-1">{data.orgName || 'YOUR RESCUE NAME'}</p>
-                  <div className="w-12 h-px bg-emerald-600 mx-auto" />
-                </div>
-              )}
-            </div>
-            {/* Square: editorial content bottom 58% */}
+              </div>
+            )}
+            {/* Square: all content — expands to fill full height when no photo */}
             <div className="flex flex-col justify-between flex-1 pt-2.5 px-0.5 pb-0">
-              <div className="text-center space-y-1">
-                <h1 className="text-xl font-black text-emerald-950 leading-tight uppercase tracking-tight font-serif">
+              <div className="text-center space-y-1 shrink-0">
+                {!hasPhoto && data.orgName && (
+                  <p className="text-[8px] font-black text-emerald-600 uppercase tracking-[0.2em]">{data.orgName}</p>
+                )}
+                <h1 className={`font-black text-emerald-950 leading-tight uppercase tracking-tight font-serif ${hasPhoto ? 'text-xl' : 'text-2xl'}`}>
                   {data.header || 'COMMUNITY NEED'}
                 </h1>
                 <p className="text-[10px] font-bold text-emerald-700 italic">{data.subtitle}</p>
                 <div className="w-16 h-0.5 bg-emerald-800 mx-auto mt-0.5" />
               </div>
-              <div className="flex-1 flex flex-col justify-center py-2 space-y-1.5">
+              <div className="flex-1 flex flex-col justify-center pb-6 min-h-0">
                 {renderBullets('text-emerald-700', 'bg-emerald-100')}
               </div>
-              <div className="border-t border-emerald-200 pt-2 flex items-center justify-between gap-2">
+              <div className="border-t border-emerald-200 pt-2 flex items-center justify-between gap-2 shrink-0">
                 <div className="text-left flex-1">
                   {data.orgName && <p className="text-[8px] font-black text-emerald-900 uppercase tracking-wider">{data.orgName}</p>}
                   {data.website && <p className="text-[8.5px] font-bold text-emerald-700">{data.website.replace('https://','').replace('www.','')}</p>}
@@ -866,15 +876,18 @@ export const RescueNeedsFlyers: React.FC = () => {
             <div className="w-20 h-0.5 bg-emerald-800 mx-auto mt-1" />
           </div>
 
-          {/* Content group — vertically centered between heading and footer */}
-          <div className="flex-1 flex flex-col justify-center gap-2 min-h-0 py-1">
-            <div className="bg-emerald-50 p-2.5 py-2 rounded-lg border border-emerald-200">
-              <p className={`${noPhoto ? 'text-[11px] py-1' : 'text-[10px]'} italic leading-relaxed text-slate-700 text-center font-semibold font-serif`}>
-                " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
-              </p>
+          {/* Content group — narrative pinned top, bullets float slightly above center */}
+          <div className="flex-1 flex flex-col min-h-0 py-1">
+            <div className="shrink-0">
+              <div className="bg-emerald-50 p-2.5 py-2 rounded-lg border border-emerald-200">
+                <p className={`${noPhoto ? 'text-[11px] py-1' : 'text-[10px]'} italic leading-relaxed text-slate-700 text-center font-semibold font-serif`}>
+                  {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'}
+                </p>
+              </div>
             </div>
-
-            <div>{renderBullets('text-emerald-700', 'bg-emerald-100')}</div>
+            <div className="flex-1 flex flex-col justify-center pb-8 min-h-0">
+              {renderBullets('text-emerald-700', 'bg-emerald-100')}
+            </div>
           </div>
 
           {/* CTA Footer — thank you message lives here so it's never overlapped */}
@@ -939,7 +952,7 @@ export const RescueNeedsFlyers: React.FC = () => {
               <div className="grid grid-cols-2 gap-2 shrink-0" style={{ height: '140px' }}>
                 <div className="bg-sky-100 rounded-xl p-2.5 flex items-center">
                   <p className="text-[9px] leading-relaxed text-slate-800 font-semibold italic">
-                    "{data.intro?.slice(0,120)}"
+                    {data.intro?.slice(0,120)}
                   </p>
                 </div>
                 <div className="rounded-xl overflow-hidden border-2 border-indigo-200 relative">
@@ -949,7 +962,7 @@ export const RescueNeedsFlyers: React.FC = () => {
             )}
             {!hasPhoto && (
               <div className="bg-sky-100 rounded-xl p-2.5 shrink-0">
-                <p className="text-[10px] leading-relaxed text-slate-800 font-semibold italic">"{data.intro}"</p>
+                <p className="text-[10px] leading-relaxed text-slate-800 font-semibold italic">{data.intro}</p>
               </div>
             )}
             <div className="flex-1 min-h-0">
@@ -998,7 +1011,7 @@ export const RescueNeedsFlyers: React.FC = () => {
             <div className={`${noPhoto ? 'col-span-1' : 'col-span-8'} flex flex-col justify-start gap-2 text-left min-h-0`}>
               <div className="bg-sky-100 p-2.5 rounded-xl border border-sky-200">
                 <p className={`${noPhoto ? 'text-[11px]' : 'text-[10px]'} leading-relaxed text-slate-800 font-medium italic`}>
-                  " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
+                  {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'}
                 </p>
               </div>
               {renderBullets('text-indigo-600', 'bg-indigo-100')}
@@ -1072,6 +1085,7 @@ export const RescueNeedsFlyers: React.FC = () => {
 
       const amberBullets = () => {
         const displayedItems = data.items.slice(0, 10);
+        const listFontSize = getListFontSize(displayedItems);
         const labelMap: Record<string, string> = { donation: 'WHAT WE NEED', fosters: 'WHY FOSTER', ongoing_volunteers: 'OPEN ROLES', event_volunteers: 'SHIFTS' };
         return (
           <div className="space-y-1.5">
@@ -1081,7 +1095,7 @@ export const RescueNeedsFlyers: React.FC = () => {
                 const ci = bullet.indexOf(':');
                 const hasC = ci > -1;
                 return (
-                  <div key={i} className="flex items-start gap-1.5 text-[10px]">
+                  <div key={i} className="flex items-start gap-1.5" style={{ fontSize: listFontSize }}>
                     <span className="font-black text-amber-600 shrink-0 mt-0.5">◆</span>
                     <p className="leading-snug text-stone-800 font-semibold">
                       {hasC ? <><strong className="font-black text-stone-900">{bullet.substring(0,ci)}:</strong>{bullet.substring(ci+1)}</> : bullet}
@@ -1112,7 +1126,7 @@ export const RescueNeedsFlyers: React.FC = () => {
             </div>
             {/* Square: narrative + CTA */}
             <div className={`bg-stone-50 p-2 rounded-xl ${bentoBorder} ${bentoShadow} text-center shrink-0`}>
-              <p className="text-[9.5px] leading-snug text-stone-700 italic font-semibold">"{data.intro?.slice(0,100)}"</p>
+              <p className="text-[9.5px] leading-snug text-stone-700 italic font-semibold">{data.intro?.slice(0,100)}</p>
             </div>
             <div className={`bg-amber-500 p-2 rounded-xl ${bentoBorder} ${bentoShadow} flex justify-between items-center shrink-0`}>
               <div className="text-left">
@@ -1135,43 +1149,45 @@ export const RescueNeedsFlyers: React.FC = () => {
 
       return (
         <div className="flex-grow flex flex-col justify-between h-full gap-2">
-          {/* Top header card */}
-          <div className={`bg-amber-50 p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} text-center space-y-0.5 shrink-0`}>
-            <p className="text-[8px] font-black tracking-[0.2em] text-amber-800 uppercase">
-              {data.orgName ? data.orgName.toUpperCase() : 'YOUR RESCUE ORG'}
-            </p>
+          {/* Top header card — bright amber, bold */}
+          <div className={`bg-amber-400 p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} text-center space-y-0.5 shrink-0`}>
+            {data.orgName && (
+              <span className="inline-block bg-white/60 px-2 py-0.5 rounded-full text-[7.5px] font-black tracking-[0.15em] text-amber-900 uppercase mb-0.5">
+                {data.orgName}
+              </span>
+            )}
             <h1 className="text-xl md:text-2xl font-black text-stone-950 leading-none tracking-tight">
               {data.header || 'COMMUNITY NEED'}
             </h1>
-            <p className="text-[10px] font-bold text-amber-900 uppercase">
+            <p className="text-[10px] font-extrabold text-amber-800 uppercase tracking-wide">
               {data.subtitle || 'Act Local · Save Lives'}
             </p>
           </div>
 
-          {/* Narrative bento block — opening paragraph near the top */}
-          <div className={`bg-stone-50 p-2 rounded-xl ${bentoBorder} ${bentoShadow} text-center shrink-0`}>
-            <p className="text-[10px] leading-snug text-slate-700 font-semibold italic">
-              " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
+          {/* Narrative bento block — warm peach */}
+          <div className={`bg-orange-100 border-2 border-orange-200 px-2.5 py-1.5 rounded-xl ${bentoShadow} text-center shrink-0`}>
+            <p className="text-[9px] leading-snug text-orange-900 font-semibold italic">
+              {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'}
             </p>
           </div>
 
           {/* Bento grid: checklist + optional photo side by side */}
           <div className={`grid gap-2 ${hasPhoto ? 'grid-cols-12 flex-grow min-h-0' : 'grid-cols-1 flex-grow min-h-0'}`}>
-            {/* Checklist bento block */}
-            <div className={`${hasPhoto ? 'col-span-7' : 'col-span-1'} bg-white p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} flex flex-col justify-start`}>
+            {/* Checklist bento block — bright yellow-white */}
+            <div className={`${hasPhoto ? 'col-span-7' : 'col-span-1'} bg-yellow-50 border-2 border-amber-200 p-2.5 rounded-xl ${bentoShadow} flex flex-col justify-start`}>
               {amberBullets()}
             </div>
 
             {/* Photo bento block — shown when photos uploaded */}
             {hasPhoto && (
-              <div className={`col-span-5 bg-white rounded-xl ${bentoBorder} ${bentoShadow} overflow-hidden flex flex-col gap-1.5 p-1.5`} style={{ minHeight: '120px' }}>
-                <div className="flex-1 rounded-lg overflow-hidden border border-stone-300 relative min-h-0" style={{ minHeight: '70px' }}>
+              <div className={`col-span-5 bg-amber-50 rounded-xl border-2 border-amber-200 ${bentoShadow} overflow-hidden flex flex-col gap-1.5 p-1.5`} style={{ minHeight: '120px' }}>
+                <div className="flex-1 rounded-lg overflow-hidden border border-amber-300 relative min-h-0" style={{ minHeight: '70px' }}>
                   <RepositionableOutreachImage id={0} src={photos[0]} alt="Bento lead" zoom={photoZooms[0]||1} offsetX={photoOffsetsX[0]||0} offsetY={photoOffsetsY[0]||0} updateZoom={updatePhotoZoom} updateOffsetX={updatePhotoOffsetX} updateOffsetY={updatePhotoOffsetY} />
                 </div>
                 {photos.length > 1 && (
                   <div className="grid grid-cols-2 gap-1 shrink-0">
                     {photos.slice(1).map((src, i) => (
-                      <div key={i} className="h-10 rounded overflow-hidden border border-stone-300 relative">
+                      <div key={i} className="h-10 rounded overflow-hidden border border-amber-300 relative">
                         <RepositionableOutreachImage id={i+1} src={src} alt={`Photo ${i+2}`} zoom={photoZooms[i+1]||1} offsetX={photoOffsetsX[i+1]||0} offsetY={photoOffsetsY[i+1]||0} updateZoom={updatePhotoZoom} updateOffsetX={updatePhotoOffsetX} updateOffsetY={updatePhotoOffsetY} />
                       </div>
                     ))}
@@ -1182,29 +1198,29 @@ export const RescueNeedsFlyers: React.FC = () => {
           </div>
 
           {data.thankYouMessage && (
-            <div className={`bg-amber-50 p-2 rounded-xl ${bentoBorder} ${bentoShadow} text-center shrink-0`}>
-              <p className="text-[9.5px] font-black text-amber-900">{data.thankYouMessage}</p>
+            <div className={`bg-orange-200 border-2 border-orange-300 p-2 rounded-xl ${bentoShadow} text-center shrink-0`}>
+              <p className="text-[9.5px] font-black text-orange-900">{data.thankYouMessage}</p>
             </div>
           )}
 
-          {/* CTA amber panel */}
-          <div className={`bg-amber-500 p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} flex justify-between items-center gap-2 shrink-0`}>
+          {/* CTA panel — bright coral/orange */}
+          <div className={`bg-orange-400 p-2.5 rounded-xl ${bentoBorder} ${bentoShadow} flex justify-between items-center gap-2 shrink-0`}>
             <div className="text-left space-y-0.5 flex-1">
-              {data.ctaLabel && <p className="text-[7.5px] font-black tracking-wider uppercase text-amber-950">{data.ctaLabel}</p>}
-              {data.ctaDetails && <p className="text-[10px] font-black text-stone-950 leading-tight">{data.ctaDetails}</p>}
+              {data.ctaLabel && <p className="text-[7.5px] font-black tracking-wider uppercase text-orange-950">{data.ctaLabel}</p>}
+              {data.ctaDetails && <p className="text-[10px] font-black text-white leading-tight">{data.ctaDetails}</p>}
               {!data.ctaLabel && !data.ctaDetails && (
                 <div className="flex flex-wrap gap-1.5 items-center">
-                  {data.orgName && <span className="text-[9.5px] font-black text-stone-950">{data.orgName}</span>}
-                  {data.website && <span className="text-[9px] font-bold text-amber-900">{data.website.replace('https://','').replace('www.','')}</span>}
-                  {data.email && <span className="text-[8.5px] font-bold text-amber-950">{data.email}</span>}
-                  {data.phone && <span className="text-[8.5px] font-bold text-amber-950">{data.phone}</span>}
+                  {data.orgName && <span className="text-[9.5px] font-black text-white">{data.orgName}</span>}
+                  {data.website && <span className="text-[9px] font-bold text-orange-100">{data.website.replace('https://','').replace('www.','')}</span>}
+                  {data.email && <span className="text-[8.5px] font-bold text-white">{data.email}</span>}
+                  {data.phone && <span className="text-[8.5px] font-bold text-white">{data.phone}</span>}
                 </div>
               )}
               {(data.ctaLabel || data.ctaDetails) && (
                 <div className="flex flex-wrap gap-1 mt-0.5">
-                  {data.email && <span className="text-[8px] font-bold text-amber-950">{data.email}</span>}
-                  {data.phone && <span className="text-[8px] font-bold text-amber-950">{data.phone}</span>}
-                  {data.website && <span className="text-[8px] font-bold text-amber-900">{data.website.replace('https://','').replace('www.','')}</span>}
+                  {data.email && <span className="text-[8px] font-bold text-white">{data.email}</span>}
+                  {data.phone && <span className="text-[8px] font-bold text-white">{data.phone}</span>}
+                  {data.website && <span className="text-[8px] font-bold text-orange-100">{data.website.replace('https://','').replace('www.','')}</span>}
                 </div>
               )}
             </div>
@@ -1234,6 +1250,7 @@ export const RescueNeedsFlyers: React.FC = () => {
 
       const playfulBullets = () => {
         const displayedItems = data.items.slice(0, 10);
+        const listFontSize = getListFontSize(displayedItems);
         const labelMap: Record<string, string> = { donation: 'WHAT WE NEED', fosters: 'WHY FOSTER', ongoing_volunteers: 'JOIN THE FUN', event_volunteers: 'VOLUNTEER SHIFTS' };
         return (
           <div className="space-y-1.5">
@@ -1244,7 +1261,7 @@ export const RescueNeedsFlyers: React.FC = () => {
                 const hasC = ci > -1;
                 const color = dotColors[i % dotColors.length];
                 return (
-                  <div key={i} className="flex items-start gap-2 text-[10px]">
+                  <div key={i} className="flex items-start gap-2" style={{ fontSize: listFontSize }}>
                     <span className="w-3 h-3 rounded-full shrink-0 mt-0.5 flex-none" style={{ backgroundColor: color }} />
                     <p className="leading-snug font-semibold text-stone-800">
                       {hasC ? <><strong className="font-black">{bullet.substring(0,ci)}:</strong>{bullet.substring(ci+1)}</> : bullet}
@@ -1279,7 +1296,7 @@ export const RescueNeedsFlyers: React.FC = () => {
             {/* Square: content centered */}
             <div className="flex-1 flex flex-col justify-center gap-2 min-h-0 py-2">
               <div className="p-2.5 rounded-2xl text-center" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #fdf2f8 100%)', border: '2px solid #fecdd3' }}>
-                <p className="text-[10px] leading-relaxed font-bold italic text-rose-950">"{data.intro}"</p>
+                <p className="text-[10px] leading-relaxed font-bold italic text-rose-950">{data.intro}</p>
               </div>
               <div>{playfulBullets()}</div>
             </div>
@@ -1315,19 +1332,19 @@ export const RescueNeedsFlyers: React.FC = () => {
             </p>
           </div>
 
-          {/* Content group — vertically centered between header and footer */}
-          <div className="flex-1 flex flex-col justify-center gap-2 min-h-0 py-1">
-            {/* Staggered photo grid */}
-            {hasPhoto && renderPhotoGrid('h-28 md:h-36', 'h-20 md:h-24', 'h-14 md:h-18')}
-
-            {/* Quote card — warm multicolor gradient bg */}
-            <div className="p-3 rounded-2xl text-center" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #fdf2f8 60%, #f5f3ff 100%)', border: '2px solid #fecdd3' }}>
-              <p className={`${noPhoto ? 'text-[11px]' : 'text-[10px]'} leading-relaxed text-stone-800 font-bold italic`}>
-                " {data.intro || 'Fostering and volunteering directly rescues regional animals. Get involved today!'} "
-              </p>
+          {/* Content group — narrative pinned top, bullets float slightly above center */}
+          <div className="flex-1 flex flex-col min-h-0 py-1">
+            <div className="shrink-0 flex flex-col gap-2">
+              {hasPhoto && renderPhotoGrid('h-28 md:h-36', 'h-20 md:h-24', 'h-14 md:h-18')}
+              <div className="p-3 rounded-2xl text-center" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #fdf2f8 60%, #f5f3ff 100%)', border: '2px solid #fecdd3' }}>
+                <p className={`${noPhoto ? 'text-[11px]' : 'text-[10px]'} leading-relaxed text-stone-800 font-bold italic`}>
+                  {data.intro || 'Fostering and volunteering directly rescues regional animals. Get involved today!'}
+                </p>
+              </div>
             </div>
-
-            <div>{playfulBullets()}</div>
+            <div className="flex-1 flex flex-col justify-center pb-8 min-h-0">
+              {playfulBullets()}
+            </div>
           </div>
 
           {/* Closing & CTA — vibrant gradient footer band */}
@@ -1359,13 +1376,14 @@ export const RescueNeedsFlyers: React.FC = () => {
 
     // Theme 1: terracotta (default classic layout)
     const tcBulletConfig = (() => {
-      if (data.useCase === 'donation') return { label: 'WHAT WE NEED', Icon: Gift, color: 'text-orange-600', bg: 'bg-orange-100' };
+      if (data.useCase === 'donation') return { label: 'WHAT WE NEED', Icon: Gift, color: 'text-orange-500', bg: 'bg-orange-100' };
       if (data.useCase === 'fosters') return { label: 'WHY FOSTER WITH US', Icon: Heart, color: 'text-rose-600', bg: 'bg-rose-100' };
       return { label: data.useCase === 'event_volunteers' ? 'VOLUNTEER SHIFTS' : 'OPEN ROLES', Icon: Users, color: 'text-amber-700', bg: 'bg-amber-100' };
     })();
 
     const renderTerracottaBullets = () => {
       const displayedItems = data.items.slice(0, 10);
+      const listFontSize = getListFontSize(displayedItems);
       const TcIcon = tcBulletConfig.Icon;
       return (
         <div className="space-y-1.5">
@@ -1377,7 +1395,7 @@ export const RescueNeedsFlyers: React.FC = () => {
               const ci = bullet.indexOf(':');
               const hasColon = ci > -1;
               return (
-                <div key={index} className="flex items-start gap-2 text-[10px] w-full">
+                <div key={index} className="flex items-start gap-2 w-full" style={{ fontSize: listFontSize }}>
                   <div className={`p-[3px] mt-[1px] ${tcBulletConfig.bg} rounded-full shrink-0 ${tcBulletConfig.color}`}>
                     <TcIcon className="w-3 h-3 shrink-0" />
                   </div>
@@ -1421,7 +1439,7 @@ export const RescueNeedsFlyers: React.FC = () => {
           {/* Square: quote block */}
           <div className="bg-amber-50 border border-orange-200 rounded-xl p-2.5 shrink-0">
             <p className="text-[10px] leading-relaxed text-stone-700 italic font-semibold text-center">
-              "{data.intro?.slice(0, 130)}"
+              {data.intro?.slice(0, 130)}
             </p>
           </div>
           {/* Square: bullets */}
@@ -1453,54 +1471,56 @@ export const RescueNeedsFlyers: React.FC = () => {
         {/* HEADER: org name prominent, solid headline (no gradient text) */}
         <div className="text-center space-y-1 relative z-10 shrink-0 pb-2">
           {data.orgName && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[8.5px] font-black uppercase bg-orange-100 border border-orange-200 text-orange-800">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[8.5px] font-black uppercase bg-orange-100 border border-orange-200 text-orange-900">
               <Sparkles className="w-3 h-3 text-orange-500" />
               <span>{data.orgName}</span>
             </div>
           )}
-          <h1 className="text-xl md:text-2xl font-black tracking-tight leading-tight uppercase text-stone-900 font-outfit">
+          <h1 className="text-xl md:text-2xl font-black tracking-tight leading-tight uppercase text-slate-900 font-outfit">
             {data.header || 'COMMUNITY NEED'}
           </h1>
-          <p className="text-[10px] font-extrabold text-orange-700 leading-none uppercase tracking-wider font-outfit">
+          <p className="text-[10px] font-extrabold text-orange-600 leading-none uppercase tracking-wider font-outfit">
             {data.subtitle || 'Make a difference today'}
           </p>
           <div className="w-14 h-0.5 bg-orange-500 mx-auto rounded-full mt-1" />
         </div>
 
-        {/* Content group — vertically centered between header and footer */}
-        <div className="flex-1 flex flex-col justify-center gap-2 min-h-0">
-          {/* Photos */}
-          {!noPhoto && renderPhotoGrid('h-28 md:h-36', 'h-20 md:h-24', 'h-14 md:h-18')}
-
-          {/* NARRATIVE — no side stripe (banned), clean card */}
-          <div className="bg-amber-50 border border-orange-200 p-2.5 px-3 rounded-xl">
-            <p className={`${noPhoto ? 'text-[11px] font-bold' : 'text-[10px] font-semibold'} leading-relaxed text-stone-700 italic text-center`}>
-              " {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'} "
-            </p>
+        {/* Content group — photo + narrative pinned top; bullets float slightly above center in remaining space */}
+        <div className="flex-1 flex flex-col min-h-0">
+          {/* Photo + narrative — always at top of content area */}
+          <div className={`shrink-0 flex flex-col gap-2 ${noPhoto ? 'pt-1' : ''}`}>
+            {!noPhoto && renderPhotoGrid('h-28 md:h-36', 'h-20 md:h-24', 'h-14 md:h-18')}
+            <div className="bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-xl">
+              <p className={`${noPhoto ? 'text-[10px] font-bold' : 'text-[9px] font-semibold'} leading-snug text-orange-950 italic text-center`}>
+                {data.intro || 'Fostering and volunteering directly rescues regional animals and prevents shelter intakes. Get involved today!'}
+              </p>
+            </div>
           </div>
 
-          {/* Bullets */}
-          <div>{renderTerracottaBullets()}</div>
+          {/* Bullets — centered in remaining space, biased slightly above true center */}
+          <div className="flex-1 flex flex-col justify-center pb-8 min-h-0">
+            {renderTerracottaBullets()}
+          </div>
         </div>
 
         {/* THANK YOU */}
-        <div className="bg-orange-50 border border-orange-200 p-2 rounded-xl text-center shrink-0">
-          <p className="text-[10px] font-black text-orange-900 leading-snug">
+        <div className="bg-slate-900 p-2 rounded-xl text-center shrink-0">
+          <p className="text-[10px] font-black text-orange-200 leading-snug">
             {data.thankYouMessage || 'We appreciate your support — you are helping save local pet lives.'}
           </p>
         </div>
 
         {/* FOOTER CTA */}
-        <div className="border-t border-orange-200 pt-2.5 shrink-0">
+        <div className="border-t border-slate-200 pt-2.5 shrink-0">
           <div className="flex gap-2.5 items-start">
             {(data.ctaLabel || data.ctaDetails) && (
-              <div className="flex-1 rounded-xl p-2.5 px-3 text-white" style={{ background: ctaBg }}>
+              <div className="flex-1 rounded-xl p-2.5 px-3 bg-slate-900">
                 {data.ctaLabel && <p className="text-[7.5px] font-black uppercase text-orange-300 tracking-wider block mb-0.5">{data.ctaLabel}</p>}
                 {data.ctaDetails && <p className="text-[10px] font-extrabold text-white leading-tight">{data.ctaDetails}</p>}
               </div>
             )}
             {data.showQRCode && data.website && (
-              <div className="bg-white p-1.5 rounded-xl border border-orange-200 shrink-0 flex flex-col items-center gap-0.5">
+              <div className="bg-white p-1.5 rounded-xl border border-slate-200 shrink-0 flex flex-col items-center gap-0.5">
                 <QRCodeImage url={data.website} className="w-12 h-12" />
                 <span className="text-[6.5px] font-black text-stone-500 uppercase tracking-widest">SCAN LINK</span>
               </div>
@@ -1508,12 +1528,12 @@ export const RescueNeedsFlyers: React.FC = () => {
           </div>
           <div className="flex flex-wrap gap-1 mt-1.5">
             {data.orgName && (
-              <span className="inline-flex items-center gap-1 bg-white border border-stone-200 px-2 py-0.5 rounded-full text-[8.5px] font-black text-stone-700">
+              <span className="inline-flex items-center gap-1 bg-white border border-slate-200 px-2 py-0.5 rounded-full text-[8.5px] font-black text-slate-700">
                 {data.orgName}
               </span>
             )}
             {data.website && (
-              <span className="inline-flex items-center gap-1 bg-white border border-stone-200 px-2 py-0.5 rounded-full text-[8.5px] font-bold text-orange-700">
+              <span className="inline-flex items-center gap-1 bg-white border border-slate-200 px-2 py-0.5 rounded-full text-[8.5px] font-bold text-orange-600">
                 <Globe className="w-2.5 h-2.5 text-orange-500" />{data.website.replace('https://','').replace('www.','')}
               </span>
             )}

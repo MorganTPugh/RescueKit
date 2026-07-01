@@ -65,7 +65,7 @@ const BLANK_PET: FosterPetData = {
 };
 
 const DEFAULT_SETTINGS: PosterDesignSettings = {
-  templateId: 'whimsical',
+  templateId: 'editorial',
   themeId: 'vibrant',
   headingText: 'ADOPT ME!',
   aspectRatio: 'flyer'
@@ -343,7 +343,7 @@ export default function App() {
               </svg>
             </div>
             <div>
-              <span className={`font-black tracking-tight font-display transition-all duration-300 ${scrolled ? 'text-2xl md:text-3xl' : 'text-3xl md:text-4xl'}`} style={{background:'linear-gradient(90deg,#082f49 0%,#082f49 40%,#0284c7 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Rescue-Kit</span>
+              <span className={`font-bold tracking-tight font-fraunces transition-all duration-300 ${scrolled ? 'text-2xl md:text-3xl' : 'text-3xl md:text-4xl'}`} style={{background:'linear-gradient(90deg,#082f49 0%,#082f49 40%,#0284c7 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Rescue-Kit</span>
               <p className={`hidden sm:block text-[11px] font-semibold text-sky-700 leading-none mt-0.5 transition-all duration-300 ${scrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>Free tools for animal rescues, fosters, and volunteers</p>
             </div>
           </div>

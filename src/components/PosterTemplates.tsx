@@ -1059,24 +1059,24 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                   { label: pet.weight || 'Medium' },
                   { label: pet.houseTrained === 'yes' ? 'Housetrained ✓' : pet.houseTrained === 'working-on-it' ? 'Learning' : 'Untrained' },
                 ].map((item, i) => (
-                  <span key={i} className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[7px] font-bold shrink-0 ${currentTheme.bgClass} border ${currentTheme.borderClass} text-slate-700`}>
+                  <span key={i} className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 ${currentTheme.bgClass} border ${currentTheme.borderClass} text-slate-700`}>
                     {item.label}
                   </span>
                 ))}
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1.5">
                 {[
                   { label: 'Dogs', val: pet.goodWithDogs },
                   { label: 'Cats', val: pet.goodWithCats },
                   { label: 'Kids', val: pet.goodWithKids },
                 ].map((item, i) => (
-                  <div key={i} className={`flex-1 rounded-lg py-0.5 text-center border ${
+                  <div key={i} className={`flex-1 rounded-lg py-1.5 text-center border ${
                     item.val === 'yes' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
                     item.val === 'no' ? 'bg-rose-50 border-rose-200 text-rose-700' :
                     'bg-stone-50 border-stone-200 text-stone-500'
                   }`}>
-                    <span className="text-[5.5px] uppercase font-black block leading-none">{item.label}</span>
-                    <span className="text-[7px] font-black block mt-0.5 leading-none">
+                    <span className="text-[9px] uppercase font-black block leading-none">{item.label}</span>
+                    <span className="text-[12px] font-black block mt-0.5 leading-none">
                       {item.val === 'yes' ? '✓ Yes' : item.val === 'no' ? '✗ No' : '— ?'}
                     </span>
                   </div>
