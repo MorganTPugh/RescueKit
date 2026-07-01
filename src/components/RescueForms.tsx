@@ -157,9 +157,9 @@ const FORM_TEMPLATES: FormTemplate[] = [
         type: 'fields',
         fields: [
           { label: 'First Name, MI, Last Name', type: 'text', width: 'full' },
-          { label: 'Date of Birth', type: 'date', width: 'half' },
-          { label: 'Email Address', type: 'email', width: 'half' },
-          { label: 'Primary / Cell Phone', type: 'phone', width: 'half' },
+          { label: 'Date of Birth', type: 'date', width: 'third' },
+          { label: 'Email Address', type: 'email', width: 'third' },
+          { label: 'Primary / Cell Phone', type: 'phone', width: 'third' },
           { label: 'Does this phone accept text messages / SMS?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
           { label: 'Alternate / Home Phone', type: 'phone', width: 'half' },
           { label: 'Physical Street Address', type: 'text', width: 'full' },
@@ -167,13 +167,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
           { label: 'Township / County', type: 'text', width: 'half' },
           { label: 'I am interested in adopting a', type: 'checkbox', options: ['Dog', 'Cat', 'Other'], width: 'half' },
           { label: 'Name of specific animal or desired breed', type: 'text', width: 'half' },
-          { label: 'What is the main reason you want this pet?', type: 'text', width: 'full' },
-          { 
-            label: 'Source of Income', 
-            type: 'checkbox', 
-            options: ['Job', 'Social Security', 'Pension', 'Unemployment', 'Disability', 'Retired', 'Self-Employment', 'No Income', 'Other'], 
-            width: 'full' 
-          }
+          { label: 'What is the main reason you want this pet?', type: 'text', width: 'full' }
         ]
       },
       {
@@ -2412,7 +2406,7 @@ export function RescueForms() {
           </div>
 
           {/* DOCUMENT BODY */}
-          <div className="mt-8 space-y-8 text-slate-700 text-xs sm:text-[13px] leading-relaxed">
+          <div className="mt-5 space-y-5 text-slate-700 text-xs sm:text-[13px] leading-relaxed">
             
             {/* Document Title Header */}
             <div className="text-center space-y-2">
@@ -2423,9 +2417,9 @@ export function RescueForms() {
             </div>
 
             {/* NOTICE BOX */}
-            <div className={`p-4 rounded-2xl border ${activeTheme.border} ${activeTheme.bgLight} space-y-2`}>
+            <div className={`p-3 rounded-2xl border ${activeTheme.border} ${activeTheme.bgLight} space-y-1.5`}>
               <h4 className={`text-[11px] font-black uppercase tracking-wider ${activeTheme.text}`}>Important Notice</h4>
-              <ul className="list-disc pl-4 space-y-1 text-slate-600 text-[11.5px] font-medium">
+              <ul className="list-disc pl-4 space-y-0.5 text-slate-600 text-[11px] font-medium">
                 {activeTemplate.notice.map((note, idx) => (
                   <li key={idx}>{note}</li>
                 ))}
@@ -2445,11 +2439,11 @@ export function RescueForms() {
 
             {/* GENERAL REQUIREMENTS */}
             {activeTemplate.generalReqs && (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 ${activeTheme.text} ${activeTheme.border}`}>
                   General Requirements
                 </h3>
-                <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
+                <ul className="list-disc pl-5 space-y-1 text-slate-600">
                   {activeTemplate.generalReqs.map((req, idx) => (
                     <li key={idx}>{req}</li>
                   ))}
@@ -2459,10 +2453,10 @@ export function RescueForms() {
 
             {/* SECTIONS */}
             {activeTemplate.sections.map((section, sIdx) => (
-              <div key={sIdx} className="form-section space-y-4">
+              <div key={sIdx} className="form-section space-y-3">
                 
                 {/* Section Title */}
-                <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 mt-6 ${activeTheme.text} ${activeTheme.border}`}>
+                <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 mt-4 ${activeTheme.text} ${activeTheme.border}`}>
                   {section.title}
                 </h3>
 
@@ -2485,12 +2479,12 @@ export function RescueForms() {
 
                 {/* FIELDS TYPE */}
                 {section.type === 'fields' && section.fields && (
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-x-4 gap-y-3.5">
+                  <div className="grid grid-cols-6 gap-x-3 gap-y-2.5">
                     {section.fields.map((field, fIdx) => {
-                      const widthClass = 
+                      const widthClass =
                         field.width === 'full' ? 'col-span-full' :
-                        field.width === 'half' ? 'col-span-full md:col-span-3' :
-                        'col-span-full md:col-span-2';
+                        field.width === 'half' ? 'col-span-3' :
+                        'col-span-2';
 
                       if (field.type === 'table') {
                         return (
