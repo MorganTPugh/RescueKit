@@ -192,7 +192,7 @@ app.post("/api/feedback", async (req, res) => {
       await resend.emails.send({
         from: "RescueKit Feedback <onboarding@resend.dev>",
         to: "morgantpugh3@gmail.com",
-        reply_to: email ? `${name || "Anonymous"} <${email}>` : undefined,
+        replyTo: email ? `${name || "Anonymous"} <${email}>` : undefined,
         subject: `[RescueKit Feedback] ${payload.subject}`,
         text: `Name: ${payload.name}\nEmail: ${payload.email}\n\n${payload.message}`,
         html: `<p><strong>From:</strong> ${payload.name} (${payload.email})</p><p><strong>Subject:</strong> ${payload.subject}</p><hr/><p>${payload.message.replace(/\n/g, "<br/>")}</p>`,

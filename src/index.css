@@ -105,8 +105,9 @@
   /* Forms: unblock the ancestor chain (display:none from responsive classes blocks even fixed children) */
   .forms-outer-grid,
   .forms-preview-col,
-  .forms-print-container,
-  .forms-print-container * {
+  .form-pages-stack,
+  .form-page,
+  .form-page * {
     visibility: visible !important;
   }
 
@@ -135,18 +136,33 @@
     break-after: avoid;
   }
 
-  .forms-print-container {
-    position: static !important;  /* flow naturally for multi-page pagination */
-    width: 100% !important;
-    height: auto !important;
+  /* Each .form-page card becomes one physical 8.5×11 sheet */
+  .form-pages-stack {
+    gap: 0 !important;
+  }
+
+  .form-page {
+    position: static !important;
+    width: 8.5in !important;
+    min-height: 11in !important;
     background-color: #ffffff !important;
     color: #000000 !important;
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
-    padding: 0.65in !important;  /* compensates for @page margin: 0 */
     margin: 0 !important;
     overflow: visible !important;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .form-page:last-child {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .form-page > div {
+    padding: 0.65in !important;
   }
   
   /* Reset body size to exactly fill paper context */

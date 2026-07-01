@@ -65,6 +65,7 @@ interface FormSection {
   type: 'text' | 'fields';
   paragraphs?: string[];
   fields?: FormField[];
+  pageBreakBefore?: boolean;
 }
 
 interface FormTemplate {
@@ -171,7 +172,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 2: Household & Property Logistics',
+        title: 'Part 2: Household & Property Logistics', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { 
@@ -214,7 +215,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 3: Animal History & Veterinary Reference',
+        title: 'Part 3: Animal History & Veterinary Reference', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { 
@@ -236,7 +237,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 4: Everyday Care, Lifestyle & Environment',
+        title: 'Part 4: Everyday Care, Lifestyle & Environment', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'Describe how often and for how long this pet will be left alone?', type: 'textarea', width: 'full' },
@@ -364,7 +365,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 4: Experience, Preferences & Capabilities',
+        title: 'Part 4: Experience, Preferences & Capabilities', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'Please describe your previous personal or professional experience handling, caring for, or training animals', type: 'textarea', width: 'full' },
@@ -520,7 +521,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 3: Yard, Fence & Property Security',
+        title: 'Part 3: Yard, Fence & Property Security', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'What type of yard do they have? (Size, terrain)', type: 'text', width: 'full' },
@@ -583,7 +584,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 6: Home Visit Conclusions',
+        title: 'Part 6: Home Visit Conclusions', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'Do you feel the adopter/foster will love and care for the dog/cat properly?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
@@ -746,7 +747,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 3: Social & Living History',
+        title: 'Part 3: Social & Living History', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'Lived with (check all that apply)', type: 'checkbox', options: ['Men', 'Women', 'Children', 'Dogs', 'Other cats', 'Other pets'], width: 'full' },
@@ -786,7 +787,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 5: Veterinary History & Care',
+        title: 'Part 5: Veterinary History & Care', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'Did the cat receive routine veterinary care (at least once a year)?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
@@ -859,7 +860,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 3: Behavior, Training & Play Style',
+        title: 'Part 3: Behavior, Training & Play Style', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'Is this dog housebroken?', type: 'radio', options: ['Yes', 'No', 'In Training'], width: 'half' },
@@ -899,7 +900,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 5: Veterinary History & Care',
+        title: 'Part 5: Veterinary History & Care', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'Did the dog receive routine veterinary care (at least once a year)?', type: 'radio', options: ['Yes', 'No'], width: 'half' },
@@ -1175,7 +1176,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 3: Acknowledgment & Signatures',
+        title: 'Part 3: Acknowledgment & Signatures', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'I have read, understood, and agree to all terms of this Adoption Contract', type: 'radio', options: ['Yes, I agree'], width: 'full' },
@@ -1240,7 +1241,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 3: Availability & Commitment',
+        title: 'Part 3: Availability & Commitment', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'Available days (check all that apply)', type: 'checkbox', options: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], width: 'full' },
@@ -1374,7 +1375,7 @@ const FORM_TEMPLATES: FormTemplate[] = [
         ]
       },
       {
-        title: 'Part 3: Rescue Organization Contacts',
+        title: 'Part 3: Rescue Organization Contacts', pageBreakBefore: true,
         type: 'fields',
         fields: [
           { label: 'Rescue Organization Name', type: 'text', width: 'full' },
@@ -2379,238 +2380,223 @@ export function RescueForms() {
           </div>
         )}
 
-        {/* PAPER LIVE PREVIEW CANVAS */}
-        <div className="bg-white border border-slate-200 shadow-lg rounded-3xl p-6 sm:p-12 md:p-16 relative overflow-hidden font-sans forms-print-container">
-          
-          {/* HEADER LETTERHEAD */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 pb-6 border-b border-slate-200">
-            {/* Logo Badge */}
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 ${activeTheme.bgLight} border-2 ${activeTheme.border}`}>
-              {(() => { const b = BADGE_OPTIONS.find(b => b.id === selectedEmoji); return b ? <b.Icon className="w-7 h-7" strokeWidth={1.5} style={{color: `#${activeTheme.primaryHex}`}} /> : null; })()}
-            </div>
-            
-            {/* Rescue Details */}
-            <div className="text-center sm:text-left space-y-1">
-              <h2 className="text-lg font-black text-slate-900 tracking-tight uppercase leading-none">
-                {displayRescueName}
-              </h2>
-              
-              {/* Badges/Metadata — only shown when user has filled the field */}
-              <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-1.5">
-                {displayLocation && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><MapPin className="w-3 h-3 text-slate-400" /><span>{displayLocation}</span></span>}
-                {displayPhone && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><Phone className="w-3 h-3 text-slate-400" /><span>{displayPhone}</span></span>}
-                {displayEmail && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><Mail className="w-3 h-3 text-slate-400" /><span>{displayEmail}</span></span>}
-                {displayWebsite && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><Globe className="w-3 h-3 text-slate-400" /><span>{displayWebsite}</span></span>}
-              </div>
-            </div>
-          </div>
+        {/* PAPER LIVE PREVIEW CANVAS — paginated pages */}
+        {(() => {
+          // Group sections into pages using pageBreakBefore flags
+          const pages: (typeof activeTemplate.sections[0])[][] = [];
+          let cur: (typeof activeTemplate.sections[0])[] = [];
+          for (const s of activeTemplate.sections) {
+            if (s.pageBreakBefore && cur.length > 0) { pages.push(cur); cur = []; }
+            cur.push(s);
+          }
+          if (cur.length > 0) pages.push(cur);
 
-          {/* DOCUMENT BODY */}
-          <div className="mt-5 space-y-5 text-slate-700 text-xs sm:text-[13px] leading-relaxed">
-            
-            {/* Document Title Header */}
-            <div className="text-center space-y-2">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                {activeTemplate.title}
-              </h1>
-              <div className="w-16 h-1 bg-slate-900 mx-auto rounded-full" />
-            </div>
-
-            {/* NOTICE BOX */}
-            <div className={`p-3 rounded-2xl border ${activeTheme.border} ${activeTheme.bgLight} space-y-1.5`}>
-              <h4 className={`text-[11px] font-black uppercase tracking-wider ${activeTheme.text}`}>Important Notice</h4>
-              <ul className="list-disc pl-4 space-y-0.5 text-slate-600 text-[11px] font-medium">
-                {activeTemplate.notice.map((note, idx) => (
-                  <li key={idx}>{note}</li>
-                ))}
-              </ul>
-            </div>
-
-            {/* CUSTOM HEADER NOTE */}
-            {customNote.trim() && (
-              <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex gap-2.5">
-                <span className="text-sm shrink-0">📌</span>
-                <div className="space-y-0.5">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Organization Note</p>
-                  <p className="text-[11.5px] text-slate-600 font-medium leading-relaxed italic">{customNote}</p>
-                </div>
-              </div>
-            )}
-
-            {/* GENERAL REQUIREMENTS */}
-            {activeTemplate.generalReqs && (
-              <div className="space-y-2">
-                <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 ${activeTheme.text} ${activeTheme.border}`}>
-                  General Requirements
-                </h3>
-                <ul className="list-disc pl-5 space-y-1 text-slate-600">
-                  {activeTemplate.generalReqs.map((req, idx) => (
-                    <li key={idx}>{req}</li>
+          const renderSection = (section: typeof activeTemplate.sections[0], sIdx: number) => (
+            <div key={sIdx} className="form-section space-y-3">
+              <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 mt-4 ${activeTheme.text} ${activeTheme.border}`}>
+                {section.title}
+              </h3>
+              {section.type === 'text' && section.paragraphs && (
+                <div className="space-y-3 text-slate-600">
+                  {section.paragraphs.map((para, pIdx) => (
+                    <div key={pIdx} className="flex items-start gap-3">
+                      {activeTemplate.id === 'foster-agreement' && (
+                        <div className="shrink-0 flex flex-col items-center justify-center pt-0.5 min-w-[70px]">
+                          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-none mb-0.5">Initials</span>
+                          <span className="w-14 border-b border-slate-300 h-4 block"></span>
+                        </div>
+                      )}
+                      <p className="flex-1 whitespace-pre-line text-[11px] leading-relaxed">{para}</p>
+                    </div>
                   ))}
-                </ul>
-              </div>
-            )}
-
-            {/* SECTIONS */}
-            {activeTemplate.sections.map((section, sIdx) => (
-              <div key={sIdx} className="form-section space-y-3">
-                
-                {/* Section Title */}
-                <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 mt-4 ${activeTheme.text} ${activeTheme.border}`}>
-                  {section.title}
-                </h3>
-
-                {/* TEXT TYPE */}
-                {section.type === 'text' && section.paragraphs && (
-                  <div className="space-y-3 text-slate-600">
-                    {section.paragraphs.map((para, pIdx) => (
-                      <div key={pIdx} className="flex items-start gap-3">
-                        {activeTemplate.id === 'foster-agreement' && (
-                          <div className="shrink-0 flex flex-col items-center justify-center pt-0.5 min-w-[70px]">
-                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-none mb-0.5">Initials</span>
-                            <span className="w-14 border-b border-slate-300 h-4 block"></span>
-                          </div>
-                        )}
-                        <p className="flex-1 whitespace-pre-line text-[11px] leading-relaxed">{para}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* FIELDS TYPE */}
-                {section.type === 'fields' && section.fields && (
-                  <div className="grid grid-cols-6 gap-x-3 gap-y-2.5">
-                    {section.fields.map((field, fIdx) => {
-                      const widthClass =
-                        field.width === 'full' ? 'col-span-full' :
-                        field.width === 'half' ? 'col-span-3' :
-                        'col-span-2';
-
-                      if (field.type === 'table') {
-                        return (
-                          <div key={fIdx} className="col-span-full mt-2 overflow-x-auto">
-                            <label className="block text-[10.5px] font-black text-slate-800 uppercase tracking-wider mb-2">
-                              {field.label}
-                            </label>
-                            <table className="w-full border-collapse border border-slate-200 min-w-[500px]">
-                              <thead>
-                                <tr className="bg-slate-50 border-b border-slate-200">
-                                  {field.tableHeaders?.map((header, hIdx) => (
-                                    <th key={hIdx} className="border border-slate-200 px-3 py-2 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider">
-                                      {header}
-                                    </th>
+                </div>
+              )}
+              {section.type === 'fields' && section.fields && (
+                <div className="grid grid-cols-6 gap-x-3 gap-y-2.5">
+                  {section.fields.map((field, fIdx) => {
+                    const widthClass =
+                      field.width === 'full' ? 'col-span-full' :
+                      field.width === 'half' ? 'col-span-3' :
+                      'col-span-2';
+                    if (field.type === 'table') {
+                      return (
+                        <div key={fIdx} className="col-span-full mt-2 overflow-x-auto">
+                          <label className="block text-[10.5px] font-black text-slate-800 uppercase tracking-wider mb-2">{field.label}</label>
+                          <table className="w-full border-collapse border border-slate-200 min-w-[500px]">
+                            <thead>
+                              <tr className="bg-slate-50 border-b border-slate-200">
+                                {field.tableHeaders?.map((header, hIdx) => (
+                                  <th key={hIdx} className="border border-slate-200 px-3 py-2 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider">{header}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {field.tableRows?.map((row, rIdx) => (
+                                <tr key={rIdx} className="border-b border-slate-100 hover:bg-slate-50/40">
+                                  {row.map((_cell, cIdx) => (
+                                    <td key={cIdx} className="border border-slate-200 px-3 py-3.5 text-xs">
+                                      <div className="h-4 w-full bg-slate-50/50 rounded-xs" />
+                                    </td>
                                   ))}
                                 </tr>
-                              </thead>
-                              <tbody>
-                                {field.tableRows?.map((row, rIdx) => (
-                                  <tr key={rIdx} className="border-b border-slate-100 hover:bg-slate-50/40">
-                                    {row.map((cell, cIdx) => (
-                                      <td key={cIdx} className="border border-slate-200 px-3 py-3.5 text-xs">
-                                        <div className="h-4 w-full bg-slate-50/50 rounded-xs" />
-                                      </td>
-                                    ))}
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        );
-                      }
-
-                      if (field.type === 'checkbox' || field.type === 'radio') {
-                        return (
-                          <div key={fIdx} className={widthClass}>
-                            <label className="block text-[10.5px] font-black text-slate-800 uppercase tracking-wider mb-2">
-                              {field.label}
-                            </label>
-                            <div className="flex flex-wrap gap-4 mt-1">
-                              {field.options?.map((opt, oIdx) => (
-                                <div key={oIdx} className="flex items-center gap-2">
-                                  <div className={`w-4 h-4 border border-slate-300 rounded flex items-center justify-center shrink-0 ${field.type === 'radio' ? 'rounded-full' : ''}`}>
-                                    <div className="w-1.5 h-1.5 bg-transparent rounded-xs" />
-                                  </div>
-                                  <span className="text-slate-600 font-semibold text-xs">{opt}</span>
-                                </div>
                               ))}
-                            </div>
-                          </div>
-                        );
-                      }
-
-                      if (field.type === 'textarea') {
-                        return (
-                          <div key={fIdx} className="col-span-full">
-                            <label className="block text-[10.5px] font-black text-slate-800 uppercase tracking-wider mb-1.5">
-                              {field.label}
-                            </label>
-                            <div className="w-full h-16 border border-slate-200 bg-slate-50/30 rounded-xl" />
-                          </div>
-                        );
-                      }
-
-                      return (
-                        <div key={fIdx} className={widthClass}>
-                          <label className="block text-[10.5px] font-black text-slate-800 uppercase tracking-wider mb-1">
-                            {field.label}
-                          </label>
-                          <div className="w-full h-8.5 border-b border-slate-300 flex items-end pb-1 text-slate-400 italic text-[11px] font-medium">
-                            {field.placeholder || ''}
-                          </div>
+                            </tbody>
+                          </table>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-              </div>
-            ))}
-
-            {/* LEGAL SIGNATURE CLAUSES */}
-            {activeTemplate.legalClauses && (
-              <div className="space-y-4 pt-4 border-t border-slate-200">
-                <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 ${activeTheme.text} ${activeTheme.border}`}>
-                  Legal Agreement & Signatures
-                </h3>
-                
-                <div className="space-y-3 text-[11.5px] text-slate-600 leading-relaxed">
-                  {activeTemplate.legalClauses.map((clause, idx) => {
-                    const isSignatureField = clause.includes('[Text]') || clause.includes('[Date]') || clause.includes('Signature:');
-                    
-                    if (isSignatureField) {
-                      // Formatting signature field layouts nicely
-                      const parts = clause.split(':');
-                      const label = parts[0] + ':';
-                      return (
-                        <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3">
-                          <div className="border-b border-slate-300 pb-1 flex items-end">
-                            <span className="font-bold text-slate-800 mr-2">{label}</span>
-                            <span className="text-[10px] text-slate-400 italic">Sign here</span>
-                          </div>
-                        </div>
-                      );
-                    } else {
-                      return (
-                        <p key={idx}>
-                          <span className="font-bold text-slate-800">{idx + 1}. </span>
-                          {clause}
-                        </p>
                       );
                     }
+                    if (field.type === 'checkbox' || field.type === 'radio') {
+                      return (
+                        <div key={fIdx} className={widthClass}>
+                          <label className="block text-[10.5px] font-black text-slate-800 uppercase tracking-wider mb-2">{field.label}</label>
+                          <div className="flex flex-wrap gap-4 mt-1">
+                            {field.options?.map((opt, oIdx) => (
+                              <div key={oIdx} className="flex items-center gap-2">
+                                <div className={`w-4 h-4 border border-slate-300 rounded flex items-center justify-center shrink-0 ${field.type === 'radio' ? 'rounded-full' : ''}`}>
+                                  <div className="w-1.5 h-1.5 bg-transparent rounded-xs" />
+                                </div>
+                                <span className="text-slate-600 font-semibold text-xs">{opt}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    }
+                    if (field.type === 'textarea') {
+                      return (
+                        <div key={fIdx} className="col-span-full">
+                          <label className="block text-[10.5px] font-black text-slate-800 uppercase tracking-wider mb-1.5">{field.label}</label>
+                          <div className="w-full h-16 border border-slate-200 bg-slate-50/30 rounded-xl" />
+                        </div>
+                      );
+                    }
+                    return (
+                      <div key={fIdx} className={widthClass}>
+                        <label className="block text-[10.5px] font-black text-slate-800 uppercase tracking-wider mb-1">{field.label}</label>
+                        <div className="w-full h-8.5 border-b border-slate-300 flex items-end pb-1 text-slate-400 italic text-[11px] font-medium">
+                          {field.placeholder || ''}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+
+          const renderLegalClauses = () => activeTemplate.legalClauses ? (
+            <div className="space-y-4 pt-4 border-t border-slate-200">
+              <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 ${activeTheme.text} ${activeTheme.border}`}>Legal Agreement & Signatures</h3>
+              <div className="space-y-3 text-[11.5px] text-slate-600 leading-relaxed">
+                {activeTemplate.legalClauses.map((clause, idx) => {
+                  const isSignatureField = clause.includes('[Text]') || clause.includes('[Date]') || clause.includes('Signature:');
+                  if (isSignatureField) {
+                    const label = clause.split(':')[0] + ':';
+                    return (
+                      <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3">
+                        <div className="border-b border-slate-300 pb-1 flex items-end">
+                          <span className="font-bold text-slate-800 mr-2">{label}</span>
+                          <span className="text-[10px] text-slate-400 italic">Sign here</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return <p key={idx}><span className="font-bold text-slate-800">{idx + 1}. </span>{clause}</p>;
                   })}
                 </div>
               </div>
-            )}
+            ) : null;
 
-          </div>
+          return (
+            <div className="space-y-6 form-pages-stack">
+              {pages.map((pageSections, pageIdx) => {
+                const isFirst = pageIdx === 0;
+                const isLast = pageIdx === pages.length - 1;
+                return (
+                  <div key={pageIdx} className="bg-white border border-slate-200 shadow-lg rounded-3xl overflow-hidden font-sans form-page">
+                    <div className="p-6 sm:p-10 md:p-12">
 
-          {/* PAGE WATERMARK / FOOTER */}
-          <div className="mt-16 pt-4 border-t border-slate-100 flex justify-between items-center text-[9px] font-bold text-slate-400 uppercase tracking-wider">
-            <span>Powered by Rescue-Kit.org Starter Forms</span>
-            <span>Document Reference: {activeTemplate.id.toUpperCase()}-STARTER-2026</span>
-          </div>
+                      {isFirst ? (
+                        <>
+                          {/* FULL LETTERHEAD */}
+                          <div className="flex flex-col sm:flex-row items-center gap-4 pb-6 border-b border-slate-200">
+                            <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 ${activeTheme.bgLight} border-2 ${activeTheme.border}`}>
+                              {(() => { const b = BADGE_OPTIONS.find(b => b.id === selectedEmoji); return b ? <b.Icon className="w-7 h-7" strokeWidth={1.5} style={{color: `#${activeTheme.primaryHex}`}} /> : null; })()}
+                            </div>
+                            <div className="text-center sm:text-left space-y-1">
+                              <h2 className="text-lg font-black text-slate-900 tracking-tight uppercase leading-none">{displayRescueName}</h2>
+                              <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-1.5">
+                                {displayLocation && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><MapPin className="w-3 h-3 text-slate-400" /><span>{displayLocation}</span></span>}
+                                {displayPhone && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><Phone className="w-3 h-3 text-slate-400" /><span>{displayPhone}</span></span>}
+                                {displayEmail && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><Mail className="w-3 h-3 text-slate-400" /><span>{displayEmail}</span></span>}
+                                {displayWebsite && <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500"><Globe className="w-3 h-3 text-slate-400" /><span>{displayWebsite}</span></span>}
+                              </div>
+                            </div>
+                          </div>
+                          {/* DOCUMENT BODY */}
+                          <div className="mt-5 space-y-5 text-slate-700 text-xs sm:text-[13px] leading-relaxed">
+                            <div className="text-center space-y-2">
+                              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{activeTemplate.title}</h1>
+                              <div className="w-16 h-1 bg-slate-900 mx-auto rounded-full" />
+                            </div>
+                            <div className={`p-3 rounded-2xl border ${activeTheme.border} ${activeTheme.bgLight} space-y-1.5`}>
+                              <h4 className={`text-[11px] font-black uppercase tracking-wider ${activeTheme.text}`}>Important Notice</h4>
+                              <ul className="list-disc pl-4 space-y-0.5 text-slate-600 text-[11px] font-medium">
+                                {activeTemplate.notice.map((note, idx) => <li key={idx}>{note}</li>)}
+                              </ul>
+                            </div>
+                            {customNote.trim() && (
+                              <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex gap-2.5">
+                                <span className="text-sm shrink-0">📌</span>
+                                <div className="space-y-0.5">
+                                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Organization Note</p>
+                                  <p className="text-[11.5px] text-slate-600 font-medium leading-relaxed italic">{customNote}</p>
+                                </div>
+                              </div>
+                            )}
+                            {activeTemplate.generalReqs && (
+                              <div className="space-y-2">
+                                <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 ${activeTheme.text} ${activeTheme.border}`}>General Requirements</h3>
+                                <ul className="list-disc pl-5 space-y-1 text-slate-600">
+                                  {activeTemplate.generalReqs.map((req, idx) => <li key={idx}>{req}</li>)}
+                                </ul>
+                              </div>
+                            )}
+                            {pageSections.map(renderSection)}
+                            {isLast && renderLegalClauses()}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* COMPACT PAGE HEADER */}
+                          <div className={`flex items-center justify-between pb-3 mb-4 border-b-2 ${activeTheme.border}`}>
+                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">{displayRescueName}</span>
+                            <span className="text-[10px] font-bold text-slate-400 text-center flex-1 px-2">{activeTemplate.title}</span>
+                            <span className={`text-[10px] font-black uppercase tracking-wider ${activeTheme.text}`}>Page {pageIdx + 1}</span>
+                          </div>
+                          {/* SECTIONS */}
+                          <div className="space-y-3 text-slate-700 text-xs sm:text-[13px] leading-relaxed">
+                            {pageSections.map(renderSection)}
+                            {isLast && renderLegalClauses()}
+                          </div>
+                        </>
+                      )}
 
-        </div>
+                      {/* FOOTER — last page only */}
+                      {isLast && (
+                        <div className="mt-10 pt-4 border-t border-slate-100 flex justify-between items-center text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                          <span>Powered by Rescue-Kit.org Starter Forms</span>
+                          <span>Document Reference: {activeTemplate.id.toUpperCase()}-STARTER-2026</span>
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
 
       </div>
 
