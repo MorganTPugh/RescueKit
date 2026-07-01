@@ -223,6 +223,14 @@ const RepositionableImage: React.FC<{
           >
             🔎 Zoom Out
           </button>
+          <div className="border-t border-stone-100" />
+          <button
+            type="button"
+            onClick={() => { setPet?.(prev => ({ ...prev, [keyOffsetX]: 0, [keyOffsetY]: 0, [keyZoom]: 1 })); setContextMenu(null); }}
+            className="flex items-center gap-2 w-full px-3.5 py-2.5 text-left hover:bg-indigo-50 text-slate-500 cursor-pointer transition-colors"
+          >
+            ↺ Reset Position
+          </button>
         </div>
       )}
 
@@ -2222,7 +2230,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               
               {/* Hand-drawn style pink brush banner for tagline */}
               <div className="bg-[#db2777] text-white px-5 py-1 text-[10px] md:text-[11px] font-bold font-sans uppercase tracking-wider rounded-lg shadow-3xs border border-white/10 flex items-center justify-center gap-1.5 rotate-[-0.5deg] max-w-[90%] mt-0.5 leading-none">
-                <span>💖 A sweet {pet.gender === 'girl' ? 'female' : pet.gender === 'boy' ? 'male' : 'companion'} looking for {pet.gender === 'girl' ? 'her' : 'his'} purr-ever home!</span>
+                <span>💖 A sweet {pet.gender === 'girl' ? 'female' : pet.gender === 'boy' ? 'male' : 'companion'} looking for {pet.gender === 'girl' ? 'her' : 'his'} fur-ever home!</span>
               </div>
             </div>
           ) : settings.templateId === 'polaroid' ? (

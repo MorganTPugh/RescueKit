@@ -100,10 +100,17 @@ export const PosterForm: React.FC<PosterFormProps> = ({
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target?.result) {
-          setPet(prev => ({
-            ...prev,
-            photos: [...prev.photos, e.target!.result as string].slice(0, 2)
-          }));
+          setPet(prev => {
+            const isFirstSlot = prev.photos.length === 0;
+            const isSecondSlot = prev.photos.length === 1;
+            return {
+              ...prev,
+              photos: [...prev.photos, e.target!.result as string].slice(0, 2),
+              // Reset offset/zoom for whichever slot is being filled
+              ...(isFirstSlot ? { photoOffsetX: 0, photoOffsetY: 0, photoZoom: 1 } : {}),
+              ...(isSecondSlot ? { photoOffsetX2: 0, photoOffsetY2: 0, photoZoom2: 1 } : {}),
+            };
+          });
         }
       };
       reader.readAsDataURL(file);
