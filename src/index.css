@@ -119,9 +119,20 @@
     width: 100% !important;
   }
 
-  /* Hide the no-print UI chrome inside the forms column so it doesn't take up space */
-  .forms-preview-col .no-print {
+  /* Hide all no-print elements so they don't take up layout space */
+  .no-print {
     display: none !important;
+  }
+
+  /* Prevent form sections from splitting awkwardly across pages */
+  .form-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .form-section h3 {
+    page-break-after: avoid;
+    break-after: avoid;
   }
 
   .forms-print-container {

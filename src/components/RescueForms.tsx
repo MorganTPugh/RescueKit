@@ -2471,7 +2471,7 @@ export function RescueForms() {
 
             {/* SECTIONS */}
             {activeTemplate.sections.map((section, sIdx) => (
-              <div key={sIdx} className="space-y-4">
+              <div key={sIdx} className="form-section space-y-4">
                 
                 {/* Section Title */}
                 <h3 className={`text-sm font-black tracking-tight border-b-2 pb-1 mt-6 ${activeTheme.text} ${activeTheme.border}`}>
