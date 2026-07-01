@@ -192,7 +192,7 @@ const RepositionableImage: React.FC<{
           alt={alt}
           referrerPolicy="no-referrer"
           draggable={false}
-          className={`absolute inset-0 w-full h-full object-cover select-none ${className}`}
+          className={`absolute inset-0 w-full h-full object-contain select-none ${className}`}
           style={{
             transform: `scale(${zoomValue}) translate(${offsetXValue}%, ${offsetYValue}%)`,
             transformOrigin: 'center center',
@@ -229,14 +229,14 @@ const RepositionableImage: React.FC<{
             onClick={() => { setPet?.(prev => ({ ...prev, [keyOffsetX]: 0, [keyOffsetY]: 0, [keyZoom]: 1 })); setContextMenu(null); }}
             className="flex items-center gap-2 w-full px-3.5 py-2.5 text-left hover:bg-indigo-50 text-slate-500 cursor-pointer transition-colors"
           >
-            ↺ Reset Position
+            ↺ Show Full Photo
           </button>
         </div>
       )}
 
       {setPet && (
         <div className="poster-drag-hint absolute bottom-1 right-1 bg-black/55 text-white rounded-md text-[7.5px] py-0.5 px-1.5 font-sans pointer-events-none select-none z-30 leading-none opacity-80">
-          Drag · Pinch/scroll to zoom · Right-click to zoom
+          Drag · Scroll to zoom/fill · Right-click for options
         </div>
       )}
     </div>
