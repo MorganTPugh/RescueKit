@@ -278,73 +278,108 @@ const PetSvgIllustration = ({ species }: { species: string }) => {
   }
 };
 
-const getDynamicBioStyle = (text: string, templateId: string, isSquare: boolean) => {
-  const n = Math.max(text.length, 1);
-
-  // Formula: safeSize = sqrt(W × H × fill / (n × k × 1.3))
-  // W, H = inner text-area dimensions measured from live DOM at preview render scale.
-  // k = character-width ratio derived per-template from DOM (textWidth / (fontSize × charsPerLine)).
-  // fill = 0.78 targets ~78% box fill, giving overflow headroom for word-wrap variability.
-  // maxPx is the largest safe font for the shortest realistic bio (~80 chars).
-  const fill = 0.78;
-  const lh = 1.3; // formula constant; actual lineHeight output is computed separately below
-
-  let W: number, H: number, k: number, minPx: number, maxPx: number;
+// Per-template/aspect font-size caps: keeps each layout's bio text within a sane
+// design range (never comically huge, never unreadably small). The actual size
+// within that range is picked by AutoFitBio below, from real measured layout —
+// not guessed from a character-count formula.
+const getBioSizeBounds = (templateId: string, isSquare: boolean) => {
+  let minPx: number, maxPx: number;
 
   if (isSquare) {
     // Square poster renders at 418×418 px
-    minPx = 8.0;
-    W = 169; H = 252; k = 0.415; maxPx = 20.0; // default (covers unmapped templates)
-
-    if (templateId === 'whimsical') {
-      W = 164; H = 223; k = 0.416; maxPx = 18.0; // Fredoka — measured inner text area
-    } else if (templateId === 'comic') {
-      W = 176; H = 249; k = 0.360; maxPx = 22.0;
-    } else if (templateId === 'editorial') {
-      W = 169; H = 252; k = 0.382; maxPx = 22.0;
-    } else if (templateId === 'minimalist') {
-      W = 373; H = 110; k = 0.459; maxPx = 22.0; // full-width photo: wide, short box
-    } else if (templateId === 'polaroid') {
-      W = 140; H = 257; k = 0.415; maxPx = 22.0;
-    } else if (templateId === 'bio-only') {
-      W = 520; H = 460; k = 0.430; maxPx = 28.0; minPx = 13.5;
-    } else if (templateId === 'two-photos' || templateId === 'extreme-duo') {
-      W = 220; H = 122; k = 0.411; maxPx = 16.0;
-    } else if (templateId === 'comic-2-photos') {
-      W = 220; H = 118; k = 0.411; maxPx = 16.0;
-    } else if (templateId === 'editorial-2-photos') {
-      W = 165; H = 220; k = 0.390; maxPx = 21.0;
-    }
+    minPx = 8.0; maxPx = 20.0; // default (covers unmapped templates)
+    if (templateId === 'whimsical') maxPx = 18.0;
+    else if (templateId === 'comic') maxPx = 22.0;
+    else if (templateId === 'editorial') maxPx = 22.0;
+    else if (templateId === 'minimalist') maxPx = 22.0;
+    else if (templateId === 'polaroid') maxPx = 22.0;
+    else if (templateId === 'bio-only') { maxPx = 28.0; minPx = 13.5; }
+    else if (templateId === 'two-photos' || templateId === 'extreme-duo') maxPx = 16.0;
+    else if (templateId === 'comic-2-photos') maxPx = 16.0;
+    else if (templateId === 'editorial-2-photos') maxPx = 21.0;
   } else {
     // Flyer poster renders at 378×489 px
-    minPx = 7.5;
-    W = 163; H = 250; k = 0.430; maxPx = 17.0; // default
-
-    if (templateId === 'whimsical') {
-      W = 141; H = 286; k = 0.394; maxPx = 19.0;
-    } else if (templateId === 'comic') {
-      W = 134; H = 193; k = 0.471; maxPx = 15.0; // narrow col + feature cards shrink bio area
-    } else if (templateId === 'editorial') {
-      W = 133; H = 234; k = 0.426; maxPx = 18.0;
-    } else if (templateId === 'minimalist') {
-      W = 183; H = 158; k = 0.475; maxPx = 16.0; // full-width photo: wide but short
-    } else if (templateId === 'polaroid') {
-      W = 119; H = 255; k = 0.443; maxPx = 16.0; // measured para dims; H scaled to compensate for word-wrap efficiency
-    } else if (templateId === 'bio-only') {
-      W = 680; H = 640; k = 0.430; maxPx = 25.0; minPx = 12.5;
-    } else if (templateId === 'two-photos' || templateId === 'extreme-duo') {
-      W = 189; H = 124; k = 0.411; maxPx = 15.0;
-    } else if (templateId === 'comic-2-photos') {
-      W = 189; H = 140; k = 0.411; maxPx = 15.0;
-    } else if (templateId === 'editorial-2-photos') {
-      W = 133; H = 210; k = 0.426; maxPx = 17.0;
-    }
+    minPx = 7.5; maxPx = 17.0; // default
+    if (templateId === 'whimsical') maxPx = 19.0;
+    else if (templateId === 'comic') maxPx = 15.0;
+    else if (templateId === 'editorial') maxPx = 18.0;
+    else if (templateId === 'minimalist') maxPx = 16.0;
+    else if (templateId === 'polaroid') maxPx = 16.0;
+    else if (templateId === 'bio-only') { maxPx = 25.0; minPx = 12.5; }
+    else if (templateId === 'two-photos' || templateId === 'extreme-duo') maxPx = 15.0;
+    else if (templateId === 'comic-2-photos') maxPx = 15.0;
+    else if (templateId === 'editorial-2-photos') maxPx = 17.0;
   }
 
-  const safeSize = Math.sqrt((W * H * fill) / (n * k * lh));
-  const fontSize = Math.min(maxPx, Math.max(minPx, safeSize));
-  const lineHeight = fontSize > 15 ? '1.4' : fontSize > 12 ? '1.3' : '1.2';
-  return { fontSize: `${fontSize.toFixed(1)}px`, lineHeight };
+  return { minPx, maxPx };
+};
+
+const lineHeightForSize = (size: number) => (size > 15 ? '1.4' : size > 12 ? '1.3' : '1.2');
+
+// Renders bio text sized as large as it can be without overflowing its box.
+// Binary-searches actual DOM measurements (the text's scrollHeight/scrollWidth
+// vs. its parent's clientHeight/clientWidth) instead of estimating from a
+// character-count formula, so it's precise for the real rendered box and the
+// real word-wrapped line count. Only ever mutates its own font-size/line-height —
+// never touches siblings, so it can't perturb a neighboring photo's layout.
+// The parent box's own size must already be independent of this text (fixed
+// height, or a flex-basis/grid-column share of a fixed-size ancestor) — every
+// call site in this file satisfies that via CSS Grid columns or flex-basis
+// ratios, with this component as the sole `flex-1` child in its stack.
+const AutoFitBio: React.FC<{ text: string; className: string; templateId: string; isSquare: boolean; fontFamily?: string }> = ({ text, className, templateId, isSquare, fontFamily }) => {
+  const { minPx, maxPx } = getBioSizeBounds(templateId, isSquare);
+  const ref = React.useRef<HTMLParagraphElement>(null);
+  const [fontSize, setFontSize] = React.useState(maxPx);
+
+  React.useLayoutEffect(() => {
+    const el = ref.current;
+    const container = el?.parentElement;
+    if (!el || !container) return;
+    let cancelled = false;
+
+    const applySize = (size: number) => {
+      el.style.fontSize = `${size}px`;
+      el.style.lineHeight = lineHeightForSize(size);
+    };
+
+    const fits = (size: number) => {
+      applySize(size);
+      return el.scrollHeight <= container.clientHeight + 0.5 && el.scrollWidth <= container.clientWidth + 0.5;
+    };
+
+    const measure = () => {
+      if (fits(maxPx)) {
+        setFontSize(maxPx);
+        return;
+      }
+      let lo = minPx, hi = maxPx, best = minPx;
+      for (let i = 0; i < 10; i++) {
+        const mid = (lo + hi) / 2;
+        if (fits(mid)) { best = mid; lo = mid; } else { hi = mid; }
+      }
+      applySize(best);
+      setFontSize(best);
+    };
+
+    measure();
+
+    // Web fonts (Fredoka, Playfair Display, Patrick Hand, etc.) can still be
+    // loading when this first measurement runs, in which case it measures
+    // against fallback-font metrics and the real font's line-wrapping can
+    // differ once it loads. Re-measure once fonts are confirmed ready as a
+    // correctness safety net — a no-op if they were already loaded.
+    document.fonts.ready.then(() => {
+      if (!cancelled) measure();
+    });
+
+    return () => { cancelled = true; };
+  }, [text, minPx, maxPx]);
+
+  return (
+    <p ref={ref} data-autofit-bio className={className} style={{ fontSize: `${fontSize.toFixed(1)}px`, lineHeight: lineHeightForSize(fontSize), ...(fontFamily ? { fontFamily } : {}) }}>
+      {text}
+    </p>
+  );
 };
 
 export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, setPet, isPrintable = true }) => {
@@ -407,7 +442,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
       case 'polaroid':
         return 'bg-rose-500 text-white font-serif px-4 py-0.5 tracking-wide shadow-sm rounded-full';
       case 'whimsical':
-        return 'bg-amber-100 text-[#0f5c3a] border-2 border-dashed border-[#0f5c3a]/55 tracking-wide font-handwritten font-black text-[12px] md:text-[13.5px] px-3.5 py-0.5 shadow-2xs rounded-tl-[15px] rounded-br-[12px] rotate-[-1.5deg]';
+        return 'bg-[#fbbf24] text-[#0f5c3a] border-2 border-[#0f5c3a] tracking-wide font-handwritten font-black text-[12px] md:text-[13.5px] px-3.5 py-0.5 shadow-[2px_2px_0px_#0f5c3a] rounded-tl-[15px] rounded-br-[12px] rotate-[-1.5deg]';
       default:
         return `${currentTheme.badgeBg} border rounded-full font-bold px-4 py-0.5 text-xs tracking-wide shadow-3xs`;
     }
@@ -465,12 +500,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
           {/* Clean, high-density copyholder readable content area */}
           <div className="flex-1 flex flex-col justify-start overflow-hidden pr-1 leading-relaxed min-h-0 select-text">
-            <p 
+            <AutoFitBio
+              text={pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
               className="font-serif text-stone-855 leading-relaxed text-left select-text whitespace-pre-wrap pr-1"
-              style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!", "bio-only", true)}
-            >
-              {pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
-            </p>
+              templateId="bio-only"
+              isSquare={true}
+            />
           </div>
 
           {/* Quick info-tag at the bottom */}
@@ -555,12 +590,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
           {/* 3. Horizontal Story Box (Simple & Focused on the bio description - no scroll bar, expanded space) */}
           <div className="flex-1 min-h-0 relative select-text text-left pt-1 pb-1 overflow-hidden">
-            <p 
+            <AutoFitBio
+              text={pet.estimatedBio || "Use our AI generator or write a custom detailed bio for this sweetheart here! Showing giant beautiful photos helps captivate families instantly."}
               className="font-serif whitespace-pre-wrap select-text leading-relaxed text-slate-805"
-              style={getDynamicBioStyle(pet.estimatedBio || "Use our AI generator or write a custom detailed bio for this sweetheart here! Showing giant beautiful photos helps captivate families instantly.", 'extreme-duo', true)}
-            >
-              {pet.estimatedBio || "Use our AI generator or write a custom detailed bio for this sweetheart here! Showing giant beautiful photos helps captivate families instantly."}
-            </p>
+              templateId="extreme-duo"
+              isSquare={true}
+            />
           </div>
 
           {/* 4. Pure Footer with Rescue Details (No city & state location for extreme-duo) */}
@@ -714,14 +749,14 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             {/* Concise Story Block (58%) */}
             <div className="w-[58%] flex flex-col justify-start text-left min-h-0">
               <div className="overflow-hidden pr-1 flex-1 leading-snug select-text">
-                <p 
+                <AutoFitBio
+                  text={pet.estimatedBio || "Please fill in some animal information to write a custom biography. This space keeps things tidy and sweet!"}
                   className={`font-serif whitespace-pre-wrap select-text leading-normal ${
                     isComic2 ? 'text-stone-850' : 'text-slate-800'
                   }`}
-                  style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some animal information to write a custom biography. This space keeps things tidy and sweet!", settings.templateId, true)}
-                >
-                  {pet.estimatedBio || "Please fill in some animal information to write a custom biography. This space keeps things tidy and sweet!"}
-                </p>
+                  templateId={settings.templateId}
+                  isSquare={true}
+                />
               </div>
             </div>
 
@@ -877,12 +912,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               )}
               <div className="flex-1 min-h-0 overflow-hidden">
                 <div className="h-full bg-[#fcfbf9] border border-stone-200/70 p-1.5 rounded-lg overflow-hidden flex flex-col justify-start select-text">
-                  <p
+                  <AutoFitBio
+                    text={pet.estimatedBio || "Please fill in some basic animal information to generate a charming adoption story for this lovely foster pet."}
                     className="italic text-slate-700 select-text"
-                    style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some basic animal information to generate a charming adoption story for this lovely foster pet.", 'editorial-2-photos', true)}
-                  >
-                    {pet.estimatedBio || "Please fill in some basic animal information to generate a charming adoption story for this lovely foster pet."}
-                  </p>
+                    templateId="editorial-2-photos"
+                    isSquare={true}
+                  />
                 </div>
               </div>
               <div className="flex gap-0.5 shrink-0">
@@ -1048,12 +1083,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             {/* Bio box */}
             <div className="flex-[4] min-h-0 overflow-hidden">
               <div className="h-full bg-stone-50/80 border border-slate-200/40 p-2 rounded-xl shadow-2xs overflow-hidden flex flex-col justify-start select-text">
-                <p
-                  className="indent-1 first-letter:text-lg first-letter:font-black first-letter:mr-0.5 italic text-slate-700 select-text"
-                  style={getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", 'minimalist', true)}
-                >
-                  {pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
-                </p>
+                <AutoFitBio
+                  text={pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
+                  className="first-letter:text-lg first-letter:font-black first-letter:mr-0.5 italic text-slate-700 select-text"
+                  templateId="minimalist"
+                  isSquare={true}
+                />
               </div>
             </div>
 
@@ -1111,7 +1146,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         <div className="grid grid-cols-12 gap-2.5 h-full z-10">
           
           {/* LEFT SIDE: DETAILS, BULLETS, STORIES */}
-          <div className={`${settings.templateId === 'polaroid' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 pr-0.5`}>            {/* COMPACT HEADLINES */}
+          <div className={`${settings.templateId === 'polaroid' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 pr-0.5 min-h-0 overflow-hidden`}>            {/* COMPACT HEADLINES */}
             <div>
               {settings.templateId === 'whimsical' ? (
                 <div className="flex items-center justify-between gap-1 w-full mt-1.5 border-b border-[#2d5a27]/15 pb-1.5 shrink-0 select-none">
@@ -1227,35 +1262,33 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             {/* EXPANDED BIO STORY CARD (Much larger text box to fit far more info inside square poster!) */}
             <div className="flex-1 flex flex-col justify-stretch min-h-0 my-1 overflow-hidden">
               {settings.templateId === 'whimsical' ? (
-                <div className="h-full bg-[#fdfbf2] border-2 border-dashed border-[#2d5a27]/15 p-3 rounded-[24px_16px_32px_20px] text-[11.5px] font-bold text-stone-850 shadow-3xs overflow-hidden relative select-text flex flex-col justify-start font-playful">
-                  <p
-                    className="indent-1 text-stone-700 select-text italic font-normal"
-                    style={{
-                      ...getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", "whimsical", true),
-                      fontFamily: '"Patrick Hand", "Gaegu", cursive, sans-serif',
-                    }}
-                  >
-                    {pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
-                  </p>
+                <div className="h-full bg-[#fdfbf2] border-2 border-dashed border-[#2f9e44] p-3 rounded-[24px_16px_32px_20px] text-[11.5px] font-bold text-stone-850 shadow-3xs overflow-hidden relative select-text flex flex-col justify-start font-playful">
+                  <AutoFitBio
+                    text={pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
+                    className="text-stone-700 select-text italic font-normal"
+                    templateId="whimsical"
+                    isSquare={true}
+                    fontFamily='"Patrick Hand", "Gaegu", cursive, sans-serif'
+                  />
                 </div>
               ) : settings.templateId === 'comic' ? (
-                <div className="h-full relative flex flex-col justify-start overflow-hidden select-text py-1 pl-3 pr-0.5">
+                <div className="h-full relative flex flex-col justify-start overflow-hidden select-text py-1 pl-3 pr-0.5 min-h-0">
                   <div className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-rose-200" />
-                  <p
+                  <AutoFitBio
+                    text={pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
                     className="italic text-stone-800 font-semibold select-text leading-snug"
-                    style={getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", "comic", true)}
-                  >
-                    {pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
-                  </p>
+                    templateId="comic"
+                    isSquare={true}
+                  />
                 </div>
               ) : (
                 <div className="h-full bg-stone-50/80 border border-slate-200/40 p-2.5 rounded-xl text-[9.5px] leading-relaxed font-semibold text-slate-705 shadow-2xs overflow-hidden relative select-text flex flex-col justify-start">
-                  <p 
-                    className="indent-1 first-letter:text-lg first-letter:font-black first-letter:mr-0.5 italic text-slate-700 select-text"
-                    style={getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", settings.templateId, true)}
-                  >
-                    {pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
-                  </p>
+                  <AutoFitBio
+                    text={pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
+                    className="first-letter:text-lg first-letter:font-black first-letter:mr-0.5 italic text-slate-700 select-text"
+                    templateId={settings.templateId}
+                    isSquare={true}
+                  />
                 </div>
               )}
             </div>
@@ -1273,7 +1306,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           </div>
 
           {/* RIGHT SIDE: PHOTO SLOT, DETAILED STAT VALUES & INSTANT SCAN QR */}
-          <div className={`${settings.templateId === 'polaroid' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 relative border-l border-slate-100 pl-2`}>
+          <div className={`${settings.templateId === 'polaroid' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 relative border-l border-slate-100 pl-2 min-h-0 overflow-hidden`}>
             <div className="flex-1 w-full min-h-0 relative mb-1">
               {settings.templateId === 'polaroid' ? (
                 <div className="bg-white p-2 pb-4.5 border border-stone-250 shadow-md rotate-[-0.5deg] w-full max-w-[260px] aspect-[1/1.12] flex flex-col group mx-auto">
@@ -1311,12 +1344,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                   </div>
                 </div>
               ) : settings.templateId === 'whimsical' ? (
-                <div className="bg-[#fffefe] p-1 pb-3 border-2 border-dashed border-[#b3cca8]/40 shadow-md rotate-[-1.5deg] h-full w-full flex flex-col justify-between rounded-[8px_32px_12px_24px] relative">
+                <div className="bg-[#fffefe] p-1 pb-3 border-2 border-dashed border-[#2f9e44] shadow-md rotate-[-1.5deg] h-full w-full flex flex-col justify-between rounded-[8px_32px_12px_24px] relative">
                   {/* Absolute Taped corners visual effect! */}
                   <div className="absolute -top-1.5 left-4 w-9 h-4 bg-yellow-105/60 backdrop-blur-3xs border-x border-dashed border-stone-500/20 rotate-[12deg] shadow-3xs z-30"></div>
                   <div className="absolute -bottom-1 -right-1 w-10 h-4 bg-indigo-150/45 backdrop-blur-3xs border-y border-dashed border-stone-500/10 rotate-[-15deg] shadow-3xs z-30"></div>
-                  
-                  <div className="flex-1 h-0 w-full bg-stone-150 relative rounded-[4px_24px_8px_16px] overflow-hidden border border-[#b3cca8]/20">
+
+                  <div className="flex-1 h-0 w-full bg-stone-150 relative rounded-[4px_24px_8px_16px] overflow-hidden border border-[#2f9e44]/60">
                     {primaryPhoto ? (
                       <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
                     ) : (
@@ -1380,15 +1413,15 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                     <div className="grid grid-cols-3 gap-1 mt-0.5 text-center text-[8.5px] md:text-[9px] font-bold font-sans">
                       <div className="bg-white/90 border border-amber-200 px-0.5 py-0.5 rounded leading-none">
                         <span className="text-[#a27b3e] text-[6.5px] md:text-[7.5px] block font-bold leading-none uppercase font-sans">DOGS</span>
-                        <span className="text-stone-850 font-extrabold leading-none block mt-0.5 text-[8.5px] md:text-[9px] font-sans">{pet.goodWithDogs === 'yes' ? '✓ OK' : pet.goodWithDogs === 'no' ? '✗ No' : '✦ Select'}</span>
+                        <span className="text-stone-850 font-extrabold leading-none block mt-0.5 text-[8.5px] md:text-[9px] font-sans">{pet.goodWithDogs === 'yes' ? '✓ OK' : pet.goodWithDogs === 'no' ? '✗ No' : '✦ Selective'}</span>
                       </div>
                       <div className="bg-white/90 border border-amber-200 px-0.5 py-0.5 rounded leading-none">
                         <span className="text-[#a27b3e] text-[6.5px] md:text-[7.5px] block font-bold leading-none uppercase font-sans">CATS</span>
-                        <span className="text-stone-850 font-extrabold leading-none block mt-0.5 text-[8.5px] md:text-[9px] font-sans">{pet.goodWithCats === 'yes' ? '✓ OK' : pet.goodWithCats === 'no' ? '✗ No' : '✦ Select'}</span>
+                        <span className="text-stone-850 font-extrabold leading-none block mt-0.5 text-[8.5px] md:text-[9px] font-sans">{pet.goodWithCats === 'yes' ? '✓ OK' : pet.goodWithCats === 'no' ? '✗ No' : '✦ Selective'}</span>
                       </div>
                       <div className="bg-white/90 border border-[#b3cca8] px-0.5 py-0.5 rounded leading-none">
                         <span className="text-[#a27b3e] text-[6.5px] md:text-[7.5px] block font-bold leading-none uppercase font-sans">KIDS</span>
-                        <span className="text-stone-850 font-extrabold leading-none block mt-0.5 text-[8.5px] md:text-[9px] font-sans">{pet.goodWithKids === 'yes' ? '✓ OK' : pet.goodWithKids === 'no' ? '✗ No' : '✦ Select'}</span>
+                        <span className="text-stone-850 font-extrabold leading-none block mt-0.5 text-[8.5px] md:text-[9px] font-sans">{pet.goodWithKids === 'yes' ? '✓ OK' : pet.goodWithKids === 'no' ? '✗ No' : '✦ Selective'}</span>
                       </div>
                     </div>
                   </div>
@@ -1543,12 +1576,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
         {/* Clean, high-density copyholder readable content area */}
         <div className="flex-1 flex flex-col justify-start overflow-hidden pr-2 leading-relaxed min-h-0 select-text">
-          <p 
+          <AutoFitBio
+            text={pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
             className="font-serif text-stone-850 leading-relaxed text-left select-text whitespace-pre-wrap pr-1"
-            style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!", "bio-only", false)}
-          >
-            {pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
-          </p>
+            templateId="bio-only"
+            isSquare={false}
+          />
         </div>
 
         {/* Quick info-tag at the bottom */}
@@ -1636,12 +1669,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
         {/* 3. Horizontal Story Box (Simple & Focused on the bio description - no scroll bar, expanded space) */}
         <div className={`flex-1 flex flex-col justify-start text-left min-h-0 relative select-text mt-1 mb-1.5 overflow-hidden p-2.5 rounded-xl border ${currentTheme.bgClass} ${currentTheme.borderClass}`}>
-          <p 
+          <AutoFitBio
+            text={pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or write a custom bio directly!"}
             className="font-serif whitespace-pre-wrap select-text leading-relaxed font-normal text-slate-800"
-            style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or write a custom bio directly!", settings.templateId, false)}
-          >
-            {pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
-          </p>
+            templateId={settings.templateId}
+            isSquare={false}
+          />
         </div>
 
         {/* 4. Footer Contacts Panel (No location details) */}
@@ -1812,15 +1845,15 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                 ))}
               </div>
             )}
-            <div className="overflow-hidden pr-2 flex-1 leading-relaxed select-text font-serif">
-              <p
+            <div className="overflow-hidden pr-2 flex-1 leading-relaxed select-text font-serif min-h-0">
+              <AutoFitBio
+                text={pet.estimatedBio || "Please fill in some animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or write a custom bio directly!"}
                 className={`font-serif whitespace-pre-wrap select-text leading-relaxed font-normal ${
                   isComic2 ? 'text-stone-850' : 'text-slate-800'
                 }`}
-                style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or write a custom bio directly!", settings.templateId, false)}
-              >
-                {pet.estimatedBio || "Please fill in some animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or write a custom bio directly!"}
-              </p>
+                templateId={settings.templateId}
+                isSquare={false}
+              />
             </div>
           </div>
 
@@ -1995,12 +2028,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             <div className="flex-1 flex flex-col justify-start min-h-0">
               <div className="bg-[#fcfbf9] border border-stone-200/70 p-2 rounded-xl relative shadow-3xs flex flex-col justify-start overflow-hidden h-full">
                 <h4 className="text-[11.5px] md:text-[12.5px] font-extrabold uppercase tracking-widest text-[#4f46e5] mb-1 leading-none font-sans">Meet {pet.name || 'Lovely Foster'}!</h4>
-                <p
-                  className="italic text-slate-700 font-medium select-text indent-2 pr-1"
-                  style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!", 'editorial-2-photos', false)}
-                >
-                  {pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
-                </p>
+                <AutoFitBio
+                  text={pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
+                  className="italic text-slate-700 font-medium select-text pr-1"
+                  templateId="editorial-2-photos"
+                  isSquare={false}
+                />
               </div>
             </div>
             <div className="flex flex-col gap-1 shrink-0">
@@ -2294,17 +2327,17 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             <div className="flex-[3] flex flex-col min-h-0 overflow-hidden">
               <div className="bg-[#fcfbf9] border border-stone-200/70 p-2 rounded-xl shadow-3xs flex flex-col justify-start overflow-hidden h-full">
                 <h4 className="text-[11.5px] md:text-[12.5px] font-extrabold uppercase tracking-widest text-[#4f46e5] mb-1 leading-none shrink-0">Meet {pet.name || 'Lovely Foster'}!</h4>
-                <p
-                  className="italic text-slate-700 font-medium select-text indent-2 pr-1"
-                  style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!", 'minimalist', false)}
-                >
-                  {pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
-                </p>
+                <AutoFitBio
+                  text={pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
+                  className="italic text-slate-700 font-medium select-text pr-1"
+                  templateId="minimalist"
+                  isSquare={false}
+                />
               </div>
             </div>
 
             {/* Stats — right ~40% */}
-            <div className="flex-[2] flex flex-col gap-1 justify-start">
+            <div className="flex-[2] flex flex-col gap-1 justify-start min-h-0 overflow-hidden">
               <div className="flex flex-wrap gap-1">
                 {[
                   { label: pet.breed || 'Unknown' },
@@ -2384,14 +2417,14 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               </div>
 
               {/* Bio story — bare text on a soft wash, no border box */}
-              <div className="flex-1 relative flex flex-col justify-start overflow-hidden select-text py-1">
+              <div className="flex-1 relative flex flex-col justify-start overflow-hidden select-text py-1 min-h-0">
                 <div className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-rose-200" />
-                <p
+                <AutoFitBio
+                  text={pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
                   className="italic text-stone-800 font-semibold select-text pl-3 pr-1 leading-snug"
-                  style={getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", "comic", false)}
-                >
-                  {pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
-                </p>
+                  templateId="comic"
+                  isSquare={false}
+                />
               </div>
 
             </div>
@@ -2432,39 +2465,27 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               {/* LARGE ADOPTION STORY BOX (Spacious, beautifully bordered, rich text with more vertical size) */}
               <div className="flex-1 flex flex-col justify-start min-h-0">
                 {settings.templateId === 'whimsical' ? (
-                  <div className="bg-[#fefcf5] border-2 border-dashed border-[#2d5a27]/25 p-2 md:p-2.5 rounded-[24px_16px_36px_20px] shadow-3xs relative flex flex-col justify-start h-full overflow-hidden font-playful">
+                  <div className="bg-[#fefcf5] border-2 border-dashed border-[#2f9e44] p-2 md:p-2.5 rounded-[24px_16px_36px_20px] shadow-3xs relative flex flex-col justify-start h-full overflow-hidden font-playful">
                     <h4 className="text-[13px] md:text-[14px] font-extrabold font-handwritten text-[#0f5c3a] mb-1 leading-none flex items-center gap-1">🌸 Meet {pet.name || 'Lovely Foster'}!</h4>
-                    <p
+                    <AutoFitBio
+                      text={pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
                       className="italic text-stone-800 font-normal select-text pr-1"
-                      style={{
-                        ...getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", "whimsical", false),
-                        fontFamily: '"Patrick Hand", "Gaegu", cursive, sans-serif',
-                      }}
-                    >
-                      {pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
-                    </p>
-                  </div>
-                ) : settings.templateId === 'comic' ? (
-                  <div className="relative flex flex-col justify-start overflow-hidden h-full select-text pl-3 pr-0.5 py-0.5">
-                    <div className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-rose-200" />
-                    <p
-                      className="italic text-stone-800 font-semibold select-text leading-snug"
-                      style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!", "comic", false)}
-                    >
-                      {pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
-                    </p>
+                      templateId="whimsical"
+                      isSquare={false}
+                      fontFamily='"Patrick Hand", "Gaegu", cursive, sans-serif'
+                    />
                   </div>
                 ) : (
                   <div className="bg-[#fcfbf9] border border-stone-200/70 p-2 rounded-xl relative shadow-3xs flex flex-col justify-start overflow-hidden h-full">
 
                     <h4 className="text-[11.5px] md:text-[12.5px] font-extrabold uppercase tracking-widest text-[#4f46e5] mb-1 leading-none">Meet {pet.name || 'Lovely Foster'}!</h4>
 
-                    <p
-                      className="italic text-slate-700 font-medium select-text indent-2 pr-1"
-                      style={getDynamicBioStyle(pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!", settings.templateId, false)}
-                    >
-                      {pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
-                    </p>
+                    <AutoFitBio
+                      text={pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
+                      className="italic text-slate-700 font-medium select-text pr-1"
+                      templateId={settings.templateId}
+                      isSquare={false}
+                    />
 
                   </div>
                 )}
@@ -2518,12 +2539,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                 </div>
               </div>
             ) : settings.templateId === 'whimsical' ? (
-              <div className="bg-[#fffefe] p-1 md:p-1.5 pb-1 md:pb-1 w-full max-w-full aspect-[0.68] flex flex-col rounded-[12px_44px_16px_36px] relative shrink-0 group shadow-xs rotate-[-1deg] border border-[#b3cca8]/30">
+              <div className="bg-[#fffefe] p-1 md:p-1.5 pb-1 md:pb-1 w-full max-w-full aspect-[0.68] flex flex-col rounded-[12px_44px_16px_36px] relative shrink-0 group shadow-xs rotate-[-1deg] border border-[#2f9e44]">
                 {/* Tape markers */}
                 <div className="absolute -top-1.5 left-8 w-11 h-4 bg-yellow-105/50 border-x border-stone-500/10 rotate-[10deg] shadow-3xs z-30 font-sans"></div>
                 <div className="absolute -bottom-1 -right-0.5 w-12 h-4 bg-[#4f46e5]/10 border-y border-stone-500/10 rotate-[-15deg] shadow-3xs z-30 font-sans"></div>
-                
-                <div className="flex-1 h-0 w-full bg-[#fcf9e8]/10 relative rounded-[4px_32px_8px_20px] overflow-hidden border border-[#b3cca8]/10">
+
+                <div className="flex-1 h-0 w-full bg-[#fcf9e8]/10 relative rounded-[4px_32px_8px_20px] overflow-hidden border border-[#2f9e44]/60">
                   {primaryPhoto ? (
                     <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
                   ) : (
