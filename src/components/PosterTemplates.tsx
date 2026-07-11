@@ -342,12 +342,34 @@ const AutoFitBio: React.FC<{ text: string; className: string; templateId: string
       el.style.lineHeight = lineHeightForSize(size);
     };
 
-    const fits = (size: number) => {
-      applySize(size);
-      return el.scrollHeight <= container.clientHeight + 0.5 && el.scrollWidth <= container.clientWidth + 0.5;
-    };
-
+    // Measure entirely in visual space (getBoundingClientRect) rather than
+    // scrollHeight/clientHeight. Two reasons:
+    // 1. Some templates render a sibling (e.g. an <h4>"Meet {name}!"</h4>
+    //    heading) above this paragraph, inside the same container —
+    //    clientHeight covers the WHOLE container, overestimating this
+    //    paragraph's real available room. Reading el's own top position
+    //    directly (fixed regardless of el's own size, since flex-col
+    //    stacking only depends on what's above it) already nets out every
+    //    sibling/padding/margin/gap without having to reconstruct them by
+    //    hand.
+    // 2. The live preview column is often rendered at a fractional CSS
+    //    transform scale (e.g. 0.9x). scrollHeight/clientHeight are always
+    //    unscaled/local, so comparing them can drift a few px from what's
+    //    actually painted at fractional scales. getBoundingClientRect
+    //    reflects the real painted geometry, matching what a screenshot
+    //    (or a user's eyes) would show.
     const measure = () => {
+      const containerRect = container.getBoundingClientRect();
+      const elTop = el.getBoundingClientRect().top;
+      const availH = containerRect.bottom - elTop;
+      const availW = containerRect.width;
+
+      const fits = (size: number) => {
+        applySize(size);
+        const r = el.getBoundingClientRect();
+        return r.height <= availH - 1 && r.width <= availW + 1;
+      };
+
       if (fits(maxPx)) {
         setFontSize(maxPx);
         return;
