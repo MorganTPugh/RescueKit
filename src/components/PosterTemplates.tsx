@@ -1228,9 +1228,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             <div className="flex-1 flex flex-col justify-stretch min-h-0 my-1 overflow-hidden">
               {settings.templateId === 'whimsical' ? (
                 <div className="h-full bg-[#fdfbf2] border-2 border-dashed border-[#2d5a27]/15 p-3 rounded-[24px_16px_32px_20px] text-[11.5px] font-bold text-stone-850 shadow-3xs overflow-hidden relative select-text flex flex-col justify-start font-playful">
-                  <p 
-                    className="indent-1 text-stone-700 select-text italic"
-                    style={getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", "whimsical", true)}
+                  <p
+                    className="indent-1 text-stone-700 select-text italic font-normal"
+                    style={{
+                      ...getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", "whimsical", true),
+                      fontFamily: '"Patrick Hand", "Gaegu", cursive, sans-serif',
+                    }}
                   >
                     {pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
                   </p>
@@ -2431,9 +2434,12 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                 {settings.templateId === 'whimsical' ? (
                   <div className="bg-[#fefcf5] border-2 border-dashed border-[#2d5a27]/25 p-2 md:p-2.5 rounded-[24px_16px_36px_20px] shadow-3xs relative flex flex-col justify-start h-full overflow-hidden font-playful">
                     <h4 className="text-[13px] md:text-[14px] font-extrabold font-handwritten text-[#0f5c3a] mb-1 leading-none flex items-center gap-1">🌸 Meet {pet.name || 'Lovely Foster'}!</h4>
-                    <p 
-                      className="italic text-stone-800 font-bold select-text pr-1"
-                      style={getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", "whimsical", false)}
+                    <p
+                      className="italic text-stone-800 font-normal select-text pr-1"
+                      style={{
+                        ...getDynamicBioStyle(pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles.", "whimsical", false),
+                        fontFamily: '"Patrick Hand", "Gaegu", cursive, sans-serif',
+                      }}
                     >
                       {pet.estimatedBio || "This sweet foster is looking for a warm snuggly space to call home. Fully vetted, housetrained, and ready to share infinite laughs and cuddles."}
                     </p>

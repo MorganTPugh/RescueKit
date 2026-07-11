@@ -675,7 +675,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                   {[
                     { id: 'editorial', name: '📰 Editorial Cover', desc: 'Bold classic serif headers' },
                     { id: 'minimalist', name: '◽ Clean Modern', desc: 'Best for vertical photo' },
-                    { id: 'whimsical', name: '🐱 Cute Whimsical', desc: 'Soft pastel bubbles' },
+                    { id: 'whimsical', name: '📔 Scrapbook', desc: 'Soft pastel bubbles' },
                     { id: 'polaroid', name: '📸 Polaroid Classic', desc: 'Cozy diary snapshot' },
                     { id: 'comic', name: '💖 Sweet Romance', desc: 'Elegant pink & custom icons' }
                   ].map(t => (
