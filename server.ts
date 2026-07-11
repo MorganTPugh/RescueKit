@@ -11,8 +11,32 @@ dotenv.config();
 const app = express();
 const PORT = parseInt(process.env.PORT || "3000", 10);
 
+// Trust the reverse proxy (e.g. Cloud Run) so req.ip reflects the real visitor, not the proxy
+app.set("trust proxy", true);
+
 // Parse JSON request bodies
 app.use(express.json({ limit: "15mb" }));
+
+// Per-visitor rate limit for the paid Gemini bio generator, so a single visitor
+// (or bot) can't rack up API costs by spamming the button.
+const BIO_RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const BIO_RATE_LIMIT_MAX = 8; // generations per visitor per window
+const bioRequestLog = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const windowStart = now - BIO_RATE_LIMIT_WINDOW_MS;
+  const recent = (bioRequestLog.get(ip) || []).filter(t => t > windowStart);
+
+  if (recent.length >= BIO_RATE_LIMIT_MAX) {
+    bioRequestLog.set(ip, recent);
+    return true;
+  }
+
+  recent.push(now);
+  bioRequestLog.set(ip, recent);
+  return false;
+}
 
 // Initialize the Gemini API client safely
 let ai: GoogleGenAI | null = null;
@@ -37,8 +61,14 @@ try {
 // API Routes FIRST
 app.post("/api/generate-bio", async (req, res) => {
   if (!ai) {
-    return res.status(503).json({ 
-      error: "AI Bio Generation is temporarily configured without an API Key. Please add your GEMINI_API_KEY in the Secrets panel." 
+    return res.status(503).json({
+      error: "AI Bio Generation is temporarily configured without an API Key. Please add your GEMINI_API_KEY in the Secrets panel."
+    });
+  }
+
+  if (isRateLimited(req.ip || "unknown")) {
+    return res.status(429).json({
+      error: "You've hit the AI bio generation limit for now. Please wait a bit and try again, or write the bio by hand below."
     });
   }
 
