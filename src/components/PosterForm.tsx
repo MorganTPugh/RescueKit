@@ -410,7 +410,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                   onChange={handleTextChange}
                   className="w-full text-[11px] font-semibold bg-stone-50/70 border-2 border-stone-200 focus:border-sky-400 p-2 rounded-xl outline-none"
                 >
-                  <option value="yes">Super sweet with kids (Yes)</option>
+                  <option value="yes">Yes</option>
                   <option value="selective">Older kids preferred</option>
                   <option value="no">Adults-only home (No)</option>
                   <option value="unknown">Not Tested</option>

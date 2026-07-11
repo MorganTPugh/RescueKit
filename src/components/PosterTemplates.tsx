@@ -1963,7 +1963,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               Meet {pet.name || 'Lovely Foster'}!
             </h1>
             <p className="text-[9px] md:text-[9.5px] uppercase tracking-[0.14em] text-stone-500 font-sans font-semibold mt-1.5 leading-none">
-              A {pet.breed || pet.species} seeking a tranquil sanctuary
+              A {pet.breed || pet.species} seeking a sanctuary
             </p>
           </div>
           <div className={`inline-flex items-center text-center justify-center py-1 transition-all duration-300 ${getBadgeStyle()} mr-1 shrink-0`}>
@@ -2180,7 +2180,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               Meet {pet.name || 'Lovely Foster'}!
             </h1>
             <p className="text-[9px] md:text-[9.5px] uppercase tracking-[0.14em] text-stone-605 font-sans font-semibold mt-1.5 leading-none">
-              A {pet.traits?.[0] ? `${pet.traits[0].toLowerCase()} ` : ''}{pet.breed} seeking a tranquil sanctuary
+              A {pet.traits?.[0] ? `${pet.traits[0].toLowerCase()} ` : ''}{pet.breed} seeking a sanctuary
             </p>
           </div>
 
@@ -2365,7 +2365,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                   <div className="min-w-0">
                     <h4 className="text-[9.5px] font-extrabold uppercase tracking-wide text-rose-700 leading-none mb-0.5">Blooming Sweetheart</h4>
                     <p className="text-[8px] font-semibold text-stone-700 leading-tight">
-                      {pet.name || 'This pet'} is full of warmth, affection, and ready to become your loyal companion.
+                      {pet.name || 'This pet'} is full of love and is ready to be your loyal companion!
                     </p>
                   </div>
                 </div>
