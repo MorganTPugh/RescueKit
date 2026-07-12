@@ -550,7 +550,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           {/* Subtle themed background */}
           <div className={`absolute inset-0 pointer-events-none -z-10 ${currentTheme.bgClass}`}></div>
           <div className="absolute inset-2 border border-slate-350/20 rounded-xl pointer-events-none -z-10"></div>
-          <div className="absolute bottom-1.5 right-2 text-[6px] text-slate-300/50 font-mono select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
+          <div className="absolute bottom-1.5 right-2 text-[7px] text-slate-500 font-mono font-semibold select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
 
           {/* 1. Header (Compact and clean) */}
           <div className="flex items-center justify-between w-full border-b border-stone-250 pb-1 mt-0 select-none shrink-0 leading-none">
@@ -686,7 +686,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           } ${getFontFamilyClass()} ${currentTheme.textClass}`}
         >
           {/* Subtle themed backgrounds */}
-          <div className="absolute bottom-1.5 right-2 text-[6px] text-slate-300/50 font-mono select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
+          <div className="absolute bottom-1.5 right-2 text-[7px] text-slate-500 font-mono font-semibold select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
           {isComic2 ? (
             <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden bg-[#fefaf2]">
               <div className="absolute top-2 right-4 text-rose-300 opacity-55 text-3xl font-sans font-normal">♥</div>
@@ -897,7 +897,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           <div className="absolute inset-0 pointer-events-none -z-10 border-t-[5px] border-b-[5px] border-stone-900">
             <div className="absolute inset-3 border border-stone-200/60"></div>
           </div>
-          <div className="absolute bottom-1.5 right-2 text-[6px] text-slate-400/40 font-mono select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
+          <div className="absolute bottom-1.5 right-2 text-[7px] text-slate-500 font-mono font-semibold select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
 
           {/* Header */}
           <div className="flex items-center gap-2 shrink-0 border-b-2 border-stone-900 pb-2 select-none">
@@ -1007,7 +1007,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         className={`${printClass} aspect-ratio-square w-full h-full relative border flex flex-col justify-between overflow-hidden p-4 selection:bg-rose-105 shadow-2xl ${settings.templateId === 'whimsical' ? 'bg-[#fdfbf6] border-[#b3cca8]/25 rounded-3xl' : settings.templateId === 'comic' ? 'bg-[#fefaf2] border-pink-100 rounded-3xl' : 'bg-white border-slate-200 rounded-2xl'} ${getFontFamilyClass()} ${currentTheme.textClass}`}
       >
         {/* BACKGROUND GRAPHICS */}
-        <div className="absolute bottom-1.5 right-2 text-[6px] text-slate-300/50 font-mono select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
+        <div className="absolute bottom-1.5 right-2 text-[7px] text-slate-500 font-mono font-semibold select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
         {settings.templateId === 'whimsical' && (
           <>
             <div className="absolute inset-2 pointer-events-none -z-10 border-2 border-dashed border-[#2d5a27]/15 rounded-2xl"></div>
@@ -1628,7 +1628,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           <div className={`absolute inset-0 pointer-events-none -z-10 ${currentTheme.bgClass}`}></div>
           <div className="absolute inset-2 border border-slate-350/20 rounded-xl pointer-events-none -z-10"></div>
         </>
-        <div className="absolute bottom-1.5 right-2 text-[6px] text-slate-300/50 font-mono select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
+        <div className="absolute bottom-1.5 right-2 text-[7px] text-slate-500 font-mono font-semibold select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
 
         {/* 1. Header (Very Compact) */}
         <div className="flex items-center justify-between w-full border-b border-stone-200 pb-1.5 mt-0 select-none shrink-0 leading-none">
@@ -1768,7 +1768,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         } ${getFontFamilyClass()} ${currentTheme.textClass}`}
       >
         {/* Subtle background styles */}
-        <div className="absolute bottom-1.5 right-2 text-[6px] text-slate-300/50 font-mono select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
+        <div className="absolute bottom-1.5 right-2 text-[7px] text-slate-500 font-mono font-semibold select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
         {isComic2 ? (
           <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden bg-[#fefaf2]">
             <div className="absolute top-4 right-8 text-rose-300 opacity-55 text-4xl font-sans font-normal">♥</div>
@@ -2012,7 +2012,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         <div className="absolute inset-0 pointer-events-none -z-10 border-t-[6px] border-b-[6px] border-stone-900">
           <div className="absolute inset-x-4 top-4 bottom-4 border border-stone-200/60"></div>
         </div>
-        <div className="absolute bottom-1.5 right-2 text-[6px] text-slate-400/40 font-mono select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
+        <div className="absolute bottom-1.5 right-2 text-[7px] text-slate-500 font-mono font-semibold select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
 
         {/* Header */}
         <div className="w-full flex items-end justify-between mt-0 mb-2.5 z-10 font-sans shrink-0 border-b-2 border-stone-900 pb-2 select-none">
@@ -2167,7 +2167,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
     >
 
       {/* BACKGROUND GRAPHIC ACCENTS BASED ON TEMPLATE STYLE */}
-      <div className="absolute bottom-1.5 right-2 text-[6px] text-slate-300/50 font-mono select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
+      <div className="absolute bottom-1.5 right-2 text-[7px] text-slate-500 font-mono font-semibold select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
       {settings.templateId === 'whimsical' && (
         <div className="absolute inset-0 pointer-events-none -z-10 opacity-40">
           <div className="absolute top-10 left-10 w-44 h-44 rounded-full bg-rose-105/40 mix-blend-multiply filter blur-2xl"></div>
@@ -2343,11 +2343,11 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           )}
 
           {/* Bio + Stats row */}
-          <div className="flex gap-2.5 flex-[5] min-h-0 items-stretch">
+          <div className="flex gap-2 flex-[5] min-h-0 items-stretch">
 
-            {/* Bio — left ~60% */}
-            <div className="flex-[3] flex flex-col min-h-0 overflow-hidden">
-              <div className="bg-[#fcfbf9] border border-stone-200/70 p-2 rounded-xl shadow-3xs flex flex-col justify-start overflow-hidden h-full">
+            {/* Bio — left ~67% */}
+            <div className="flex-[2] flex flex-col min-h-0 overflow-hidden">
+              <div className="bg-[#fcfbf9] border border-stone-200/70 p-1.5 rounded-xl shadow-3xs flex flex-col justify-start overflow-hidden h-full">
                 <h4 className="text-[11.5px] md:text-[12.5px] font-extrabold uppercase tracking-widest text-[#4f46e5] mb-1 leading-none shrink-0">Meet {pet.name || 'Lovely Foster'}!</h4>
                 <AutoFitBio
                   text={pet.estimatedBio || "Please fill in some basic animal information and tap 'Generate Bio with AI' to automatically generate a charming adoption story, or type a custom bio directly!"}
@@ -2358,29 +2358,36 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               </div>
             </div>
 
-            {/* Stats — right ~40% */}
-            <div className="flex-[2] flex flex-col gap-1 justify-start min-h-0 overflow-hidden">
-              <div className="flex flex-wrap gap-1">
-                {[
-                  { label: pet.breed || 'Unknown' },
-                  { label: pet.age || 'Age N/A' },
-                  { label: pet.gender === 'boy' ? 'Male' : pet.gender === 'girl' ? 'Female' : 'Unknown sex' },
-                  { label: pet.weight || 'Medium' },
-                  { label: pet.houseTrained === 'yes' ? 'Housetrained ✓' : pet.houseTrained === 'working-on-it' ? 'Learning' : 'Untrained' },
-                  ...(pet.location ? [{ label: pet.location }] : []),
-                ].map((item, i) => (
-                  <span key={i} className={`inline-flex items-center px-2 py-0.5 rounded-full text-[7.5px] font-bold shrink-0 ${currentTheme.bgClass} border ${currentTheme.borderClass} text-slate-700`}>
-                    {item.label}
-                  </span>
-                ))}
+            {/* Stats — right ~33%, compact spec list */}
+            <div className="flex-[1] flex flex-col gap-1 justify-between min-h-0 overflow-hidden">
+              <div className="bg-[#fcfbf9] border border-stone-200/70 rounded-xl shadow-3xs px-2 py-1.5 flex flex-col gap-0.5 overflow-hidden">
+                <div className="text-[9px] font-bold text-slate-800 leading-tight truncate">
+                  {pet.breed || 'Unknown'}
+                </div>
+                <div className="text-[9px] leading-tight truncate border-t border-stone-100 pt-0.5">
+                  <span className="font-black text-slate-500 uppercase tracking-wide text-[7px] mr-1">Age:</span>
+                  <span className="font-bold text-slate-800">{pet.age || 'Age N/A'}</span>
+                </div>
+                <div className="text-[9px] font-bold text-slate-800 leading-tight truncate border-t border-stone-100 pt-0.5">
+                  {pet.gender === 'boy' ? 'Male' : pet.gender === 'girl' ? 'Female' : 'Unknown sex'}
+                </div>
+                <div className="text-[9px] font-bold text-slate-800 leading-tight truncate border-t border-stone-100 pt-0.5">
+                  {pet.weight || 'Medium'}
+                </div>
+                <div className="text-[9px] font-bold text-slate-800 leading-tight truncate border-t border-stone-100 pt-0.5">
+                  {pet.location || 'Local Area'}
+                </div>
+                <div className="text-[9px] font-bold text-slate-800 leading-tight truncate border-t border-stone-100 pt-0.5">
+                  {pet.houseTrained === 'yes' ? 'Housetrained ✓' : pet.houseTrained === 'working-on-it' ? 'Learning' : 'Untrained'}
+                </div>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 shrink-0">
                 {[
                   { label: 'Dogs', val: pet.goodWithDogs },
                   { label: 'Cats', val: pet.goodWithCats },
                   { label: 'Kids', val: pet.goodWithKids },
                 ].map((item, i) => (
-                  <div key={i} className={`flex-1 rounded-xl py-1 text-center border ${
+                  <div key={i} className={`flex-1 rounded-lg py-1 text-center border ${
                     item.val === 'yes' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
                     item.val === 'no' ? 'bg-rose-50 border-rose-200 text-rose-700' :
                     'bg-stone-50 border-stone-200 text-stone-500'
