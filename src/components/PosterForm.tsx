@@ -798,9 +798,9 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             <div className="grid grid-cols-3 gap-2.5 my-3">
               <button
                 type="button"
-                id="generate-tinder-btn"
+                id="generate-short-sweet-btn"
                 disabled={isGeneratingBio}
-                onClick={() => onGenerateBio('tinder')}
+                onClick={() => onGenerateBio('short-sweet')}
                 className="cursor-pointer bg-[#451a03] text-white font-extrabold hover:bg-stone-850 leading-tight text-[10px] py-2 px-1.5 rounded-full transition-transform hover:scale-[1.02] text-center"
               >
                 ⚡ Short & Sweet
