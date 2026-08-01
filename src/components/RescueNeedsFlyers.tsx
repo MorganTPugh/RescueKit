@@ -1951,12 +1951,12 @@ export const RescueNeedsFlyers: React.FC = () => {
         <div className="bg-white border border-sky-100 rounded-3xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
           <div className="flex flex-col gap-0.5 hidden sm:flex">
             <p className="text-xs font-bold text-slate-700">Choose Format</p>
-            <p className="text-[10px] text-sky-700/60 font-semibold mt-0.5">Save as an 8.5x11 rectangle flyer, a 1x1 flyer, or both! Both formats can be shared digitally or printed.</p>
+            <p className="text-[10px] text-sky-700/60 font-semibold mt-0.5">Both formats print beautifully and share just as well online — try either, or make both.</p>
           </div>
           <div className="flex gap-2">
             {([
-              { val: 'flyer', label: 'Flyer (Print & Share)' },
-              { val: 'square', label: 'Social Square (1:1)' },
+              { val: 'flyer', label: '📄 Flyer (8.5×11)' },
+              { val: 'square', label: '🖼️ Square (1:1)' },
             ] as const).map(opt => (
               <button key={opt.val} onClick={() => setAspectRatio(opt.val)}
                 className={`px-4 py-2 rounded-full font-bold text-xs transition-all cursor-pointer ${
