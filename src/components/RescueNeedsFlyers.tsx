@@ -1597,7 +1597,7 @@ export const RescueNeedsFlyers: React.FC = () => {
             Make Flyers for Every Rescue Need
           </h1>
           <p className="text-sm text-sky-800/80 font-semibold mt-1.5">
-            Design printable or social media flyers for donations, fosters, volunteers, or events — in minutes.
+            Design digital and printable flyers for donations, fosters, volunteers, or events — in minutes.
           </p>
         </div>
         <div className="hidden md:flex items-center gap-2 shrink-0 flex-wrap justify-end">

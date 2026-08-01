@@ -48,7 +48,17 @@ export const PosterForm: React.FC<PosterFormProps> = ({
   const [activeStep, setActiveStep] = useState<number>(0);
   const [customTraitInput, setCustomTraitInput] = useState<string>('');
   const [dragActive, setDragActive] = useState<boolean>(false);
+  const [traitCapWarning, setTraitCapWarning] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const traitCapWarningTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const MAX_TRAITS = 4;
+
+  const flashTraitCapWarning = () => {
+    setTraitCapWarning(true);
+    if (traitCapWarningTimeout.current) clearTimeout(traitCapWarningTimeout.current);
+    traitCapWarningTimeout.current = setTimeout(() => setTraitCapWarning(false), 2200);
+  };
 
   const steps = [
     { title: 'Pet Details', icon: <Dna className="w-4 h-4" /> },
@@ -66,7 +76,11 @@ export const PosterForm: React.FC<PosterFormProps> = ({
   const handleCheckboxChange = (trait: string) => {
     setPet(prev => {
       const isSelected = prev.traits.includes(trait);
-      const newTraits = isSelected 
+      if (!isSelected && prev.traits.length >= MAX_TRAITS) {
+        flashTraitCapWarning();
+        return prev;
+      }
+      const newTraits = isSelected
         ? prev.traits.filter(t => t !== trait)
         : [...prev.traits, trait];
       return { ...prev, traits: newTraits };
@@ -75,13 +89,17 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
   const handleAddCustomTrait = (e: React.FormEvent) => {
     e.preventDefault();
-    if (customTraitInput.trim() && !pet.traits.includes(customTraitInput.trim())) {
-      setPet(prev => ({
-        ...prev,
-        traits: [...prev.traits, customTraitInput.trim()]
-      }));
-      setCustomTraitInput('');
+    const trimmed = customTraitInput.trim();
+    if (!trimmed || pet.traits.includes(trimmed)) return;
+    if (pet.traits.length >= MAX_TRAITS) {
+      flashTraitCapWarning();
+      return;
     }
+    setPet(prev => ({
+      ...prev,
+      traits: [...prev.traits, trimmed]
+    }));
+    setCustomTraitInput('');
   };
 
   const handleRemoveTrait = (trait: string) => {
@@ -224,25 +242,29 @@ export const PosterForm: React.FC<PosterFormProps> = ({
       </div>
 
       {/* STEPPERS NAVIGATION BAR */}
-      <div className="flex border-b border-sky-50 pb-3.5 mb-5 items-center gap-3 md:gap-4.5 justify-start overflow-x-auto scroll-hide">
-        {steps.map((s, idx) => (
-          <button
-            key={idx}
-            onClick={() => setActiveStep(idx)}
-            className={`flex items-center gap-1.5 sm:gap-2 pb-2.5 border-b-2 text-xs font-semibold shrink-0 transition-all cursor-pointer ${
-              activeStep === idx 
-                ? 'border-sky-500 text-sky-600 font-bold' 
-                : 'border-transparent text-sky-700/50 hover:text-sky-800'
-            }`}
-          >
-            <div className={`w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
-              activeStep === idx ? 'bg-sky-50 text-sky-650 font-bold' : 'bg-sky-50/60 text-sky-700/60'
-            }`}>
-              {idx + 1}
-            </div>
-            <span className="whitespace-nowrap">{s.title}</span>
-          </button>
-        ))}
+      <div className="relative mb-5">
+        <div className="flex border-b border-sky-50 pb-3.5 items-center gap-3 md:gap-4.5 justify-start overflow-x-auto scroll-hide">
+          {steps.map((s, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActiveStep(idx)}
+              className={`flex items-center gap-1.5 sm:gap-2 pb-2.5 border-b-2 text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+                activeStep === idx
+                  ? 'border-sky-500 text-sky-600 font-bold'
+                  : 'border-transparent text-sky-700/50 hover:text-sky-800'
+              }`}
+            >
+              <div className={`w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
+                activeStep === idx ? 'bg-sky-50 text-sky-650 font-bold' : 'bg-sky-50/60 text-sky-700/60'
+              }`}>
+                {idx + 1}
+              </div>
+              <span className="whitespace-nowrap">{s.title}</span>
+            </button>
+          ))}
+        </div>
+        {/* Right-edge fade cue: signals more steps are scrollable off-screen (e.g. step 4 on narrow mobile viewports) */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-3.5 w-8 bg-gradient-to-l from-white to-transparent" />
       </div>
 
       {/* ========================================================= */}
@@ -448,19 +470,28 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           </div>
 
           <div className="border border-stone-200 rounded-2xl p-4 bg-stone-50/50">
-            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-2">Select Core Traits (Up to 4)</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Select Core Traits (Up to {MAX_TRAITS})</label>
+              {traitCapWarning && (
+                <span className="text-[10px] font-bold text-rose-600 animate-fade-in">Remove one to add another</span>
+              )}
+            </div>
             <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
               {PRESET_TRAITS.map((trait, idx) => {
                 const isSelected = pet.traits.includes(trait);
+                const atCap = !isSelected && pet.traits.length >= MAX_TRAITS;
                 return (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => handleCheckboxChange(trait)}
-                    className={`text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
-                      isSelected 
-                        ? 'bg-sky-600 text-white border-sky-600 shadow-sm shadow-sky-200' 
-                        : 'bg-white text-slate-600 border-stone-200 hover:border-sky-405'
+                    aria-disabled={atCap}
+                    className={`text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
+                      isSelected
+                        ? 'bg-sky-600 text-white border-sky-600 shadow-sm shadow-sky-200 cursor-pointer'
+                        : atCap
+                        ? 'bg-stone-100 text-slate-350 border-stone-150 cursor-not-allowed opacity-60'
+                        : 'bg-white text-slate-600 border-stone-200 hover:border-sky-405 cursor-pointer'
                     }`}
                   >
                     {isSelected ? '✓ ' : ''}{trait}
@@ -468,7 +499,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 );
               })}
             </div>
-            
+
             {/* Custom tags creator */}
             <form onSubmit={handleAddCustomTrait} className="flex gap-2 mt-3.5 border-t border-stone-50 pt-3">
               <input
@@ -476,13 +507,16 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 type="text"
                 value={customTraitInput}
                 onChange={e => setCustomTraitInput(e.target.value)}
-                placeholder="Add customized trait... (e.g. Snorer Extraordinaire)"
-                className="flex-1 text-xs font-semibold bg-white border-2 border-stone-200 focus:border-sky-400 rounded-xl p-2 outline-none"
+                onFocus={() => { if (pet.traits.length >= MAX_TRAITS) flashTraitCapWarning(); }}
+                disabled={pet.traits.length >= MAX_TRAITS}
+                placeholder={pet.traits.length >= MAX_TRAITS ? `Remove a trait to add another` : "Add customized trait... (e.g. Snorer Extraordinaire)"}
+                className="flex-1 text-xs font-semibold bg-white border-2 border-stone-200 focus:border-sky-400 rounded-xl p-2 outline-none disabled:bg-stone-50 disabled:text-slate-400 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
                 id="add-trait-btn"
-                className="bg-sky-600 border border-sky-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-sky-700 active:scale-95 transition-all cursor-pointer"
+                disabled={pet.traits.length >= MAX_TRAITS}
+                className="bg-sky-600 border border-sky-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-sky-700 active:scale-95 transition-all cursor-pointer disabled:bg-stone-200 disabled:border-stone-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:active:scale-100"
               >
                 + Add
               </button>
@@ -809,12 +843,12 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           </div>
 
           {/* GEMINI STORYTELLER CARD */}
-          <div className="bg-yellow-50 rounded-3xl border border-yellow-100 p-4 mt-2">
+          <div className="bg-sky-50/70 rounded-3xl border border-sky-100 p-4 mt-2">
             <div className="flex gap-2 items-start mb-2">
-              <Sparkles className="w-5 h-5 text-yellow-600 animate-pulse shrink-0 mt-0.5" />
+              <Sparkles className="w-5 h-5 text-sky-600 animate-pulse shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-black text-yellow-950">Gemini's AI Bio-writer</h4>
-                <p className="text-[10px] text-yellow-750 font-bold leading-normal">Choose a voice — AI writes the bio, you make it perfect.</p>
+                <h4 className="text-xs font-black text-slate-800">Gemini's AI Bio-writer</h4>
+                <p className="text-[10px] text-slate-600 font-bold leading-normal">Choose a voice — AI writes the bio, you make it perfect.</p>
               </div>
             </div>
 
@@ -824,7 +858,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 id="generate-short-sweet-btn"
                 disabled={isGeneratingBio}
                 onClick={() => onGenerateBio('short-sweet')}
-                className="cursor-pointer bg-[#451a03] text-white font-extrabold hover:bg-stone-850 leading-tight text-[10px] py-2 px-1.5 rounded-full transition-transform hover:scale-[1.02] text-center"
+                className="cursor-pointer bg-sky-600 text-white font-extrabold hover:bg-sky-700 leading-tight text-[10px] py-2 px-1.5 rounded-full transition-transform hover:scale-[1.02] text-center"
               >
                 ⚡ Short & Sweet
               </button>
@@ -833,7 +867,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 id="generate-heartwarming-btn"
                 disabled={isGeneratingBio}
                 onClick={() => onGenerateBio('heartwarming')}
-                className="cursor-pointer bg-pink-100 text-pink-700 hover:bg-pink-200 border border-pink-200 font-extrabold leading-tight text-[10px] py-2 px-1.5 rounded-full transition-transform hover:scale-[1.02] text-center"
+                className="cursor-pointer bg-sky-600 text-white font-extrabold hover:bg-sky-700 leading-tight text-[10px] py-2 px-1.5 rounded-full transition-transform hover:scale-[1.02] text-center"
               >
                 💖 Sweet Diary
               </button>
@@ -849,8 +883,8 @@ export const PosterForm: React.FC<PosterFormProps> = ({
             </div>
 
             {isGeneratingBio && (
-              <div id="ai-generating-loader" className="text-center font-bold text-[11px] text-yellow-800 py-1.5 animate-pulse flex items-center justify-center gap-1.5">
-                <div className="w-3 h-3 border-2 border-yellow-800 border-t-transparent rounded-full animate-spin"></div>
+              <div id="ai-generating-loader" className="text-center font-bold text-[11px] text-sky-700 py-1.5 animate-pulse flex items-center justify-center gap-1.5">
+                <div className="w-3 h-3 border-2 border-sky-700 border-t-transparent rounded-full animate-spin"></div>
                 <span>Gemini is dreaming up the perfect pet profile... please wait...</span>
               </div>
             )}
