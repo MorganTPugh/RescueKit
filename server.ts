@@ -10,6 +10,7 @@ dotenv.config();
 
 const app = express();
 const PORT = parseInt(process.env.PORT || "3000", 10);
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
 
 // Parse JSON request bodies
 app.use(express.json({ limit: "15mb" }));
@@ -126,7 +127,7 @@ app.post("/api/generate-bio", async (req, res) => {
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: GEMINI_MODEL,
       contents: prompt,
     });
 

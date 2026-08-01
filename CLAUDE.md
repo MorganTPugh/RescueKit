@@ -11,12 +11,14 @@ npm run build        # Build frontend (Vite) + bundle server (esbuild → dist/s
 npm run start        # Run production build
 npm run lint         # Type-check with tsc --noEmit (no test suite exists)
 npm run clean        # Remove dist/ and server.js
+npm run test:gemini  # Standalone check that GEMINI_API_KEY/GEMINI_MODEL can reach the Gemini API
 ```
 
 ## Environment
 
 Copy `.env.example` to `.env` and set:
 - `GEMINI_API_KEY` — required for AI bio generation via `/api/generate-bio`
+- `GEMINI_MODEL` — optional, defaults to `gemini-flash-latest` (an auto-updating alias). Override to pin a specific model version.
 
 ## Architecture
 
