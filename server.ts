@@ -15,6 +15,35 @@ const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
 // Parse JSON request bodies
 app.use(express.json({ limit: "15mb" }));
 
+// Safety net for AI bio text: the poster renders this as plain text (no markdown
+// renderer), so strip any markdown Gemini slips in despite prompt instructions,
+// collapse blank lines that waste space on the printed poster, and cap emoji count.
+const BIO_EMOJI_REGEX = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]/gu;
+const MAX_BIO_EMOJIS = 4;
+
+function sanitizeBioText(raw: string): string {
+  let text = raw
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/__(.*?)__/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^[*-]\s+/gm, "")
+    .replace(/\*/g, "");
+
+  text = text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join("\n");
+
+  let emojiCount = 0;
+  text = text.replace(BIO_EMOJI_REGEX, (match) => {
+    emojiCount++;
+    return emojiCount <= MAX_BIO_EMOJIS ? match : "";
+  });
+
+  return text.replace(/[ \t]{2,}/g, " ").trim();
+}
+
 // Initialize the Gemini API client safely
 let ai: GoogleGenAI | null = null;
 try {
@@ -67,11 +96,11 @@ app.post("/api/generate-bio", async (req, res) => {
           * ${pet.rescueWebsite ? `More information website: ${pet.rescueWebsite}` : ""}
         - Combine all of these personality elements, facts, and contact details into a cohesive, beautifully written biography flow that excels as a ready-to-use adoption listing!
       `;
-    } else if (selectedStyle === "tinder") {
+    } else if (selectedStyle === "short-sweet") {
       styleDescription = `
-        - Tone: Humorous, charming, lighthearted, and playful. Structured like a cute "Tinder-style" dating profile for a pet.
-        - Include sections like 'About Me', 'My Dream Sunday', 'Negotiable Perks', 'Absolute Red Flags' (keep them extremely funny, e.g. "Will scream for cheese").
-        - Keep the emojis cheerful and relevant.
+        - Tone: Warm, upbeat, and refreshingly brief — the shortest, punchiest of the available styles.
+        - Write as a simple, direct blurb (1-2 short paragraphs, plain prose). NO structured sections or labels like "About Me" — just a tight, charming description of who they are.
+        - Use at most 2 emojis in the ENTIRE bio, placed sparingly.
       `;
     } else if (selectedStyle === "heartwarming") {
       styleDescription = `
@@ -82,9 +111,10 @@ app.post("/api/generate-bio", async (req, res) => {
     } else {
       // scroll-stopper social
       styleDescription = `
-        - Tone: Punchy, high-energy, scrolls-stopping social media caption!
-        - Use excellent spacing, lots of cute pet-centric emojis, short paragraphs, and catchphrases.
-        - End with highly visible, playful hashtags (e.g. #FosterHero, #[breed], #AdoptDontShop).
+        - Tone: Punchy, high-energy, scroll-stopping social media caption!
+        - Write as one flowing paragraph of short, punchy sentences — not separate labeled sections.
+        - Use at most 2-3 emojis total in the whole caption, placed naturally, not one per sentence.
+        - End with 2-3 playful hashtags on the same line (e.g. #FosterHero, #[breed], #AdoptDontShop).
       `;
     }
 
@@ -124,6 +154,11 @@ app.post("/api/generate-bio", async (req, res) => {
       3. Focus entirely on highlighting their unique quirks as endearing benefits.
       4. DO NOT use placeholder text or metadata tags. Keep the tone completely natural, adorable, and ready to print.
       5. If you are unsure whether you are under the word limit, cut more — shorter is always better on a printed poster.
+      6. FORMATTING — this text is displayed as plain text on a printed poster, with no markdown renderer:
+         - NEVER use markdown: no **bold**, no # headers, no bullet dashes/asterisks.
+         - NEVER use labeled sections or headers (e.g. "About Me:", "Dream Sunday:", "Red Flags:"). Write flowing paragraph prose only — the poster layout already has its own headings, so restating an obvious section name wastes space.
+         - NEVER leave a blank line between paragraphs — a single line break at most. Every line must have content.
+         - Use at most 3-4 emojis in the ENTIRE response, placed naturally. Do not put an emoji on every line.
     `;
 
     const response = await ai.models.generateContent({
@@ -132,7 +167,7 @@ app.post("/api/generate-bio", async (req, res) => {
     });
 
     const bioText = response.text || "";
-    res.json({ bio: bioText.trim() });
+    res.json({ bio: sanitizeBioText(bioText) });
   } catch (err: any) {
     console.error("Gemini API biological storytelling generation error:", err);
     res.status(500).json({ error: "Failed to generate bio with Gemini API: " + err.message });
