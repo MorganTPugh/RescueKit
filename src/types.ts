@@ -20,7 +20,8 @@ export interface FosterPetData {
   funnyHabit: string; // "Snores like a freight train..."
   perfectDay: string; // "Breakfast in bed, followed by 12 hours of sleep..."
   loveLanguage: string; // "Aggressively placing their wet nose against your forearm..."
-  estimatedBio: string; // AI generated or self-customized adoption bio story
+  estimatedBio: string; // Foster's own raw notes/draft, typed by hand — never overwritten by AI generation
+  posterBio: string; // Final bio shown on the poster — starts blank, filled by AI generation or the foster editing directly
 
   // Contact & Rescue Details
   fosterName: string;

@@ -50,6 +50,7 @@ const BLANK_PET: FosterPetData = {
   perfectDay: '',
   loveLanguage: '',
   estimatedBio: '',
+  posterBio: '',
   fosterName: '',
   rescueOrg: '',
   fosterEmail: '',
@@ -104,7 +105,12 @@ export default function App() {
   const [pet, setPet] = useState<FosterPetData>(() => {
     try {
       const saved = localStorage.getItem(LS_PET_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Migrate pre-existing saves: posterBio didn't exist before, so carry
+        // over whatever was already showing on the poster (estimatedBio).
+        return { ...BLANK_PET, ...parsed, posterBio: parsed.posterBio || parsed.estimatedBio || '' };
+      }
     } catch {}
     return BLANK_PET;
   });
@@ -149,9 +155,20 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [activeSection]);
 
-  // Track scroll for header shrink
+  // Track scroll for header shrink. Uses a hysteresis band (enter at 40px,
+  // exit at 15px) instead of one threshold — the header resizing itself right
+  // at a single scroll boundary can trigger the browser's scroll anchoring to
+  // nudge scrollY back across that line, flipping `scrolled` again and
+  // causing an endless resize loop ("pulsing"). A gap between the two
+  // thresholds absorbs that feedback instead of oscillating forever.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setScrolled(prev => {
+        if (window.scrollY > 40) return true;
+        if (window.scrollY < 15) return false;
+        return prev;
+      });
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -178,7 +195,7 @@ export default function App() {
   };
 
   const handleStartFresh = () => {
-    const hasMeaningfulData = pet.name || pet.breed || pet.estimatedBio || pet.photos.length > 0;
+    const hasMeaningfulData = pet.name || pet.breed || pet.estimatedBio || pet.posterBio || pet.photos.length > 0;
     if (hasMeaningfulData && !window.confirm("Start fresh? This will clear all your current pet's details and photos.")) return;
     setPet(BLANK_PET);
     setSettings(DEFAULT_SETTINGS);
@@ -207,7 +224,7 @@ export default function App() {
       }
 
       if (data.bio) {
-        setPet(prev => ({ ...prev, estimatedBio: data.bio }));
+        setPet(prev => ({ ...prev, posterBio: data.bio }));
         setSuccessToast("Bio generated! Check the preview on the right — or switch to the Preview tab on mobile.");
         setTimeout(() => setSuccessToast(null), 5000);
       }
@@ -331,7 +348,10 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-br from-sky-50/60 via-stone-50 to-teal-50/30 text-slate-800 flex flex-col justify-between">
 
       {/* 1. APP HEADER - HIDDEN IN PRINTING OUTPUT (.no-print) */}
-      <header className={`no-print bg-sky-50/90 backdrop-blur-sm px-4 sticky top-0 z-20 border-b-2 border-sky-200 transition-all duration-300 ${scrolled ? 'py-1.5 md:px-8 shadow-md' : 'py-3 md:px-8 md:py-4 shadow-sm'}`}>
+      <header
+        className={`no-print bg-sky-50/90 backdrop-blur-sm px-4 sticky top-0 z-20 border-b-2 border-sky-200 transition-all duration-300 ${scrolled ? 'py-1.5 md:px-8 shadow-md' : 'py-3 md:px-8 md:py-4 shadow-sm'}`}
+        style={{ overflowAnchor: 'none' }}
+      >
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
 
           <div className="flex items-center gap-3">
@@ -419,7 +439,7 @@ export default function App() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_theme(colors.sky.100/50),_transparent_60%)] pointer-events-none" />
             <div className="relative z-10">
               <h1 className="text-[22.8px] md:text-[34.2px] font-black text-slate-900 tracking-tight flex items-center gap-2 font-fraunces">Create Adoption Flyers in Minutes</h1>
-              <p className="text-sm text-sky-800 font-bold mt-1.5">Generate digital and printable flyers or AI-written adoption bios — free, private, no sign-up needed.</p>
+              <p className="text-sm text-sky-800 font-bold mt-1.5">Generate digital and printable flyers or AI-assisted adoption bios — free, private, no sign-up needed.</p>
             </div>
           </div>
 
@@ -503,7 +523,7 @@ export default function App() {
             <div className="no-print w-full bg-white border border-sky-100 rounded-2xl p-4 shadow-sm shadow-sky-50 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-left">
                 <p className="text-xs font-bold text-slate-700">Choose Format</p>
-                <p className="text-[10px] text-sky-700/60 font-semibold mt-0.5">Save as a printable flyer, social post, or both!</p>
+                <p className="text-[10px] text-sky-700/60 font-semibold mt-0.5">Save as an 8.5x11 rectangle flyer, a 1x1 flyer, or both! Both formats can be shared digitally or printed.</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
