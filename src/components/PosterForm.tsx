@@ -18,7 +18,8 @@ import {
   Palette,
   HeartHandshake,
   Workflow,
-  Copy
+  Copy,
+  X
 } from 'lucide-react';
 
 interface PosterFormProps {
@@ -51,9 +52,9 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
   const steps = [
     { title: 'Pet Details', icon: <Dna className="w-4 h-4" /> },
-    { title: 'Personality & Bio', icon: <MessageSquareHeart className="w-4 h-4" /> },
+    { title: 'Personality', icon: <MessageSquareHeart className="w-4 h-4" /> },
     { title: 'Photos & Contact', icon: <FileImage className="w-4 h-4" /> },
-    { title: 'Poster Styling', icon: <Palette className="w-4 h-4" /> }
+    { title: 'Flyer Style', icon: <Palette className="w-4 h-4" /> }
   ];
 
   // Form handle helpers
@@ -369,7 +370,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           {/* Living Compatibility Checkboxes */}
           <div className="pt-2 border-t border-stone-50">
-            <h4 className="text-xs font-black text-slate-800 mb-2">Social & Potty Compatibility</h4>
+            <h4 className="text-xs font-black text-slate-800 mb-2">Compatibility</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Good with dogs?</label>
@@ -486,6 +487,28 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 + Add
               </button>
             </form>
+
+            {/* Custom tags the foster has added — shown so they're never invisible/unremovable */}
+            {pet.traits.filter(t => !PRESET_TRAITS.includes(t)).length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2.5">
+                {pet.traits.filter(t => !PRESET_TRAITS.includes(t)).map((trait, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full border bg-sky-600 text-white border-sky-600 shadow-sm shadow-sky-200"
+                  >
+                    {trait}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTrait(trait)}
+                      className="cursor-pointer hover:text-sky-100"
+                      aria-label={`Remove ${trait} trait`}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Core Foster Survey Questionnaire Questions condensed into 1 larger description box */}
@@ -838,11 +861,11 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 <button
                   type="button"
                   onClick={() => {
-                    if (pet.estimatedBio) {
-                      navigator.clipboard.writeText(pet.estimatedBio);
+                    if (pet.posterBio) {
+                      navigator.clipboard.writeText(pet.posterBio);
                     }
                   }}
-                  disabled={!pet.estimatedBio}
+                  disabled={!pet.posterBio}
                   title="Copy bio to clipboard"
                   className="flex items-center gap-1 text-[10px] font-bold text-sky-600 hover:text-sky-800 disabled:text-slate-300 disabled:cursor-not-allowed cursor-pointer transition-colors"
                 >
@@ -851,8 +874,8 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 </button>
               </div>
               <textarea
-                name="estimatedBio"
-                value={pet.estimatedBio}
+                name="posterBio"
+                value={pet.posterBio}
                 onChange={handleTextChange}
                 placeholder="Story box is editable. Tap one of the buttons above to generate adoption details magically, or write what makes them special manually!"
                 rows={5}
