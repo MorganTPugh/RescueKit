@@ -650,7 +650,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Contact Details & Rescue Information */}
           <div className="space-y-3 pt-3 border-t border-stone-50">
             <h4 className="text-sm font-black text-slate-850 mb-0.5 flex items-center gap-1.5 font-display"><HeartHandshake className="w-4 h-4 text-sky-550" /> Organization Contact Information</h4>
-            <p className="text-[10px] font-semibold text-slate-600 mb-1.5">Only add details that should show on the flyer</p>
+            <p className="text-[10px] font-semibold text-slate-600 mb-1.5">Only add details that you want to show on the flyer</p>
             
             <div className="grid grid-cols-1 gap-3">
               <div>

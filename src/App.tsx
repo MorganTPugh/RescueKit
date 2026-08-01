@@ -81,7 +81,7 @@ function ZeroHurdlesCard() {
       <div>
         <h3 className="text-xs font-bold text-emerald-950">Zero hurdles, totally free & private</h3>
         <p className="text-[11px] text-emerald-800 font-medium leading-relaxed mt-0.5 font-sans">
-          Built for every volunteer — no design skills needed. No sign-up, no software, no learning curve. Just fill in your pet's details and get printable and digital flyers in minutes — whether you've been rescuing for 20 years or just fostered your first pet this week.
+          Built for everyone — no sign up, no learning curve, no design skills needed. Just fill in your pet's details and create shareable flyers in minutes — whether you've been rescuing for 20 years or just fostered your first pet this week.
         </p>
       </div>
     </div>
@@ -325,7 +325,7 @@ export default function App() {
         link.click();
         document.body.removeChild(link);
 
-        setSuccessToast(`Successfully saved ${pet.name || 'your pet'}'s Instagram Square as a high-resolution PNG image!`);
+        setSuccessToast(`Successfully saved ${pet.name || 'your pet'}'s Square Flyer as a high-resolution PNG image!`);
       }
 
       setTimeout(() => setSuccessToast(null), 5000);
@@ -523,7 +523,7 @@ export default function App() {
             <div className="no-print w-full bg-white border border-sky-100 rounded-2xl p-4 shadow-sm shadow-sky-50 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-left">
                 <p className="text-xs font-bold text-slate-700">Choose Format</p>
-                <p className="text-[10px] text-sky-700/60 font-semibold mt-0.5">Save as an 8.5x11 rectangle flyer, a 1x1 flyer, or both! Both formats can be shared digitally or printed.</p>
+                <p className="text-[10px] text-sky-700/60 font-semibold mt-0.5">Both formats print beautifully and share just as well online — try either, or make both.</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
@@ -536,7 +536,7 @@ export default function App() {
                       : 'bg-stone-50 text-slate-600 border border-stone-200 hover:bg-stone-100'
                   }`}
                 >
-                  <span>📄 Flyer (Print & Share)</span>
+                  <span>📄 Flyer (8.5×11)</span>
                 </button>
                 <button
                   id="layout-square-btn"
@@ -548,7 +548,7 @@ export default function App() {
                       : 'bg-stone-50 text-slate-600 border border-stone-200 hover:bg-stone-100'
                   }`}
                 >
-                  <span>📸 Instagram Square (1:1)</span>
+                  <span>🖼️ Square (1:1)</span>
                 </button>
               </div>
             </div>
@@ -614,7 +614,7 @@ export default function App() {
                   ) : (
                     <Download className="w-4 h-4 shrink-0" />
                   )}
-                  <span>Save Instagram Square (PNG)</span>
+                  <span>Save Square Flyer (PNG)</span>
                 </button>
               </div>
             </div>
@@ -630,17 +630,13 @@ export default function App() {
               </button>
             </div>
 
-            <div className="no-print text-center max-w-sm mt-2">
-              {settings.aspectRatio === 'square' ? (
-                <p className="text-xs text-sky-700/50 font-medium animate-fade-in">
-                  📸 <strong className="text-sky-800/70">Instagram Mode active:</strong> A perfect square layout designed for Instagram/Facebook posts. You can take a quick screenshot to share, or printed cards will register as high-resolution squares!
-                </p>
-              ) : (
+            {settings.aspectRatio === 'flyer' && (
+              <div className="no-print text-center max-w-sm mt-2">
                 <p className="text-xs text-sky-700/50 font-medium animate-fade-in">
                   📄 <strong className="text-sky-800/70">Printable Poster:</strong> Save/Print as PDF and pin it around town—on coffee shop bulletin boards, local parks, and vets!
                 </p>
-              )}
-            </div>
+              </div>
+            )}
 
           </div>
 

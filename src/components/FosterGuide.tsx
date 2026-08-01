@@ -1316,10 +1316,6 @@ export function FosterGuide() {
           <h1 className="text-[22.8px] md:text-[34.2px] font-black text-slate-900 tracking-tight font-fraunces">Foster Care Handbook & Tools</h1>
           <p className="text-sm text-sky-800/80 font-bold mt-1.5">A complete handbook, prep checklist, and diagnostic tools for fosters</p>
         </div>
-        <div className="hidden md:block text-right bg-white/70 p-2.5 px-4 rounded-2xl border border-sky-100 shrink-0">
-          <span className="text-[11px] font-black text-emerald-600 block">Compassionate, expert-backed care 🏡❤️</span>
-          <span className="text-[10px] font-semibold text-sky-700/60 block mt-0.5">Offline-ready support resources</span>
-        </div>
       </div>
 
       {/* SUB NAVIGATION TABS */}
@@ -1644,10 +1640,10 @@ export function FosterGuide() {
       {/* PERSISTENT DISCLAIMER NOTE */}
       <div className="print:hidden mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-5 text-[11px] text-amber-900 font-medium leading-relaxed space-y-2">
         <p>
-          <strong className="text-amber-800">For rescue coordinators:</strong> This guide is provided as a free resource by Rescue-Kit and is designed to be a foundation, not a final rulebook. Feel free to adapt it — layer in your own policies, contact details, and organization-specific protocols to make it fully yours.
+          <strong className="text-amber-800">For Rescues:</strong> This guide is designed to be a foundation, not a final rulebook. Feel free to download this and adapt it - layer in your own policies and organization-specific rules to make it your own.
         </p>
         <p>
-          <strong className="text-amber-800">For fosters:</strong> This guide covers general best practices, but every rescue operates a little differently. Always check with your coordinator for rules specific to your rescue — including adoption procedures, event attendance, transport policies, and anything else not outlined here.
+          <strong className="text-amber-800">For Fosters & Volunteers:</strong> This guide covers best practices, but always check with your specific rescue for rules specific to your rescue - including adoption procedures, event details, and anything else that may not be outlined here.
         </p>
       </div>
 
