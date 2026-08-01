@@ -370,7 +370,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           {/* Living Compatibility Checkboxes */}
           <div className="pt-2 border-t border-stone-50">
-            <h4 className="text-xs font-black text-slate-800 mb-2">Compatibility</h4>
+            <h4 className="text-sm font-black text-slate-800 mb-2 font-display">Compatibility</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Good with dogs?</label>
@@ -615,7 +615,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           {/* Contact Details & Rescue Information */}
           <div className="space-y-3 pt-3 border-t border-stone-50">
-            <h4 className="text-xs font-black text-slate-850 mb-0.5 flex items-center gap-1.5"><HeartHandshake className="w-4 h-4 text-sky-550" /> Organization Contact Information</h4>
+            <h4 className="text-sm font-black text-slate-850 mb-0.5 flex items-center gap-1.5 font-display"><HeartHandshake className="w-4 h-4 text-sky-550" /> Organization Contact Information</h4>
             <p className="text-[10px] font-semibold text-slate-600 mb-1.5">Only add details that should show on the flyer</p>
             
             <div className="grid grid-cols-1 gap-3">
@@ -682,7 +682,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
       {activeStep === 3 && (
         <div className="space-y-4 animate-fade-in text-slate-800">
           <div>
-            <h3 className="text-sm font-black text-slate-800 mb-1 font-display">Poster Canvas Aesthetics</h3>
+            <h3 className="text-sm font-black text-slate-800 mb-1 font-display">Flyer Aesthetics</h3>
             <p className="text-xs text-slate-500">Customize layout theme, header, and use Gemini to help with the final description.</p>
           </div>
 
@@ -726,8 +726,8 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                   {[
                     { id: 'comic-2-photos', name: '💖 2 Photos- Sweet Romance', desc: 'Elegant pink layout with 2 photos' },
                     { id: 'two-photos', name: '🖼️ 2 Photos - Modern', desc: 'Twin large pictures, concise info' },
-                    { id: 'extreme-duo', name: '📷 Photo-Focused', desc: 'Maximized pictures, limited info' },
-                    { id: 'editorial-2-photos', name: '📰 Editorial Duo', desc: '2 stacked photos, editorial style' }
+                    { id: 'extreme-duo', name: '📷 2 Photos - Large Vertical Photos', desc: 'Maximized pictures, limited info' },
+                    { id: 'editorial-2-photos', name: '📰 2 Photos - Editorial Cover', desc: '2 stacked photos, editorial style' }
                   ].map(t => (
                     <button
                       key={t.id}
@@ -752,7 +752,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
 
           {/* Preset Color Themes */}
           <div>
-            <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest block mb-2">Choose Color Palette</label>
+            <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest block mb-2">Choose Accent Color</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {THEMES.map(theme => {
                 const isSelected = settings.themeId === theme.id;
