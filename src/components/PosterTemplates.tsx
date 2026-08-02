@@ -1871,8 +1871,8 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             {!isComic2 && pet.traits.length > 0 && (
               <div className="flex flex-wrap gap-1 shrink-0">
                 {pet.traits.map((t, idx) => (
-                  <span key={idx} className={`inline-flex items-center whitespace-nowrap shrink-0 text-[7.5px] font-extrabold border px-1.5 py-0.5 rounded capitalize leading-none ${currentTheme.badgeBg}`}>
-                    <span className="mr-0.5 text-[7px]">✨</span>
+                  <span key={idx} className={`inline-flex items-center whitespace-nowrap shrink-0 text-[8.5px] font-bold tracking-wide border px-1.5 py-0.5 rounded capitalize leading-none ${currentTheme.badgeBg}`}>
+                    <span className="mr-0.5 text-[8px]">✨</span>
                     <span>{t}</span>
                   </span>
                 ))}
