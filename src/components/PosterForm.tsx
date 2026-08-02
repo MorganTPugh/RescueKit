@@ -723,7 +723,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
           {/* Template Choice Selectors */}
           <div className="space-y-4">
             <div>
-              <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest block mb-2">Choose Poster Style / Layout</label>
+              <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest block mb-2">Choose Flyer Style</label>
               
               {/* Row 1: Single-Photo Classics */}
               <div className="mb-4">
