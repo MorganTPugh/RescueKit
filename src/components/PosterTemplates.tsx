@@ -841,7 +841,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               {pet.traits.length > 0 && (
                 <div className="flex flex-wrap gap-0.5">
                   {pet.traits.slice(0, 4).map((t, idx) => (
-                    <span key={idx} className={`text-[9.5px] font-bold border px-1.5 py-0.5 rounded capitalize leading-none inline-flex items-center whitespace-nowrap shrink-0 ${currentTheme.badgeBg}`}
+                    <span key={idx} className={`text-[9.5px] font-bold tracking-wide border px-1.5 py-0.5 rounded capitalize leading-none inline-flex items-center whitespace-nowrap shrink-0 ${currentTheme.badgeBg}`}
                     >
                       <span className="mr-0.5 shrink-0 text-[9px]">✨</span>
                       <span>{t}</span>
@@ -1949,7 +1949,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             {isComic2 && pet.traits.length > 0 && (
               <div className="flex flex-wrap gap-0.5 mt-1 justify-start">
                 {pet.traits.slice(0, 4).map((t, idx) => (
-                  <span key={idx} className={`inline-flex items-center whitespace-nowrap shrink-0 text-[9px] font-extrabold border px-1.5 py-0.5 rounded capitalize leading-none ${currentTheme.badgeBg}`}>
+                  <span key={idx} className={`inline-flex items-center whitespace-nowrap shrink-0 text-[9px] font-bold tracking-wide border px-1.5 py-0.5 rounded capitalize leading-none ${currentTheme.badgeBg}`}>
                     <span className="mr-0.5 text-[8.5px]">✨</span>
                     <span>{t}</span>
                   </span>
