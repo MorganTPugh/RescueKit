@@ -443,7 +443,7 @@ export default function App() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_theme(colors.sky.100/50),_transparent_60%)] pointer-events-none" />
             <div className="relative z-10">
               <h1 className="text-[22.8px] md:text-[34.2px] font-black text-slate-900 tracking-tight flex items-center gap-2 font-fraunces">Create Adoption Flyers in Minutes</h1>
-              <p className="text-sm text-sky-800 font-bold mt-1.5">Generate digital and printable flyers or AI-assisted adoption bios — free, private, no sign-up needed.</p>
+              <p className="text-sm text-sky-800 font-bold mt-1.5">Generate digital and printable flyers or AI-assisted adoption bios to help get animals adopted quicker.</p>
             </div>
           </div>
 
