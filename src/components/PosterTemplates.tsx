@@ -679,10 +679,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
       return (
         <div 
           id="print-poster-card" 
-          className={`${printClass} aspect-ratio-square w-full h-full relative border flex flex-col justify-between overflow-hidden p-[12px] md:p-[14px] selection:bg-rose-105 shadow-2xl ${
+          className={`${printClass} aspect-ratio-square w-full h-full relative border flex flex-col justify-between overflow-hidden selection:bg-rose-105 shadow-2xl ${
             isComic2 
-              ? 'bg-[#fefaf2] border-pink-100 rounded-3xl' 
-              : 'bg-white border-slate-250 rounded-2xl'
+              ? 'bg-[#fefaf2] border-pink-100 rounded-3xl pl-2 pr-2 pt-2.5 pb-2.5 md:pl-2 md:pr-2 md:pt-3 md:pb-3' 
+              : 'bg-white border-slate-250 rounded-2xl p-[12px] md:p-[14px]'
           } ${getFontFamilyClass()} ${currentTheme.textClass}`}
         >
           {/* Subtle themed backgrounds */}
@@ -693,7 +693,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               <div className="absolute top-8 right-10 text-rose-200 opacity-40 text-xl font-sans font-normal">♥</div>
               <div className="absolute bottom-20 left-4 text-rose-200 opacity-30 text-2xl font-sans font-normal">♥</div>
               <div className="absolute bottom-10 right-14 text-rose-100 opacity-20 text-4xl font-sans font-normal">🐾</div>
-              <div className="absolute inset-2 border border-pink-100/60 rounded-2xl opacity-60 pointer-events-none"></div>
+              <div className="absolute inset-1.5 border border-pink-100/60 rounded-2xl opacity-60 pointer-events-none"></div>
             </div>
           ) : (
             <>
@@ -768,8 +768,8 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
           {/* 3. Concise Info & Story Box */}
           <div className="flex-1 flex gap-2 min-h-0 relative select-text pt-0.5">
-            {/* Concise Story Block (58%) */}
-            <div className="w-[58%] flex flex-col justify-start text-left min-h-0">
+            {/* Concise Story Block (66%) */}
+            <div className="w-[66%] flex flex-col justify-start text-left min-h-0 pr-1.5">
               <div className="overflow-hidden pr-1 flex-1 leading-snug select-text">
                 <AutoFitBio
                   text={pet.posterBio || "Please fill in some animal information to write a custom biography. This space keeps things tidy and sweet!"}
@@ -782,13 +782,13 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               </div>
             </div>
 
-            {/* Fast Stats Row (42%) */}
-            <div className={`w-[42%] flex flex-col justify-start gap-1 border-l pl-2 select-none h-full min-h-0 ${
+            {/* Fast Stats Row (34%) */}
+            <div className={`w-[34%] flex flex-col justify-start gap-1 border-l pl-1.5 select-none h-full min-h-0 ${
               isComic2 ? 'border-pink-100/70' : 'border-slate-250/50'
             }`}>
               <div className="flex flex-col gap-0.5">
                 {/* Basic info box */}
-                <div className={`p-1.5 rounded border flex flex-col gap-1.5 text-[8.5px] font-bold ${
+                <div className={`p-1.5 rounded border flex flex-col gap-1.5 text-[9.5px] font-bold ${
                   isComic2
                     ? 'bg-[#fffcfb] border-pink-200/60 text-slate-700'
                     : `${currentTheme.bgClass} ${currentTheme.borderClass} text-slate-700`
@@ -796,12 +796,20 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                   <div className={`flex justify-start items-center border-b border-dashed pb-1 ${
                     isComic2 ? 'border-pink-105' : 'border-slate-200/50'
                   }`}>
-                    <span className={`${isComic2 ? 'text-rose-600' : 'text-slate-900'} font-extrabold truncate text-[10px]`}>
-                      {pet.age || 'Unknown'}{pet.weight ? `, ${pet.weight}` : ''}
+                    <span className={`${isComic2 ? 'text-rose-600' : 'text-slate-900'} font-extrabold truncate text-[11px]`}>
+                      {pet.age || 'Unknown'}
                     </span>
                   </div>
+                  {pet.weight && (
+                    <div className={`flex justify-between items-center border-b border-dashed pb-1 ${
+                      isComic2 ? 'border-pink-105' : 'border-slate-200/50'
+                    }`}>
+                      <span className={`${isComic2 ? 'text-pink-400' : 'text-slate-404'} text-[8px] uppercase shrink-0`}>Size</span>
+                      <span className={`${isComic2 ? 'text-rose-700' : 'text-slate-900'} font-extrabold max-w-[70px] truncate`}>{pet.weight}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center">
-                    <span className={`${isComic2 ? 'text-pink-400' : 'text-slate-404'} text-[7px] uppercase shrink-0`}>Housetrained</span>
+                    <span className={`${isComic2 ? 'text-pink-400' : 'text-slate-404'} text-[8px] uppercase shrink-0`}>Housetrained</span>
                     <span className={`${isComic2 ? 'text-rose-700' : 'text-slate-900'} font-extrabold max-w-[55px] truncate`}>{pet.houseTrained === 'yes' ? '✓' : pet.houseTrained === 'working-on-it' ? 'Learning' : '✗'}</span>
                   </div>
                 </div>
@@ -809,20 +817,20 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                 {/* Social compatibility boxes (1 word & answer below in separate boxes) */}
                 <div className="grid grid-cols-3 gap-0.5">
                   <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200/80'} border p-1 rounded text-center`}>
-                    <span className={`text-[6px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>DOGS</span>
-                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[7.5px] font-black leading-none block mt-0.5`}>
+                    <span className={`text-[7px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>DOGS</span>
+                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[8.5px] font-black leading-none block mt-0.5`}>
                       {pet.goodWithDogs === 'yes' ? 'Yes' : pet.goodWithDogs === 'no' ? 'No' : 'Maybe'}
                     </span>
                   </div>
                   <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200/80'} border p-1 rounded text-center`}>
-                    <span className={`text-[6px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>CATS</span>
-                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[7.5px] font-black leading-none block mt-0.5`}>
+                    <span className={`text-[7px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>CATS</span>
+                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[8.5px] font-black leading-none block mt-0.5`}>
                       {pet.goodWithCats === 'yes' ? 'Yes' : pet.goodWithCats === 'no' ? 'No' : 'Maybe'}
                     </span>
                   </div>
                   <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200/80'} border p-1 rounded text-center`}>
-                    <span className={`text-[6px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>KIDS</span>
-                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[7.5px] font-black leading-none block mt-0.5`}>
+                    <span className={`text-[7px] block font-bold uppercase leading-none ${isComic2 ? 'text-pink-500' : 'text-slate-404'}`}>KIDS</span>
+                    <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[8.5px] font-black leading-none block mt-0.5`}>
                       {pet.goodWithKids === 'yes' ? 'Yes' : pet.goodWithKids === 'no' ? 'No' : 'Maybe'}
                     </span>
                   </div>
@@ -832,10 +840,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               {/* Personality traits moved under basic info/compatibility space */}
               {pet.traits.length > 0 && (
                 <div className="flex flex-wrap gap-0.5">
-                  {pet.traits.slice(0, 3).map((t, idx) => (
-                    <span key={idx} className={`text-[7.5px] font-bold border px-1 py-0.5 rounded capitalize leading-none inline-flex items-center whitespace-nowrap shrink-0 ${currentTheme.badgeBg}`}
+                  {pet.traits.slice(0, 4).map((t, idx) => (
+                    <span key={idx} className={`text-[9.5px] font-bold border px-1.5 py-0.5 rounded capitalize leading-none inline-flex items-center whitespace-nowrap shrink-0 ${currentTheme.badgeBg}`}
                     >
-                      <span className="mr-0.5 shrink-0 text-[7px]">✨</span>
+                      <span className="mr-0.5 shrink-0 text-[9px]">✨</span>
                       <span>{t}</span>
                     </span>
                   ))}
@@ -1168,7 +1176,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         <div className="grid grid-cols-12 gap-2.5 h-full z-10">
           
           {/* LEFT SIDE: DETAILS, BULLETS, STORIES */}
-          <div className={`${settings.templateId === 'polaroid' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 pr-0.5 min-h-0 overflow-hidden`}>            {/* COMPACT HEADLINES */}
+          <div className={`${settings.templateId === 'polaroid' || settings.templateId === 'comic' ? 'col-span-5' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 pr-0.5 min-h-0 overflow-hidden`}>            {/* COMPACT HEADLINES */}
             <div>
               {settings.templateId === 'whimsical' ? (
                 <div className="flex items-center justify-between gap-1 w-full mt-1.5 border-b border-[#2d5a27]/15 pb-1.5 shrink-0 select-none">
@@ -1328,11 +1336,11 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           </div>
 
           {/* RIGHT SIDE: PHOTO SLOT, DETAILED STAT VALUES & INSTANT SCAN QR */}
-          <div className={`${settings.templateId === 'polaroid' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 relative border-l border-slate-100 pl-2 min-h-0 overflow-hidden`}>
+          <div className={`${settings.templateId === 'polaroid' || settings.templateId === 'comic' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-between h-full py-0.5 relative border-l border-slate-100 pl-2 min-h-0 overflow-hidden`}>
             <div className="flex-1 w-full min-h-0 relative mb-1">
               {settings.templateId === 'polaroid' ? (
-                <div className="bg-white p-2 pb-4.5 border border-stone-250 shadow-md rotate-[-0.5deg] w-full max-w-[260px] aspect-[1/1.12] flex flex-col group mx-auto">
-                  <div className="w-full aspect-square bg-stone-100 relative rounded-sm overflow-hidden border border-stone-200/50">
+                <div className={`p-1.5 pb-3.5 border border-black/10 shadow-md rotate-[-0.5deg] w-full max-w-[320px] max-h-full aspect-[1/1.38] flex flex-col group mx-auto ${currentTheme.accentClass}`}>
+                  <div className="w-full aspect-[1/1.18] bg-stone-100 relative rounded-sm overflow-hidden border border-stone-200/50">
                     {primaryPhoto ? (
                       <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
                     ) : (
@@ -1341,16 +1349,15 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                       </div>
                     )}
                   </div>
-                  <div className="text-center pt-1.5 flex-1 flex items-center justify-center leading-none shrink-0">
-                    <span className="font-serif italic text-rose-850 font-bold text-[8.5px] leading-none">Ready for cuddles! 📷</span>
+                  <div className="text-center pt-1 flex-1 flex items-center justify-center leading-none shrink-0">
+                    <span className="font-serif italic font-bold text-[8.5px] leading-none">Ready for cuddles! 📷</span>
                   </div>
                 </div>
               ) : settings.templateId === 'comic' ? (
-                <div className="relative h-full w-full flex items-stretch" style={{padding: '3px 3px 14px 3px'}}>
-                  <div className="absolute inset-0 bg-rose-200/20 blur-xl" style={{borderRadius: '55% 45% 48% 52% / 48% 52% 48% 52%'}} />
+                <div className="relative h-full w-full flex items-stretch" style={{padding: '0 0 12px 0'}}>
+                  <div className="absolute inset-0 bg-rose-200/20 blur-xl rounded-2xl" />
                   <div
-                    className="relative w-full h-full overflow-hidden shadow-[0_6px_24px_rgba(219,39,119,0.20),0_2px_6px_rgba(219,39,119,0.10)]"
-                    style={{borderRadius: '52% 48% 56% 44% / 44% 52% 48% 56%'}}
+                    className="relative w-full h-full overflow-hidden shadow-[0_6px_24px_rgba(219,39,119,0.20),0_2px_6px_rgba(219,39,119,0.10)] rounded-2xl"
                   >
                     {primaryPhoto ? (
                       <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
@@ -1496,13 +1503,17 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                     { label: pet.weight || 'Medium' },
                     { label: pet.houseTrained === 'yes' ? 'Housetrained ✓' : pet.houseTrained === 'working-on-it' ? 'Learning' : 'Untrained' },
                   ].map((item, i) => (
-                    <span key={i} className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[7px] font-bold shrink-0 ${
-                      settings.templateId === 'editorial'
-                        ? 'bg-stone-900 text-white'
-                        : settings.templateId === 'polaroid'
-                        ? 'bg-stone-100 text-stone-700 border border-stone-300'
-                        : `${currentTheme.bgClass} border ${currentTheme.borderClass} text-slate-700`
-                    }`}>
+                    <span
+                      key={i}
+                      className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-bold shrink-0 ${
+                        settings.templateId === 'editorial'
+                          ? 'bg-stone-900 text-white'
+                          : settings.templateId === 'polaroid'
+                          ? 'bg-stone-100 text-stone-700 border'
+                          : `${currentTheme.bgClass} border ${currentTheme.borderClass} text-slate-700`
+                      }`}
+                      style={settings.templateId === 'polaroid' ? { borderColor: currentTheme.themeColorHex } : undefined}
+                    >
                       {item.label}
                     </span>
                   ))}
@@ -1761,10 +1772,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
     return (
       <div 
         id="print-poster-card" 
-        className={`${printClass} poster-proportions w-full h-full relative border flex flex-col justify-between overflow-hidden p-3.5 md:p-4 selection:bg-rose-105 shadow-2xl ${
+        className={`${printClass} poster-proportions w-full h-full relative border flex flex-col justify-between overflow-hidden selection:bg-rose-105 shadow-2xl ${
           isComic2 
-            ? 'bg-[#fefaf2] border-pink-100 rounded-3xl' 
-            : 'bg-white border-slate-200 rounded-2xl'
+            ? 'bg-[#fefaf2] border-pink-100 rounded-3xl pt-3 pb-4.5 pl-2 pr-2 md:pt-[14px] md:pb-[20px] md:pl-2 md:pr-2' 
+            : 'bg-white border-slate-200 rounded-2xl p-3.5 md:p-4'
         } ${getFontFamilyClass()} ${currentTheme.textClass}`}
       >
         {/* Subtle background styles */}
@@ -1776,7 +1787,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             <div className="absolute bottom-32 left-8 text-rose-200 opacity-35 text-3xl font-sans font-normal">♥</div>
             <div className="absolute bottom-20 right-24 text-rose-100 opacity-25 text-5xl font-sans font-normal">🐾</div>
             <div className="absolute top-[20%] left-6 text-orange-100 opacity-30 text-2xl font-sans font-normal">🌸</div>
-            <div className="absolute inset-3 border border-pink-105/60 rounded-2xl opacity-60 pointer-events-none"></div>
+            <div className="absolute inset-1.5 border border-pink-105/60 rounded-2xl opacity-60 pointer-events-none"></div>
           </div>
         ) : (
           <>
@@ -1854,10 +1865,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
 
         {/* 3. Concise Info & Story Box */}
         <div className="flex-1 grid grid-cols-12 gap-4 mt-2 min-h-0 relative select-text">
-          {/* Concise Story Block (col-span-7) */}
-          <div className="col-span-7 flex flex-col justify-start text-left min-h-0 gap-1">
+          {/* Concise Story Block (col-span-8) */}
+          <div className="col-span-8 flex flex-col justify-start text-left min-h-0 gap-1 pr-1.5">
             {/* Traits here so they never overflow off the page */}
-            {pet.traits.length > 0 && (
+            {!isComic2 && pet.traits.length > 0 && (
               <div className="flex flex-wrap gap-1 shrink-0">
                 {pet.traits.map((t, idx) => (
                   <span key={idx} className={`inline-flex items-center whitespace-nowrap shrink-0 text-[7.5px] font-extrabold border px-1.5 py-0.5 rounded capitalize leading-none ${currentTheme.badgeBg}`}>
@@ -1880,13 +1891,13 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           </div>
 
           {/* Fact Sheet Column (col-span-4) */}
-          <div className={`col-span-5 flex flex-col justify-start gap-1 select-none border-l pl-4 h-full min-h-0 ${
+          <div className={`col-span-4 flex flex-col justify-start gap-1 select-none border-l pl-1.5 h-full min-h-0 ${
             isComic2 ? 'border-pink-100/70' : 'border-slate-250/50'
           }`}>
             <div className="flex flex-col gap-1 w-full font-sans">
               
               {/* Basic Information Box */}
-              <div className={`p-1.5 rounded-lg border font-sans flex flex-col gap-1 text-[8.5px] md:text-[9.5px] font-bold ${
+              <div className={`p-1.5 rounded-lg border font-sans flex flex-col gap-1 text-[9.5px] md:text-[10.5px] font-bold ${
                 isComic2 
                   ? 'bg-[#fffcfb] border-pink-200/60 text-slate-700' 
                   : `${currentTheme.borderClass} ${currentTheme.bgClass} text-slate-755`
@@ -1894,12 +1905,20 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                 <div className={`flex justify-start items-center border-b border-dashed pb-1 font-sans ${
                   isComic2 ? 'border-pink-100/70' : 'border-slate-200/50'
                 }`}>
-                  <span className={`${isComic2 ? 'text-rose-600' : 'text-slate-900'} font-extrabold truncate font-sans text-[9px] md:text-[10px]`}>
-                    {pet.age || 'Unknown Age'}{pet.weight ? `, ${pet.weight}` : ''}
+                  <span className={`${isComic2 ? 'text-rose-600' : 'text-slate-900'} font-extrabold truncate font-sans text-[10px] md:text-[11.5px]`}>
+                    {pet.age || 'Unknown Age'}
                   </span>
                 </div>
+                {pet.weight && (
+                  <div className={`flex justify-between items-center border-b border-dashed pb-1 font-sans ${
+                    isComic2 ? 'border-pink-100/70' : 'border-slate-200/50'
+                  }`}>
+                    <span className={`${isComic2 ? 'text-pink-400' : 'text-slate-404'} text-[8.5px] uppercase shrink-0 font-sans`}>Size</span>
+                    <span className={`${isComic2 ? 'text-rose-700' : 'text-slate-900'} font-extrabold max-w-[85px] truncate font-sans`}>{pet.weight}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center font-sans">
-                  <span className={`${isComic2 ? 'text-pink-400' : 'text-slate-404'} text-[7.5px] uppercase shrink-0 font-sans`}>Housetrained</span>
+                  <span className={`${isComic2 ? 'text-pink-400' : 'text-slate-404'} text-[8.5px] uppercase shrink-0 font-sans`}>Housetrained</span>
                   <span className={`${isComic2 ? 'text-rose-700' : 'text-slate-900'} font-extrabold max-w-[85px] truncate font-sans`}>{pet.houseTrained === 'yes' ? '✓' : pet.houseTrained === 'working-on-it' ? 'Learning' : '✗'}</span>
                 </div>
               </div>
@@ -1907,27 +1926,36 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
               {/* Social Compatibility columns (1 word & answer below in separate boxes) */}
               <div className="grid grid-cols-3 gap-0.5 font-sans">
                 <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200'} border p-1 rounded-lg text-center shadow-3xs flex flex-col justify-center items-center font-sans`}>
-                  <span className={`text-[6.5px] font-black block leading-none font-sans select-none ${isComic2 ? 'text-[#db2777]' : 'text-slate-404'}`}>DOGS</span>
-                  <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[8px] font-black leading-none block mt-1 font-sans`}>
+                  <span className={`text-[7.5px] font-black block leading-none font-sans select-none ${isComic2 ? 'text-[#db2777]' : 'text-slate-404'}`}>DOGS</span>
+                  <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[9px] font-black leading-none block mt-1 font-sans`}>
                     {pet.goodWithDogs === 'yes' ? 'YES' : pet.goodWithDogs === 'no' ? 'NO' : 'MAYBE'}
                   </span>
                 </div>
                 <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200'} border p-1 rounded-lg text-center shadow-3xs flex flex-col justify-center items-center font-sans`}>
-                  <span className={`text-[6.5px] font-black block leading-none font-sans select-none ${isComic2 ? 'text-[#db2777]' : 'text-slate-404'}`}>CATS</span>
-                  <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[8px] font-black leading-none block mt-1 font-sans`}>
+                  <span className={`text-[7.5px] font-black block leading-none font-sans select-none ${isComic2 ? 'text-[#db2777]' : 'text-slate-404'}`}>CATS</span>
+                  <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[9px] font-black leading-none block mt-1 font-sans`}>
                     {pet.goodWithCats === 'yes' ? 'YES' : pet.goodWithCats === 'no' ? 'NO' : 'MAYBE'}
                   </span>
                 </div>
                 <div className={`${isComic2 ? 'bg-pink-50/50 border-pink-100/60' : 'bg-[#fcfdfd]/95 border-slate-200'} border p-1 rounded-lg text-center shadow-3xs flex flex-col justify-center items-center font-sans`}>
-                  <span className={`text-[6.5px] font-black block leading-none font-sans select-none ${isComic2 ? 'text-[#db2777]' : 'text-slate-404'}`}>KIDS</span>
-                  <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[8px] font-black leading-none block mt-1 font-sans`}>
+                  <span className={`text-[7.5px] font-black block leading-none font-sans select-none ${isComic2 ? 'text-[#db2777]' : 'text-slate-404'}`}>KIDS</span>
+                  <span className={`${isComic2 ? 'text-rose-755' : 'text-slate-900'} text-[9px] font-black leading-none block mt-1 font-sans`}>
                     {pet.goodWithKids === 'yes' ? 'YES' : pet.goodWithKids === 'no' ? 'NO' : 'MAYBE'}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Traits moved to bio column to prevent overflow */}
+            {isComic2 && pet.traits.length > 0 && (
+              <div className="flex flex-wrap gap-0.5 mt-1 justify-start">
+                {pet.traits.slice(0, 4).map((t, idx) => (
+                  <span key={idx} className={`inline-flex items-center whitespace-nowrap shrink-0 text-[9px] font-extrabold border px-1.5 py-0.5 rounded capitalize leading-none ${currentTheme.badgeBg}`}>
+                    <span className="mr-0.5 text-[8.5px]">✨</span>
+                    <span>{t}</span>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -2006,11 +2034,11 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
     return (
       <div
         id="print-poster-card"
-        className={`${printClass} poster-proportions w-full h-full relative border flex flex-col justify-between overflow-hidden p-4.5 md:p-[20px] selection:bg-rose-105 shadow-2xl bg-white border-slate-200 rounded-2xl font-serif ${currentTheme.textClass}`}
+        className={`${printClass} poster-proportions w-full h-full relative border flex flex-col justify-between overflow-hidden pl-2 pr-2 pt-4.5 pb-4.5 md:pl-2 md:pr-2 md:pt-[20px] md:pb-[20px] selection:bg-rose-105 shadow-2xl bg-white border-slate-200 rounded-2xl font-serif ${currentTheme.textClass}`}
       >
         {/* Editorial black stripe borders */}
         <div className="absolute inset-0 pointer-events-none -z-10 border-t-[6px] border-b-[6px] border-stone-900">
-          <div className="absolute inset-x-4 top-4 bottom-4 border border-stone-200/60"></div>
+          <div className="absolute inset-x-1.5 top-4 bottom-4 border border-stone-200/60"></div>
         </div>
         <div className="absolute bottom-1.5 right-2 text-[7px] text-slate-500 font-mono font-semibold select-none pointer-events-none z-50 leading-none">Powered by Rescue-kit.org</div>
 
@@ -2163,7 +2191,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
   return (
     <div
       id="print-poster-card"
-      className={`${printClass} poster-proportions w-full h-full relative border flex flex-col justify-between overflow-hidden p-4.5 md:p-[20px] selection:bg-rose-105 shadow-2xl ${settings.templateId === 'whimsical' ? 'bg-[#fdfbf6] border-[#b3cca8]/20 rounded-3xl' : settings.templateId === 'comic' ? 'bg-[#fefaf2] border-pink-100 rounded-3xl' : 'bg-white border-slate-200 rounded-2xl'} ${getFontFamilyClass()} ${currentTheme.textClass}`}
+      className={`${printClass} poster-proportions w-full h-full relative border flex flex-col justify-between overflow-hidden ${settings.templateId === 'comic' ? 'pt-3 pb-4.5 pl-2 pr-2 md:pt-[14px] md:pb-[20px] md:pl-2 md:pr-2' : (settings.templateId === 'whimsical' || settings.templateId === 'polaroid') ? 'pt-3 pb-3.5 pl-2 pr-2 md:pt-[12px] md:pb-[14px] md:pl-2 md:pr-2' : settings.templateId === 'editorial' ? 'pt-4.5 pb-4.5 pl-2 pr-2 md:pt-[20px] md:pb-[20px] md:pl-2 md:pr-2' : 'p-4.5 md:p-[20px]'} selection:bg-rose-105 shadow-2xl ${settings.templateId === 'whimsical' ? 'bg-[#fdfbf6] border-[#b3cca8]/20 rounded-3xl' : settings.templateId === 'comic' ? 'bg-[#fefaf2] border-pink-100 rounded-3xl' : 'bg-white border-slate-200 rounded-2xl'} ${getFontFamilyClass()} ${currentTheme.textClass}`}
     >
 
       {/* BACKGROUND GRAPHIC ACCENTS BASED ON TEMPLATE STYLE */}
@@ -2195,27 +2223,27 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
           {/* Subtle inner border accent */}
-          <div className="absolute inset-3.5 border border-rose-100/40 rounded-2xl pointer-events-none"></div>
+          <div className={`absolute border border-rose-100/40 rounded-2xl pointer-events-none ${settings.templateId === 'comic' ? 'inset-1.5' : 'inset-3.5'}`}></div>
         </div>
       )}
 
       {settings.templateId === 'polaroid' && (
-        <div className="absolute inset-0 pointer-events-none -z-10 bg-[#faf8f5] border-[10px] border-white shadow-inner">
+        <div className="absolute inset-0 pointer-events-none -z-10 bg-[#faf8f5] border-[6px] border-white shadow-inner">
           <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-stone-100/40 to-transparent"></div>
         </div>
       )}
 
       {settings.templateId === 'editorial' && (
         <div className="absolute inset-0 pointer-events-none -z-10 border-t-[6px] border-b-[6px] border-stone-900">
-          <div className="absolute inset-x-4 top-4 bottom-4 border border-stone-200/60"></div>
+          <div className="absolute inset-x-1.5 top-4 bottom-4 border border-stone-200/60"></div>
         </div>
       )}
 
       {/* ==================== 1. UPPER HEADER SECTION (COMPACT SIZE FOR HIGHER DENSITY) ==================== */}
       {settings.templateId === 'whimsical' ? (
-        <div className="w-full flex items-center justify-between mt-0 mb-2 z-10 font-sans shrink-0 border-b border-[#2d5a27]/10 pb-1 select-none">
+        <div className="w-full flex items-center justify-between mt-0 mb-1.5 z-10 font-sans shrink-0 border-b border-[#2d5a27]/10 pb-0.5 select-none">
           {/* Left top: Meet Barnaby! */}
-          <div className="relative inline-block pl-2 mt-1">
+          <div className="relative inline-block pl-2 mt-0">
             <h1 className="text-[38px] font-handwritten font-black tracking-tight text-[#0f5c3a] leading-none mb-0.5">
               Meet {pet.name || 'Lovely Foster'}!
             </h1>
@@ -2225,9 +2253,9 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
           </div>
 
           {/* Right top: Adopt me! Badge */}
-          <div className={`inline-flex items-center text-center justify-center py-1 transition-all duration-300 ${getBadgeStyle()} mr-1 shrink-0`}>
-            <Sparkles className="w-3.5 h-3.5 mr-1 text-orange-500" />
-            <span className="font-bold uppercase tracking-wider text-[10px] md:text-[12px] px-3 py-0.5">{settings.headingText || 'Adopt Me!'}</span>
+          <div className={`inline-flex items-center text-center justify-center rounded-xl py-1 transition-all duration-300 ${getBadgeStyle()} mr-1 shrink-0 max-w-[125px] md:max-w-[150px]`}>
+            <Sparkles className="w-3 h-3 mr-0.5 text-orange-500 shrink-0" />
+            <span className="font-bold uppercase tracking-wider text-[8.5px] md:text-[9.5px] px-1 py-0.5 leading-tight break-words text-center w-full">{settings.headingText || 'Adopt Me!'}</span>
           </div>
         </div>
       ) : settings.templateId === 'editorial' ? (
@@ -2268,40 +2296,39 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             <span className="leading-tight font-extrabold text-[8px]">Me!</span>
           </div>
         </div>
+      ) : settings.templateId === 'polaroid' ? (
+        <div className="w-full flex items-center justify-between mt-0 mb-1.5 z-10 font-sans shrink-0 border-b border-stone-200/55 pb-1 select-none">
+          {/* Left top: Meet Barnaby! and details */}
+          <div className="text-left pl-1 min-w-0">
+            <h1 className="text-[22px] md:text-[25px] font-serif capitalize font-black text-stone-800 leading-none">
+              Meet {pet.name || 'Lovely Star'}!
+            </h1>
+            <div className="text-[9px] md:text-[10px] text-stone-500 flex items-center gap-1.5 mt-1 font-mono">
+              <MapPin className="w-2.5 h-2.5 text-stone-400 shrink-0" />
+              <span className="truncate">{pet.location || 'Local Area'}</span>
+              <span className="text-stone-300">•</span>
+              <Heart className="w-2.5 h-2.5 text-rose-400 shrink-0" />
+              <span className="truncate">{pet.breed}</span>
+            </div>
+          </div>
+
+          {/* Right top: Adopt me! Oval Badge */}
+          <div className={`inline-flex items-center text-center justify-center rounded-2xl transition-all duration-300 ${getBadgeStyle()} mr-1 shrink-0 max-w-[130px] md:max-w-[160px]`}>
+            <span className="font-bold uppercase tracking-wider text-[9px] md:text-[10px] px-3.5 py-1.5 leading-tight text-center break-words w-full">{settings.headingText || 'Adopt Me!'}</span>
+          </div>
+        </div>
       ) : (
         <div className="flex flex-col items-center text-center mt-0 z-10 font-sans shrink-0">
-          
-          {/* Urgent Badge */}
-          {settings.templateId !== 'comic' && (
-            <div className={`mb-1 inline-flex items-center text-center justify-center py-0.5 transition-all duration-300 ${getBadgeStyle()}`}>
-              {settings.templateId === 'whimsical' && <Sparkles className="w-3 h-3 mr-1 text-orange-500" />}
-              <span className="font-bold uppercase tracking-wider text-[9px] md:text-[11px] px-2 py-0.5">{settings.headingText || 'Adopt Me!'}</span>
-            </div>
-          )}
-
           {/* Pet Name & Deck Subtitle with controlled sizing */}
           {settings.templateId === 'comic' ? (
-            <div className="flex flex-col items-center text-center -mt-1 mb-1.5 w-full relative select-none">
-              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#db2777] font-playful relative leading-none mb-1 text-shadow-3xs">
+            <div className="flex flex-col items-center text-center -mt-2.5 mb-1 w-full relative select-none">
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#db2777] font-playful relative leading-none mb-0.5 text-shadow-3xs">
                 Meet {pet.name || 'Lovely Foster'}!
               </h1>
               
               {/* Hand-drawn style pink brush banner for tagline */}
-              <div className="bg-[#db2777] text-white px-5 py-1 text-[10px] md:text-[11px] font-bold font-sans uppercase tracking-wider rounded-lg shadow-3xs border border-white/10 flex items-center justify-center gap-1.5 rotate-[-0.5deg] max-w-[90%] mt-0.5 leading-none">
+              <div className="bg-[#db2777] text-white px-4 py-1 text-[10px] md:text-[11px] font-bold font-sans uppercase tracking-wider rounded-lg shadow-3xs border border-white/10 flex items-center justify-center gap-1.5 rotate-[-0.5deg] max-w-[96%] mt-0.5 leading-none">
                 <span>💖 A sweet {pet.gender === 'girl' ? 'female' : pet.gender === 'boy' ? 'male' : 'companion'} looking for {pet.gender === 'girl' ? 'her' : 'his'} fur-ever home!</span>
-              </div>
-            </div>
-          ) : settings.templateId === 'polaroid' ? (
-            <div className="mb-0.5">
-              <h1 className="text-2xl font-serif capitalize font-bold text-stone-800 leading-none">
-                Meet {pet.name || 'Lovely Star'}!
-              </h1>
-              <div className="text-[9px] md:text-[10px] text-stone-500 flex items-center justify-center gap-1.5 mt-0.5 font-mono">
-                <MapPin className="w-2.5 h-2.5 text-stone-400" />
-                <span>{pet.location || 'Local Area'}</span>
-                <span>•</span>
-                <Heart className="w-2.5 h-2.5 text-rose-400" />
-                <span>{pet.breed}</span>
               </div>
             </div>
           ) : null}
@@ -2408,7 +2435,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
       {/* ==================== 2b. PRIMARY 2-COLUMN SPLIT (all other templates) ==================== */}
       {settings.templateId !== 'minimalist' && (
       <div
-        className={`grid ${settings.templateId === 'editorial' ? '' : 'grid-cols-12'} ${settings.templateId === 'whimsical' || settings.templateId === 'editorial' || settings.templateId === 'polaroid' || settings.templateId === 'comic' ? 'gap-2 md:gap-2' : 'gap-3 md:gap-3.5'} ${settings.templateId === 'polaroid' ? 'my-0.5' : 'my-1'} z-10 flex-1 h-full items-stretch w-full min-h-0`}
+        className={`grid ${settings.templateId === 'editorial' ? '' : 'grid-cols-12'} ${settings.templateId === 'whimsical' || settings.templateId === 'editorial' || settings.templateId === 'polaroid' || settings.templateId === 'comic' ? 'gap-2 md:gap-2' : 'gap-3 md:gap-3.5'} ${settings.templateId === 'polaroid' || settings.templateId === 'comic' || settings.templateId === 'whimsical' ? 'my-0.5' : 'my-1'} z-10 flex-1 h-full items-stretch w-full min-h-0`}
         style={
           settings.templateId === 'editorial'
             ? { gridTemplateColumns: '11fr 13fr' }
@@ -2528,10 +2555,10 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         <div className={`${settings.templateId === 'editorial' ? '' : settings.templateId === 'polaroid' ? 'col-span-7' : settings.templateId === 'comic' ? 'col-span-7' : 'col-span-6'} flex flex-col justify-between h-full space-y-1 pb-0.5 mt-0.5 ${settings.templateId === 'whimsical' ? '' : settings.templateId === 'editorial' ? 'border-l border-stone-350 pl-2' : settings.templateId === 'polaroid' ? 'border-l border-stone-200/50 pl-1.5' : settings.templateId === 'comic' ? 'pl-1' : 'border-l border-slate-100 pl-2.5'} min-h-0 overflow-hidden`}>
           
           {/* STYLED PHOTO BOX - SCALED OUT TO FILL FULL WIDEST SPAN */}
-          <div className={`w-full relative flex-1 ${settings.templateId === 'whimsical' ? 'max-h-[72%]' : settings.templateId === 'polaroid' ? 'max-h-[82%]' : settings.templateId === 'comic' ? 'max-h-[74%]' : settings.templateId === 'editorial' ? 'max-h-[72%]' : 'max-h-[70%]'} min-h-[115px] flex flex-col justify-center items-center ${settings.templateId === 'comic' ? 'p-1' : ''}`}>
+          <div className={`w-full relative flex-1 ${settings.templateId === 'whimsical' ? 'max-h-[72%]' : settings.templateId === 'polaroid' ? 'max-h-[82%]' : settings.templateId === 'comic' ? 'max-h-[84%]' : settings.templateId === 'editorial' ? 'max-h-[72%]' : 'max-h-[70%]'} min-h-[115px] flex flex-col justify-center items-center`}>
             {settings.templateId === 'polaroid' ? (
-              <div className="bg-white p-2 pb-5 border border-stone-250 shadow-md rotate-[1deg] w-full max-w-[280px] aspect-[1/1.12] flex flex-col group mx-auto">
-                <div className="w-full aspect-square bg-stone-100 relative rounded-sm overflow-hidden border border-stone-200/50">
+              <div className={`p-1.5 pb-4 border border-black/10 shadow-md rotate-[1deg] w-full max-w-[340px] max-h-full aspect-[1/1.38] flex flex-col group mx-auto ${currentTheme.accentClass}`}>
+                <div className="w-full aspect-[1/1.26] bg-stone-100 relative rounded-sm overflow-hidden border border-stone-200/50">
                   {primaryPhoto ? (
                     <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
                   ) : (
@@ -2540,18 +2567,17 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                     </div>
                   )}
                 </div>
-                <div className="text-center pt-1.5 flex-1 flex items-center justify-center leading-none shrink-0">
-                  <span className="font-serif italic text-stone-650 font-bold text-[9.5px] leading-none">{pet.name || 'Sweet foster'} 📷</span>
+                <div className="text-center pt-1 flex-1 flex items-center justify-center leading-none shrink-0">
+                  <span className="font-serif italic font-bold text-[9.5px] leading-none">{pet.name || 'Sweet foster'} 📷</span>
                 </div>
               </div>
             ) : settings.templateId === 'comic' ? (
-              <div className="relative w-full flex-1 min-h-[180px] max-w-full select-none group flex items-stretch" style={{padding: '4px 4px 18px 0'}}>
+              <div className="relative w-full flex-1 min-h-[180px] max-w-full select-none group flex items-stretch" style={{padding: '0 0 16px 0'}}>
                 {/* Soft pink bloom behind the photo */}
-                <div className="absolute inset-0 bg-rose-200/20 blur-2xl" style={{borderRadius: '55% 45% 48% 52% / 48% 52% 48% 52%'}} />
-                {/* Organic blob photo — no border, just a warm shadow */}
+                <div className="absolute inset-0 bg-rose-200/20 blur-2xl rounded-3xl" />
+                {/* Rectangular photo with rounded corners — no border, just a warm shadow */}
                 <div
-                  className="relative w-full h-full overflow-hidden shadow-[0_8px_28px_rgba(219,39,119,0.22),0_2px_8px_rgba(219,39,119,0.10)]"
-                  style={{borderRadius: '52% 48% 56% 44% / 44% 52% 48% 56%'}}
+                  className="relative w-full h-full overflow-hidden shadow-[0_8px_28px_rgba(219,39,119,0.22),0_2px_8px_rgba(219,39,119,0.10)] rounded-3xl"
                 >
                   {primaryPhoto ? (
                     <RepositionableImage src={primaryPhoto} alt={pet.name} pet={pet} setPet={setPet} />
@@ -2568,7 +2594,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                 </div>
               </div>
             ) : settings.templateId === 'whimsical' ? (
-              <div className="bg-[#fffefe] p-1 md:p-1.5 pb-1 md:pb-1 w-full max-w-full aspect-[0.68] flex flex-col rounded-[12px_44px_16px_36px] relative shrink-0 group shadow-xs rotate-[-1deg] border border-[#2f9e44]">
+              <div className="bg-[#fffefe] p-1 md:p-1.5 pb-1 md:pb-1 w-auto h-auto max-w-full max-h-full aspect-[0.68] flex flex-col rounded-[12px_44px_16px_36px] relative group shadow-xs rotate-[-1deg] border border-[#2f9e44]">
                 {/* Tape markers */}
                 <div className="absolute -top-1.5 left-8 w-11 h-4 bg-yellow-105/50 border-x border-stone-500/10 rotate-[10deg] shadow-3xs z-30 font-sans"></div>
                 <div className="absolute -bottom-1 -right-0.5 w-12 h-4 bg-[#4f46e5]/10 border-y border-stone-500/10 rotate-[-15deg] shadow-3xs z-30 font-sans"></div>
@@ -2708,13 +2734,17 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
                   { label: pet.houseTrained === 'yes' ? 'Housetrained ✓' : pet.houseTrained === 'working-on-it' ? 'Learning' : 'Untrained' },
                   ...(pet.location ? [{ label: pet.location }] : []),
                 ].map((item, i) => (
-                  <span key={i} className={`inline-flex items-center px-2 py-0.5 rounded-full text-[7.5px] font-bold shrink-0 ${
-                    settings.templateId === 'editorial'
-                      ? 'bg-stone-900 text-white'
-                      : settings.templateId === 'polaroid'
-                      ? 'bg-stone-100 text-stone-700 border border-stone-300'
-                      : `${currentTheme.bgClass} border ${currentTheme.borderClass} text-slate-700`
-                  }`}>
+                  <span
+                    key={i}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[8.5px] font-bold shrink-0 ${
+                      settings.templateId === 'editorial'
+                        ? 'bg-stone-900 text-white'
+                        : settings.templateId === 'polaroid'
+                        ? 'bg-stone-100 text-stone-700 border'
+                        : `${currentTheme.bgClass} border ${currentTheme.borderClass} text-slate-700`
+                    }`}
+                    style={settings.templateId === 'polaroid' ? { borderColor: currentTheme.themeColorHex } : undefined}
+                  >
                     {item.label}
                   </span>
                 ))}
@@ -2746,15 +2776,15 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
       )}
 
       {/* ==================== 3. RETRO LOWER QR & CONTACT PANEL ==================== */}
-      <div className="mt-1 pt-1 border-t border-stone-200 grid grid-cols-12 gap-3 items-center z-10 w-full shrink-0">
+      <div className={`mt-1 pt-1 border-t border-stone-200 grid grid-cols-12 gap-3 z-10 w-full shrink-0 ${settings.templateId === 'comic' || settings.templateId === 'whimsical' || settings.templateId === 'polaroid' ? 'items-end pb-0.5' : 'items-center'}`}>
         
         {/* Organization metadata on the left (col-span-8) */}
-        <div className="col-span-8 flex flex-col text-left">
-          <h4 className="text-[12.5px] md:text-[13.5px] font-extrabold text-stone-900 truncate">
+        <div className={`col-span-8 flex flex-col text-left ${settings.templateId === 'comic' || settings.templateId === 'whimsical' || settings.templateId === 'polaroid' ? 'gap-y-[2px]' : ''}`}>
+          <h4 className={`font-extrabold text-stone-900 truncate ${settings.templateId === 'comic' || settings.templateId === 'whimsical' || settings.templateId === 'polaroid' ? 'text-[11.5px] md:text-[12.5px] leading-none mb-[1px]' : 'text-[12.5px] md:text-[13.5px]'}`}>
             {pet.rescueOrg || 'Independent Rescuer'}
           </h4>
           
-          <div className="mt-0.5 flex flex-col sm:flex-row sm:items-center sm:gap-x-2.5 text-[9.5px] md:text-[10px] text-stone-600 font-medium">
+          <div className={`${settings.templateId === 'comic' || settings.templateId === 'whimsical' || settings.templateId === 'polaroid' ? 'mt-0' : 'mt-0.5'} flex flex-col sm:flex-row sm:items-center sm:gap-x-2.5 text-[9.5px] md:text-[10px] text-stone-600 font-medium`}>
             {pet.fosterEmail && (
               <div className="flex items-center gap-1">
                 <Mail className="w-2.5 h-2.5 text-stone-400 inline-block shrink-0" />
@@ -2769,7 +2799,7 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
             )}
           </div>
           {pet.rescueWebsite && (
-            <div className="flex items-center gap-1 text-[9.5px] md:text-[10px] text-rose-700 font-bold mt-0.5 select-all">
+            <div className={`flex items-center gap-1 text-[9.5px] md:text-[10px] text-rose-700 font-bold select-all ${settings.templateId === 'comic' || settings.templateId === 'whimsical' || settings.templateId === 'polaroid' ? 'mt-0' : 'mt-0.5'}`}>
               <Globe className="w-2.5 h-2.5 text-rose-400 shrink-0" />
               <span className="truncate hover:underline">{pet.rescueWebsite.replace(/^https?:\/\//, '')}</span>
             </div>
@@ -2777,13 +2807,13 @@ export const PosterTemplates: React.FC<PosterTemplateProps> = ({ pet, settings, 
         </div>
 
         {/* Scan code and QR panel on the right (col-span-4) */}
-        <div className="col-span-4 flex items-center justify-end gap-2.5">
+        <div className={`col-span-4 flex items-center justify-end ${settings.templateId === 'comic' || settings.templateId === 'whimsical' || settings.templateId === 'polaroid' ? 'gap-2' : 'gap-2.5'}`}>
           <div className="text-right hidden sm:block">
             <span className="text-[7px] uppercase font-black text-rose-500 block leading-none">Find out more</span>
             <span className="text-[8.5px] font-black text-slate-800 uppercase block mt-0.5 leading-none">Apply to Adopt!</span>
           </div>
           
-          <div className="bg-stone-50 border border-stone-200 p-0.5 rounded-lg w-14 h-14 relative flex items-center justify-center shadow-3xs shrink-0">
+          <div className={`bg-stone-50 border border-stone-200 p-0.5 rounded-lg relative flex items-center justify-center shadow-3xs shrink-0 ${settings.templateId === 'comic' || settings.templateId === 'whimsical' || settings.templateId === 'polaroid' ? 'w-12 h-12' : 'w-14 h-14'}`}>
             {pet.rescueWebsite ? (
               <QRCodeImage 
                 url={pet.rescueWebsite} 
