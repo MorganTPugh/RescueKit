@@ -251,3 +251,7 @@
   display: none !important;
 }
 
+/* Hide photo drag/zoom helper instructions in full preview modal view */
+#modal-poster-card-wrapper .poster-drag-hint {
+  display: none !important;
+}

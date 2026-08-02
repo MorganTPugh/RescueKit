@@ -269,7 +269,7 @@ export default function App() {
     }
   };
 
-  const handleDownloadImageSpecific = async (targetRatio: 'flyer' | 'square') => {
+  const handleDownloadImageSpecific = async (targetRatio: 'flyer' | 'square', format: 'pdf' | 'png' = 'png') => {
     setIsDownloading(true);
     setErrorMessage(null);
     const previousRatio = settings.aspectRatio;
@@ -300,7 +300,7 @@ export default function App() {
         }
       });
 
-      if (targetRatio === 'flyer') {
+      if (targetRatio === 'flyer' && format === 'pdf') {
         // PDF Export - Create a standard letter-sized portrait page (8.5 x 11 inches)
         const pdf = new jsPDF({
           orientation: 'portrait',
@@ -316,16 +316,20 @@ export default function App() {
 
         setSuccessToast(`Successfully saved ${pet.name || 'your pet'}'s Printable Poster as a high-resolution 8.5x11 PDF!`);
       } else {
-        // PNG export for Instagram square
+        // PNG export for Instagram square or vertical flyer image
         const link = document.createElement('a');
-        const filename = `${pet.name ? pet.name.toLowerCase().replace(/[^a-z0-9]/g, '_') : 'pet'}_${targetRatio}.png`;
+        const suffix = targetRatio === 'flyer' ? 'poster' : targetRatio;
+        const filename = `${pet.name ? pet.name.toLowerCase().replace(/[^a-z0-9]/g, '_') : 'pet'}_${suffix}.png`;
         link.download = filename;
         link.href = dataUrl;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        setSuccessToast(`Successfully saved ${pet.name || 'your pet'}'s Square Flyer as a high-resolution PNG image!`);
+        const toastDesc = targetRatio === 'flyer'
+          ? "Printable Poster as a high-resolution PNG image!"
+          : "Square Flyer as a high-resolution PNG image!";
+        setSuccessToast(`Successfully saved ${pet.name || 'your pet'}'s ${toastDesc}`);
       }
 
       setTimeout(() => setSuccessToast(null), 5000);
@@ -439,7 +443,7 @@ export default function App() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_theme(colors.sky.100/50),_transparent_60%)] pointer-events-none" />
             <div className="relative z-10">
               <h1 className="text-[22.8px] md:text-[34.2px] font-black text-slate-900 tracking-tight flex items-center gap-2 font-fraunces">Create Adoption Flyers in Minutes</h1>
-              <p className="text-sm text-sky-800 font-bold mt-1.5">Generate digital and printable flyers or AI-assisted adoption bios — free, private, no sign-up needed.</p>
+              <p className="text-sm text-sky-800 font-bold mt-1.5">Generate digital and printable flyers or AI-assisted adoption bios to help get animals adopted quicker.</p>
             </div>
           </div>
 
@@ -584,11 +588,11 @@ export default function App() {
 
             {/* Action Buttons for Export */}
             <div className="no-print w-full flex flex-col gap-2.5 max-w-[480px] mt-2">
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <button
                   id="save-poster-btn"
                   type="button"
-                  onClick={() => handleDownloadImageSpecific('flyer')}
+                  onClick={() => handleDownloadImageSpecific('flyer', 'pdf')}
                   disabled={isDownloading}
                   className="cursor-pointer flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-extrabold text-[11px] sm:text-xs py-3 px-2 rounded-xl transition-all shadow-md shadow-emerald-100 hover:shadow-lg hover:scale-[1.01] active:scale-95 text-center leading-none"
                   title="Save high resolution vertical poster as PDF (8.5x11)"
@@ -602,9 +606,25 @@ export default function App() {
                 </button>
 
                 <button
+                  id="save-poster-png-btn"
+                  type="button"
+                  onClick={() => handleDownloadImageSpecific('flyer', 'png')}
+                  disabled={isDownloading}
+                  className="cursor-pointer flex items-center justify-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 disabled:bg-emerald-400 text-white font-extrabold text-[11px] sm:text-xs py-3 px-2 rounded-xl transition-all shadow-md shadow-emerald-200 hover:shadow-lg hover:scale-[1.01] active:scale-95 text-center leading-none"
+                  title="Save high resolution vertical poster as PNG image (8.5x11)"
+                >
+                  {isDownloading ? (
+                    <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  ) : (
+                    <Download className="w-4 h-4 shrink-0" />
+                  )}
+                  <span>Save Poster (8.5x11 PNG)</span>
+                </button>
+
+                <button
                   id="save-square-btn"
                   type="button"
-                  onClick={() => handleDownloadImageSpecific('square')}
+                  onClick={() => handleDownloadImageSpecific('square', 'png')}
                   disabled={isDownloading}
                   className="cursor-pointer flex items-center justify-center gap-1.5 bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white font-extrabold text-[11px] sm:text-xs py-3 px-2 rounded-xl transition-all shadow-md shadow-teal-100 hover:shadow-lg hover:scale-[1.01] active:scale-95 text-center leading-none"
                   title="Save high resolution square image for Instagram"
@@ -706,24 +726,68 @@ export default function App() {
               <h3 className="text-xs font-black tracking-wide uppercase font-display">Full-Scale Poster Preview</h3>
             </div>
             <div className="flex items-center gap-2.5">
-              <button
-                onClick={handleDownloadImage}
-                disabled={isDownloading}
-                className="cursor-pointer bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 active:scale-95 text-white font-extrabold text-[11px] px-3.5 py-1.5 rounded-full shadow-lg transition-all flex items-center gap-1"
-                id="modal-download-btn"
-              >
-                {isDownloading ? (
-                  <>
-                    <span className="w-3 h-3 border-2 border-white/35 border-t-white rounded-full animate-spin"></span>
-                    <span>Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Save Image</span>
-                  </>
-                )}
-              </button>
+              {settings.aspectRatio === 'flyer' ? (
+                <>
+                  <button
+                    onClick={() => handleDownloadImageSpecific('flyer', 'pdf')}
+                    disabled={isDownloading}
+                    className="cursor-pointer bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 active:scale-95 text-white font-extrabold text-[11px] px-3.5 py-1.5 rounded-full shadow-lg transition-all flex items-center gap-1"
+                    id="modal-download-pdf-btn"
+                    title="Save high resolution vertical poster as PDF (8.5x11)"
+                  >
+                    {isDownloading ? (
+                      <>
+                        <span className="w-3 h-3 border-2 border-white/35 border-t-white rounded-full animate-spin"></span>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Save PDF</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleDownloadImageSpecific('flyer', 'png')}
+                    disabled={isDownloading}
+                    className="cursor-pointer bg-emerald-700 hover:bg-emerald-800 disabled:bg-emerald-400 active:scale-95 text-white font-extrabold text-[11px] px-3.5 py-1.5 rounded-full shadow-lg transition-all flex items-center gap-1"
+                    id="modal-download-png-btn"
+                    title="Save high resolution vertical poster as PNG image (8.5x11)"
+                  >
+                    {isDownloading ? (
+                      <>
+                        <span className="w-3 h-3 border-2 border-white/35 border-t-white rounded-full animate-spin"></span>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Save PNG</span>
+                      </>
+                    )}
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => handleDownloadImageSpecific('square', 'png')}
+                  disabled={isDownloading}
+                  className="cursor-pointer bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 active:scale-95 text-white font-extrabold text-[11px] px-3.5 py-1.5 rounded-full shadow-lg transition-all flex items-center gap-1"
+                  id="modal-download-square-btn"
+                  title="Save high resolution square image for Instagram"
+                >
+                  {isDownloading ? (
+                    <>
+                      <span className="w-3 h-3 border-2 border-white/35 border-t-white rounded-full animate-spin"></span>
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Save PNG</span>
+                    </>
+                  )}
+                </button>
+              )}
               <button
                 onClick={() => { window.print(); }}
                 className="cursor-pointer bg-sky-600 hover:bg-sky-700 active:scale-95 text-white font-extrabold text-[11px] px-3.5 py-1.5 rounded-full shadow-lg transition-all flex items-center gap-1"
