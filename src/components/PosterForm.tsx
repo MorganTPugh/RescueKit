@@ -758,10 +758,10 @@ export const PosterForm: React.FC<PosterFormProps> = ({
                 <span className="text-[9.5px] font-black text-sky-505 uppercase tracking-wider block mb-1.5 opacity-80">Two-Photo Layouts</span>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {[
-                    { id: 'comic-2-photos', name: '💖 2 Photos- Sweet Romance', desc: 'Elegant pink layout with 2 photos' },
-                    { id: 'two-photos', name: '🖼️ 2 Photos - Modern', desc: 'Twin large pictures, concise info' },
-                    { id: 'extreme-duo', name: '📷 2 Photos - Large Vertical Photos', desc: 'Maximized pictures, limited info' },
-                    { id: 'editorial-2-photos', name: '📰 2 Photos - Editorial Cover', desc: '2 stacked photos, editorial style' }
+                    { id: 'comic-2-photos', name: '💖 Sweet Romance', desc: 'Elegant pink layout with 2 photos' },
+                    { id: 'two-photos', name: '🖼️ Modern', desc: 'Twin large pictures, concise info' },
+                    { id: 'extreme-duo', name: '📷 Large Vertical Photos', desc: 'Maximized pictures, limited info' },
+                    { id: 'editorial-2-photos', name: '📰 Editorial Cover', desc: '2 stacked photos, editorial style' }
                   ].map(t => (
                     <button
                       key={t.id}
