@@ -717,7 +717,7 @@ export const PosterForm: React.FC<PosterFormProps> = ({
         <div className="space-y-4 animate-fade-in text-slate-800">
           <div>
             <h3 className="text-sm font-black text-slate-800 mb-1 font-display">Flyer Aesthetics</h3>
-            <p className="text-xs text-slate-500">Customize layout theme, header, and use Gemini to help with the final description.</p>
+            <p className="text-xs text-slate-500">Customize layout theme, header, and use AI if you'd like help with the final description.</p>
           </div>
 
           {/* Template Choice Selectors */}
