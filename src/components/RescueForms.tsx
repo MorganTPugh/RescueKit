@@ -2569,7 +2569,7 @@ export function RescueForms() {
                       ) : (
                         <>
                           {/* COMPACT PAGE HEADER */}
-                          <div className={`flex items-center justify-between pb-3 mb-4 border-b-2 ${activeTheme.border}`}>
+                          <div className={`form-page-compact-header flex items-center justify-between pb-3 mb-4 border-b-2 ${activeTheme.border}`}>
                             <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">{displayRescueName}</span>
                             <span className="text-[10px] font-bold text-slate-400 text-center flex-1 px-2">{activeTemplate.title}</span>
                             <span className={`text-[10px] font-black uppercase tracking-wider ${activeTheme.text}`}>Page {pageIdx + 1}</span>

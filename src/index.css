@@ -146,14 +146,22 @@
     break-after: avoid;
   }
 
-  /* Each .form-page card becomes one physical 8.5×11 sheet */
+  /* Forms print as ONE continuous flowing document, not one forced page per card.
+     Forcing a page-break after every .form-page card (the old behavior) meant a short
+     card — e.g. 5 fields that only fill a quarter of a sheet — still consumed an entire
+     physical page, leaving the rest blank before the next card force-started fresh.
+     Letting content flow naturally (with page-break-inside: avoid on each .form-section)
+     lets short sections share a page and only breaks where a section genuinely can't fit. */
   .form-pages-stack {
     gap: 0 !important;
+    width: 8.5in !important;
+    padding: 0.65in !important;
+    box-sizing: border-box !important;
   }
 
   .form-page {
     position: static !important;
-    width: 8.5in !important;
+    width: 100% !important;
     background-color: #ffffff !important;
     color: #000000 !important;
     box-shadow: none !important;
@@ -161,19 +169,18 @@
     border-radius: 0 !important;
     margin: 0 !important;
     overflow: visible !important;
-    break-after: page;
-    page-break-after: always;
-  }
-
-  .form-page:last-child {
-    break-after: avoid;
-    page-break-after: avoid;
   }
 
   .form-page > div {
-    padding: 0.65in !important;
+    padding: 0 !important;
   }
-  
+
+  /* The on-screen "Page N of M" card header no longer maps to a real physical page
+     once cards flow continuously, so it's misleading in print — hide it there. */
+  .form-page-compact-header {
+    display: none !important;
+  }
+
   /* Reset body size to exactly fill paper context */
   html, body, #root {
     background-color: #ffffff !important;
