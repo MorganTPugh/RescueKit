@@ -37,26 +37,26 @@ interface Grant {
 
 const CONST_GRANTS: Grant[] = [
   {
-    id: 'g_petco_lifesaving',
-    provider: 'Petco Love Lifesaving Grants',
-    name: 'Lifesaving Operations and Spay/Neuter',
-    maxAmount: '$50,000',
-    deadline: 'July 15, 2026',
-    category: 'Spay/Neuter',
-    description: 'Funding aimed at supporting operations that immediately increase canine and feline lifesaving rates, including community spay/neuter and TNR campaigns.',
-    requirements: ['501(c)(3) determination letter', 'Shelter animals intake database statistics', 'Active pet adoption partnership'],
-    applyUrl: 'https://petcolove.org/partner-portal/'
+    id: 'g_petco_love_stories',
+    provider: 'Petco Love',
+    name: 'Love Stories Grant (Adoption Stories Campaign)',
+    maxAmount: '$100,000',
+    deadline: 'October 31, 2026',
+    category: 'General Operations',
+    description: 'Petco Love\'s annual adoption-story campaign — submit a real adopter\'s story for a chance at grants up to $100,000, plus additional People\'s Choice awards of $5,000-$25,000 voted on by the public.',
+    requirements: ['501(c)(3) or municipal shelter status', 'Real adopter story submission with photos', 'Active Petco Love Partner Portal profile'],
+    applyUrl: 'https://petcolove.org/shelter-partners/grants/'
   },
   {
     id: 'g_gray_muzzle',
     provider: 'The Grey Muzzle Organization',
-    name: 'Senior Dog Care & Quality of Life Grant',
-    maxAmount: '$15,000',
-    deadline: 'Rolling',
+    name: 'Senior Dog Well-Being Grant Cycle',
+    maxAmount: '$10,000',
+    deadline: 'March 16, 2027',
     category: 'Veterinary & Seniors',
-    description: 'Specifically focuses on building vet funds, medical supply resources, and nutritional diagnostics to improve life and adoption rates for older hospice and sanctuary dogs.',
-    requirements: ['501(c)(3) determination status', 'Dedicated project budget plan', 'Targeted age parameter metrics'],
-    applyUrl: 'https://www.greymuzzle.org/grant-opportunities'
+    description: 'The 2026-2027 Senior Dog Grant Cycle funds programs that measurably improve well-being outcomes for at-risk senior dogs, building a national evidence base for what actually works in senior dog care.',
+    requirements: ['501(c)(3) determination status', 'Program targeting senior dog well-being outcomes', 'Baseline and outcome metrics for evaluation'],
+    applyUrl: 'https://www.greymuzzle.org/grants/about-grey-muzzle-grants'
   },
   {
     id: 'g_aspca_disaster',
@@ -70,92 +70,81 @@ const CONST_GRANTS: Grant[] = [
     applyUrl: 'https://www.aspcapro.org/grants'
   },
   {
-    id: 'g_maddies_innov',
-    provider: 'Maddie\'s Fund Grant Foundation',
-    name: 'Foster Care Innovations & Support',
-    maxAmount: '$10,000',
-    deadline: 'September 1, 2026',
+    id: 'g_maddies_bipoc',
+    provider: 'Maddie\'s Fund',
+    name: 'BIPOC-Led Operating Support & Innovation Grants',
+    maxAmount: '$50,000',
+    deadline: 'Rolling',
     category: 'General Operations',
-    description: 'Grants allocated to support foster-friendly programs, training courses, community foster portals, and home care decompressional setups.',
-    requirements: ['Completed Shelter Animals Count baseline', 'Web portal proof or training plan'],
+    description: 'Supports dog- and cat-focused nonprofits led by or serving BIPOC communities, alongside Maddie\'s ongoing Innovation and Challenge Grants — cycles are announced periodically, so sign up for the Maddie\'s Fund mailing list to catch each window.',
+    requirements: ['501(c)(3) or government animal welfare status', 'Public intake/outcome data (e.g. Live Release Rate)', 'Signed up for Maddie\'s Fund grant cycle alerts'],
     applyUrl: 'https://www.maddiesfund.org/grant-opportunities.htm'
   },
   {
-    id: 'g_bissell_wellness',
-    provider: 'Bissell Pet Foundation Team',
-    name: 'Wellness, Spay/Neuter & Microchipping Programs',
-    maxAmount: '$20,000',
-    deadline: 'October 10, 2026',
+    id: 'g_bissell_partners',
+    provider: 'Bissell Pet Foundation',
+    name: 'Partners for Pets (P4P) Grant',
+    maxAmount: '$10,000',
+    deadline: 'Rolling',
     category: 'Spay/Neuter',
-    description: 'Assisting shelters with free or highly subsidized baseline surgical options, puppy/kitten vaccines, and community microchipping drives to reduce stray intakes.',
-    requirements: ['Surgical license agreements of partner vets', 'Onetime fee outline spreadsheet'],
-    applyUrl: 'https://www.bissellpetfoundation.org/grants/'
+    description: 'Funds shelter medical, wellness, and spay/neuter programs for established Partners for Pets members. Cycles open twice a year (spring and fall) as funds allow — first-time recipients are typically capped at $5,000.',
+    requirements: ['Active Partners for Pets (P4P) member for 6+ months', 'First-time recipients capped at $5,000', 'Itemized program budget'],
+    applyUrl: 'https://www.bissellpetfoundation.org/grant-guidelines-eligibility-requirements/'
   },
   {
-    id: 'g_pedigree_breedbg',
-    provider: 'Pedigree Foundation Granting',
-    name: 'Breed-Agnostic Adoption Acceleration Support',
-    maxAmount: '$25,000',
-    deadline: 'June 30, 2026',
-    category: 'General Operations',
-    description: 'Supports campaigns, digital tool setups (like flyers and web directories), and mobile adoption buses to quicken general intake-to-adoption velocities.',
-    requirements: ['IRS Form 990 (recent)', 'Adoption promotion visual plan', 'List of board members'],
-    applyUrl: 'https://www.pedigreefoundation.org/grant-programs/'
+    id: 'g_banfield_community_care',
+    provider: 'Banfield Foundation',
+    name: 'Community Care Grant (Access to Veterinary Care)',
+    maxAmount: '$15,000',
+    deadline: 'October 1, 2026',
+    category: 'Veterinary & Seniors',
+    description: 'Quarterly funding that helps nonprofits and government agencies subsidize veterinary bills — medications, vaccines, and medical supplies — for owned pets whose families can\'t otherwise afford care.',
+    requirements: ['501(c)(3) nonprofit or government agency', 'Program directly subsidizes owned-pet veterinary costs', 'Applications reviewed quarterly (Jan / Apr / Jul / Oct)'],
+    applyUrl: 'https://www.banfieldfoundation.org/Banfield-Foundation-Grant-Programs'
   },
   {
     id: 'g_bf_rachael_ray',
     provider: 'Best Friends & Rachael Ray Foundation',
     name: 'Rachael Ray Save Them All Grants',
     maxAmount: '$50,000',
-    deadline: 'Rolling',
+    deadline: 'September 17, 2026',
     category: 'General Operations',
-    description: 'Projects that increase linesaving of cats and dogs in U.S. shelters; open to public/private shelters, rescue groups, and other animal welfare organizations.',
-    requirements: ['Best Friends Network Partner status', '501(c)(3) determination status', 'Completed animal care metrics upload'],
-    applyUrl: 'https://network.bestfriends.org/about-us/grants'
+    description: 'Funds lifesaving projects — intake prevention, medical care, and shelter enrichment — for U.S. shelters, rescue groups, and welfare organizations working to close a lifesaving gap (target shelter below a 90% save rate).',
+    requirements: ['Best Friends Network Partner status', 'Target shelter has a lifesaving gap (below 90% save rate)', 'Letter of Interest before full application'],
+    applyUrl: 'https://bestfriends.org/network/partner-perk/rachael-ray-save-them-all-grants'
   },
   {
-    id: 'g_aspca_rescue_effect',
+    id: 'g_aspca_shelter_spayneuter',
     provider: 'ASPCA Pro Grants',
-    name: 'The Rescue Effect Adoption Support Grants',
-    maxAmount: '$2,000,000 (Total Pool)',
+    name: 'Shelter & Spay/Neuter Clinic Grants',
+    maxAmount: '$500,000',
     deadline: 'Rolling',
-    category: 'General Operations',
-    description: 'Adoption support for shelters and rescues during the 2026 "The Rescue Effect" campaign to maximize adoption velocity and reduce rescue animal stay times.',
-    requirements: ['Active ASPCA partner registration', 'Adoption statistics report', 'Promotional campaign overview'],
-    applyUrl: 'https://www.aspcapro.org/grants'
+    category: 'Spay/Neuter',
+    description: 'ASPCA\'s flagship annual initiative combining shelter operations and spay/neuter clinic support, distributing up to $14 million nationally in per-grant awards ranging from $10,000 to $500,000. Reopens annually — check ASPCApro.org for the current cycle.',
+    requirements: ['Registered with Shelter Animals Count (SAC)', 'Physical facility housing adoptable animals', 'Meets ASPCA Grantee Organizational Standards'],
+    applyUrl: 'https://www.aspcapro.org/2026-aspca-grants-shelters-and-spayneuter-clinics'
   },
   {
-    id: 'g_aspca_national_initiative',
-    provider: 'ASPCA Pro Grants',
-    name: 'National Shelter Grants Initiative',
-    maxAmount: '$2,500,000 (Total Pool)',
+    id: 'g_petfinder_emergency',
+    provider: 'Petfinder Foundation',
+    name: 'Emergency Medical Grant',
+    maxAmount: '$1,000',
     deadline: 'Rolling',
     category: 'Veterinary & Seniors',
-    description: 'Programs that support animal outcomes, animal psychological health, treatment, and community access to veterinary care.',
-    requirements: ['ASPCA network affiliate listing', 'Veterinary clinical supervision details', 'Project evaluation metrics'],
-    applyUrl: 'https://www.aspcapro.org/grants'
+    description: 'One-time emergency veterinary funding for a single at-risk pet in the care of an active Petfinder-listed rescue or shelter, so a treatable animal doesn\'t lose its shot at adoption. Reviewed on a rolling monthly basis.',
+    requirements: ['Active Petfinder-listed organization', 'Single at-risk pet with an emergency medical need', 'Itemized vet estimate or invoice'],
+    applyUrl: 'https://petfinderfoundation.org/grant/grant-opportunities-from-the-petfinder-foundation/'
   },
   {
-    id: 'g_aspca_disaster_prep',
-    provider: 'ASPCA Pro Grants',
-    name: 'ASPCA Disaster Preparedness Grants',
-    maxAmount: '$500,000 (Total Pool)',
+    id: 'g_petsmart_adoption_growth',
+    provider: 'PetSmart Charities',
+    name: 'Adoption Growth Grant',
+    maxAmount: '$75,000',
     deadline: 'Rolling',
-    category: 'Disaster & Capital',
-    description: 'Disaster preparedness and resilience building for animals in coastal or high-risk areas (focusing on AL, MS, and LA communities).',
-    requirements: ['Community disaster plan proof', '501(c)(3) tax letter', 'Geographical qualification criteria'],
-    applyUrl: 'https://www.aspcapro.org/grants'
-  },
-  {
-    id: 'g_denver_animals',
-    provider: 'The Denver Foundation',
-    name: 'Animals Welfare Funding',
-    maxAmount: '$5,000',
-    deadline: 'June 15, 2026',
     category: 'General Operations',
-    description: 'Animal-related grants supporting micro-operations, healthcare access, and animal placement in the U.S. with simple eligibility criteria.',
-    requirements: ['U.S. Rescue non-profit certification', 'Short proposal letter of intent', 'Annual expense spreadsheet'],
-    applyUrl: 'https://denverfoundation.org/grants/'
+    description: 'Funds in-store adoption programs hosted at PetSmart locations, helping approved Adoption Partners expand adoption event capacity and get more pets into loving homes.',
+    requirements: ['Approved PetSmart Charities Adoption Partner', 'In-store adoption program at a PetSmart location', 'Adoption outcome tracking data'],
+    applyUrl: 'https://petsmartcharities.org/pro/grants'
   }
 ];
 
@@ -617,7 +606,7 @@ export function RescueGrants() {
     try {
       const saved = localStorage.getItem('rescuekit_tracked_grants');
       return saved ? JSON.parse(saved) : [
-        { id: 'tr_1', grantName: 'Petco Love Lifesaving Operations', fundingTarget: '$25,000', deadline: 'July 15, 2026', status: 'Drafting', notes: 'Working on getting veterinary surgical stats together.' }
+        { id: 'tr_1', grantName: 'Petco Love — Love Stories Grant', fundingTarget: '$25,000', deadline: 'October 31, 2026', status: 'Drafting', notes: 'Working on getting an adopter\'s story and photos together.' }
       ];
     } catch { return []; }
   });
@@ -1038,7 +1027,7 @@ export function RescueGrants() {
             <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <div className="text-xs text-amber-950 leading-relaxed font-semibold">
               <span className="font-extrabold block text-slate-900 mb-0.5">Verify guidelines directly at funder portals before drafting</span>
-              This directory was verified as of <span className="text-indigo-700 font-black">June 2026</span>. Deadlines, geographic jurisdictions, and allowable expenses can change unexpectedly. Always click <span className="text-emerald-800 font-bold">Apply Online</span> to confirm real-time criteria.
+              This directory was verified as of <span className="text-indigo-700 font-black">August 2026</span>. Deadlines, geographic jurisdictions, and allowable expenses can change unexpectedly. Always click <span className="text-emerald-800 font-bold">Apply Online</span> to confirm real-time criteria.
             </div>
           </div>
 
@@ -1079,7 +1068,7 @@ export function RescueGrants() {
                         {grant.category}
                       </span>
                       <span className="inline-block bg-emerald-50 text-emerald-800 border border-emerald-100 rounded-full px-2 py-0.5 text-[8.5px] font-black uppercase tracking-wider">
-                        ✓ Verified June 2026
+                        ✓ Verified August 2026
                       </span>
                     </div>
                     <span className="text-emerald-600 font-black text-sm tracking-tight flex items-center gap-0.5 shrink-0">
